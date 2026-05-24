@@ -209,3 +209,14 @@ QuanLyNhaHang/
 │   └── js/
 └── Program.cs      ← API Routes (Entry Point)
 ```
+
+---
+
+### 🕐 14:50 — Nâng cấp giao diện Bistro Elite (Dark Mode & Lavender)
+
+**Công việc:**
+- Chuyển đổi toàn bộ giao diện 4 trang (`index.html`, `menu.html`, `order.html`, `lichsu.html`) sang phong cách Bistro Elite sang trọng, tinh tế.
+- Sử dụng bảng màu: Nền tối huyền bí `#0b1326`, Container `#171f33`, màu nhấn chính tím oải hương `#c0c1ff`.
+- Áp dụng hiệu ứng kính mờ `glass-card` thời thượng cùng Sidebar bên trái rộng 72px cố định.
+- Tối ưu hóa CSS để đảm bảo mọi phần tử HTML render động từ các file JavaScript riêng biệt (`ban.js`, `menu.js`, `order.js`, `lichsu.js`) hiển thị đẹp mắt, ăn khớp với thiết kế mới mà không làm thay đổi hay ảnh hưởng đến logic nghiệp vụ cũ.
+

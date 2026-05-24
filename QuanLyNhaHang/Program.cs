@@ -16,6 +16,13 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
+// Cấu hình JSON Options cho Minimal API (giữ nguyên PascalCase của C# Properties và hỗ trợ tiếng Việt)
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = null;
+    options.SerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+});
+
 // --- Đăng ký các DAL vào Dependency Injection ---
 builder.Services.AddSingleton<IBanDAL, BanDAL>();
 builder.Services.AddSingleton<ISanPhamDAL, SanPhamDAL>();

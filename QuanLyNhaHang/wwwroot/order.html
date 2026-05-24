@@ -1,159 +1,341 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html class="dark" lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gọi Món - Quản Lý Nhà Hàng</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Bistro Elite - Gọi Món & Thanh Toán</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c0c1ff",
+                        "surface": "#0b1326",
+                        "surface-container": "#171f33",
+                        "surface-container-highest": "#2d3449",
+                        "on-surface": "#dae2fd",
+                        "on-surface-variant": "#c7c4d7",
+                        "background": "#0b1326",
+                        "primary-container": "#8083ff",
+                        "mau-xanh": "#2ecc71",
+                        "mau-do": "#e74c3c"
+                    },
+                    spacing: {
+                        "sidebar-width": "72px",
+                        "container-padding": "32px",
+                        "grid-gutter": "24px",
+                    }
+                }
+            }
+        };
+    </script>
     <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(192, 193, 255, 0.2);
+        }
+        .nav-btn.active {
+            color: #c0c1ff;
+            background: rgba(192, 193, 255, 0.1);
+        }
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            height: 32px;
+            width: 4px;
+            background: #c0c1ff;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* CSS cho các Class được JS chèn động */
         .mon-item {
-            background: var(--mau-nen-input);
-            border: 1px solid var(--mau-vien);
-            border-radius: var(--bo-goc-nho);
-            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 0.85rem 1.1rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 0.5rem;
         }
         .mon-item:hover {
-            border-color: var(--mau-chinh);
-            background: var(--mau-chinh-nhat);
+            border-color: #c0c1ff;
+            background: rgba(192, 193, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
-        .mon-item .mon-ten { font-weight: 500; font-size: 0.9rem; }
-        .mon-item .mon-gia { color: var(--mau-chinh); font-weight: 600; font-size: 0.85rem; }
+        .mon-item .mon-ten { font-weight: 500; font-size: 0.9rem; color: #dae2fd; }
+        .mon-item .mon-gia { color: #c0c1ff; font-weight: 600; font-size: 0.85rem; }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-thucan { background: rgba(192,193,255,0.1); color: #c0c1ff; border: 1px solid rgba(192,193,255,0.15); }
+        .badge-nuocuong { background: rgba(52,152,219,0.1); color: #3498db; border: 1px solid rgba(52,152,219,0.15); }
+        .badge-cokhach { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.15); }
+        .badge-trong { background: rgba(46,204,113,0.1); color: #2ecc71; border: 1px solid rgba(46,204,113,0.15); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+            border-radius: 9999px;
+            cursor: pointer;
+        }
+        .btn-sm { padding: 0.4rem 1rem; font-size: 0.72rem; }
+        .btn-primary { background: #c0c1ff; color: #0b1326; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: #dae2fd; border: 1px solid rgba(255,255,255,0.08); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .btn-danger { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.15); border-radius: 8px; padding: 0.35rem 0.6rem; }
+        .btn-danger:hover { background: #e74c3c; color: #fff; }
+        .btn-success { background: #c0c1ff; color: #0b1326; width: 100%; padding: 0.75rem; font-size: 0.85rem; border-radius: 12px; font-weight: 700; }
+        .btn-success:hover { opacity: 0.9; box-shadow: 0 4px 12px rgba(192,193,255,0.2); }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.2);
+        }
+        .table-wrapper table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        .table-wrapper th { padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); color: #c7c4d7; font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .table-wrapper td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); color: #dae2fd; }
+        .table-wrapper tr:last-child td { border-bottom: none; }
+
         .menu-danh-sach {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 0.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
             max-height: 400px;
             overflow-y: auto;
             padding-right: 0.25rem;
         }
-        /* Scrollbar đẹp */
-        .menu-danh-sach::-webkit-scrollbar { width: 6px; }
-        .menu-danh-sach::-webkit-scrollbar-track { background: var(--mau-nen); }
-        .menu-danh-sach::-webkit-scrollbar-thumb { background: var(--mau-vien); border-radius: 3px; }
+        /* Custom scrollbar */
+        .menu-danh-sach::-webkit-scrollbar { width: 5px; }
+        .menu-danh-sach::-webkit-scrollbar-track { background: transparent; }
+        .menu-danh-sach::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+        .menu-danh-sach::-webkit-scrollbar-thumb:hover { background: #c0c1ff; }
+        
+        .alert {
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+        }
+        .alert-success { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.15); color: #2ecc71; }
+        .alert-error { background: rgba(231,76,60,0.1); border-color: rgba(231,76,60,0.15); color: #e74c3c; }
+
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+        }
+        .empty-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+        .text-nhat {
+            color: #c7c4d7;
+            font-size: 0.85rem;
+        }
+        .text-chinh {
+            color: #c0c1ff;
+        }
     </style>
 </head>
-<body>
+<body class="bg-background text-on-surface min-h-screen flex font-['Inter']">
 
-<nav class="nav">
-    <div class="nav-inner">
-        <a href="index.html" class="nav-logo">🍽️ Nhà Hàng</a>
-        <div class="nav-links">
-            <a href="index.html">🪑 <span>Quản Lý Bàn</span></a>
-            <a href="menu.html">📋 <span>Thực Đơn</span></a>
-            <a href="order.html" class="active">🛒 <span>Gọi Món</span></a>
-            <a href="lichsu.html">📊 <span>Lịch Sử</span></a>
-        </div>
+    <!-- SIDEBAR -->
+    <nav class="fixed left-0 top-0 h-screen w-sidebar-width z-50 bg-surface-container border-r border-white/5 flex flex-col items-center py-8 gap-6">
+        <div class="text-primary font-['Sora'] font-bold text-xl mb-4">BE</div>
+        
+        <a href="index.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Sơ đồ bàn">
+            <span class="material-symbols-outlined">layers</span>
+        </a>
+
+        <a href="menu.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Thực đơn">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+        </a>
+
+        <a href="order.html" class="nav-btn active relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant hover:text-on-surface transition-all group" title="Gọi món">
+            <span class="material-symbols-outlined">point_of_sale</span>
+        </a>
+
+        <a href="lichsu.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Lịch sử hóa đơn">
+            <span class="material-symbols-outlined">receipt_long</span>
+        </a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-sidebar-width flex-1 flex flex-col">
+        <!-- HEADER -->
+        <header class="sticky top-0 h-16 bg-surface/80 backdrop-blur-md border-b border-white/5 flex justify-between items-center px-8 z-40">
+            <h1 class="font-['Sora'] text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">point_of_sale</span> Bistro Elite
+            </h1>
+            <div class="flex items-center gap-4">
+                <div class="text-right mr-4">
+                    <p class="text-xs text-on-surface-variant">Hệ thống quản lý</p>
+                    <p class="text-sm font-semibold">Bistro Elite v1.0</p>
+                </div>
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-surface-container-highest flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-8 flex-1">
+            <!-- PAGE: GỌI MÓN & POS -->
+            <section id="trang-goimon" class="page active block">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-white/5 pb-4">
+                    <div>
+                        <h2 class="font-['Sora'] text-3xl font-bold mb-2">Gọi Món & POS</h2>
+                        <p class="text-on-surface-variant">Phục vụ khách hàng, thêm món ăn và xử lý hóa đơn nhanh chóng.</p>
+                    </div>
+                </div>
+
+                <!-- Khu vực thông báo -->
+                <div id="thongBaoKhuVuc" class="mb-6"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <!-- CỘT TRÁI: Chọn bàn và gọi món (7/12 cột) -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <!-- Chọn bàn -->
+                        <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 font-['Sora']">
+                                    <span class="material-symbols-outlined text-[16px]">touch_app</span> 1️⃣ Chọn Bàn Cần Phục Vụ
+                                </h3>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-4 items-center">
+                                <select id="selectBan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer" onchange="chonBan()">
+                                    <option value="">-- Chọn bàn cần phục vụ --</option>
+                                </select>
+                            </div>
+                            <div id="thongTinBan" class="mt-3 flex items-center gap-2" style="display:none;">
+                                <span class="badge" id="badgeTrangThaiBan"></span>
+                                <span id="thongBaoMoBan" class="text-xs text-on-surface-variant italic"></span>
+                            </div>
+                        </div>
+
+                        <!-- Gọi món -->
+                        <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg" id="khuVucGoiMon" style="display:none;">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-white/5">
+                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 font-['Sora']">
+                                    <span class="material-symbols-outlined text-[18px]">restaurant</span> 2️⃣ Chọn Món & Thêm Vào Bill
+                                </h3>
+                                <!-- Lọc loại -->
+                                <div class="flex gap-2">
+                                    <button class="btn btn-sm btn-primary" onclick="locMenuTheoLoai('')" id="btnTatCa">Tất cả</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('ThucAn')" id="btnThucAn">Thức ăn</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('NuocUong')" id="btnNuocUong">Nước uống</button>
+                                </div>
+                            </div>
+
+                            <!-- Danh sách menu để chọn -->
+                            <div id="menuDanhSach" class="menu-danh-sach"></div>
+
+                            <!-- Form thêm món -->
+                            <div id="formThemMon" class="mt-6 pt-5 border-t border-white/5" style="display:none;">
+                                <div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4">
+                                    <p class="text-xs text-on-surface-variant">Đang chọn thêm:</p>
+                                    <strong id="tenMonDangThem" class="text-base text-primary block mt-0.5"></strong>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng *</label>
+                                        <input type="number" id="inputSoLuong" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm"
+                                               value="1" min="1" placeholder="Nhập số lượng">
+                                    </div>
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ghi chú / Tùy chọn</label>
+                                        <input type="text" id="inputThuocTinhThem" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30"
+                                               placeholder="Phần lớn / Lon / Ít cay...">
+                                    </div>
+                                </div>
+
+                                <!-- Gợi ý tùy chọn -->
+                                <div class="mt-3 flex flex-wrap gap-1.5" id="goiYTuyChon"></div>
+
+                                <div class="flex gap-3 mt-5">
+                                    <button class="bg-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
+                                    <button class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all" onclick="huyChonMon()">✕ Hủy</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CỘT PHẢI: Hóa đơn hiện tại (5/12 cột) -->
+                    <div class="lg:col-span-5">
+                        <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg" id="khuVucHoaDon">
+                            <div class="flex justify-between items-center pb-3 mb-4 border-b border-white/5">
+                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 font-['Sora']">
+                                    <span class="material-symbols-outlined text-[18px]">receipt</span> Hóa Đơn Hiện Tại
+                                </h3>
+                                <button class="glass-card w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200" onclick="taiLaiHoaDon()">
+                                    <span class="material-symbols-outlined text-[18px]">refresh</span>
+                                </button>
+                            </div>
+
+                            <!-- Trạng thái chưa chọn bàn -->
+                            <div id="chuaChonBan" class="flex flex-col items-center justify-center py-16 text-center text-on-surface-variant">
+                                <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-2">table_bar</span>
+                                <p class="text-sm">Hãy chọn bàn ở cột bên trái để quản lý hoặc thanh toán.</p>
+                            </div>
+
+                            <!-- Danh sách món đã gọi -->
+                            <div id="danhSachMon" class="space-y-4" style="display:none;">
+                                <div id="bangChiTietHoaDon" class="max-h-[350px] overflow-y-auto"></div>
+
+                                <!-- Hộp hiển thị tổng tiền -->
+                                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex justify-between items-center shadow-inner">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[16px] text-primary">payments</span> Tổng thanh toán:
+                                    </span>
+                                    <span id="tongTienHienThi" class="text-xl font-bold text-primary">0 ₫</span>
+                                </div>
+
+                                <div class="pt-2">
+                                    <button class="btn-success flex items-center justify-center gap-2 active:scale-[0.98] shadow-md py-3 font-bold" onclick="thanhToan()" id="btnThanhToan">
+                                        <span class="material-symbols-outlined">check_circle</span> THANH TOÁN & ĐÓNG BÀN
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
-</nav>
 
-<div class="container">
-    <h1 class="page-title"><span>🛒</span> Gọi Món & Thanh Toán</h1>
-
-    <div id="thongBaoKhuVuc"></div>
-
-    <div class="grid-2">
-        <!-- CỘT TRÁI: Chọn bàn và gọi món -->
-        <div>
-            <!-- Chọn bàn -->
-            <div class="card mb-2">
-                <div class="card-header">
-                    <h3 class="card-title">1️⃣ Chọn Bàn</h3>
-                </div>
-                <div class="form-group" style="margin-bottom:0">
-                    <select id="selectBan" class="form-control" onchange="chonBan()">
-                        <option value="">-- Chọn bàn cần phục vụ --</option>
-                    </select>
-                </div>
-                <div id="thongTinBan" style="margin-top:0.75rem; display:none;">
-                    <span class="badge" id="badgeTrangThaiBan"></span>
-                    <span id="thongBaoMoBan" style="font-size:0.85rem; color:var(--mau-chu-nhat); margin-left:0.5rem;"></span>
-                </div>
-            </div>
-
-            <!-- Gọi món -->
-            <div class="card mb-2" id="khuVucGoiMon" style="display:none;">
-                <div class="card-header">
-                    <h3 class="card-title">2️⃣ Chọn Món</h3>
-                    <!-- Lọc loại -->
-                    <div style="display:flex; gap:0.5rem;">
-                        <button class="btn btn-sm btn-primary" onclick="locMenuTheoLoai('')" id="btnTatCa">Tất cả</button>
-                        <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('ThucAn')" id="btnThucAn">🍖 Thức ăn</button>
-                        <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('NuocUong')" id="btnNuocUong">🥤 Nước uống</button>
-                    </div>
-                </div>
-
-                <!-- Danh sách menu để chọn -->
-                <div id="menuDanhSach" class="menu-danh-sach"></div>
-
-                <!-- Form thêm món -->
-                <div id="formThemMon" style="display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--mau-vien);">
-                    <p style="font-size:0.85rem; color:var(--mau-chu-nhat); margin-bottom:0.75rem;">
-                        Đang thêm: <strong id="tenMonDangThem" style="color:var(--mau-chinh)"></strong>
-                    </p>
-                    <div class="grid-2" style="gap:0.75rem;">
-                        <div class="form-group" style="margin:0">
-                            <label class="form-label">Số lượng *</label>
-                            <input type="number" id="inputSoLuong" class="form-control"
-                                   value="1" min="1" placeholder="Nhập số lượng">
-                        </div>
-                        <div class="form-group" style="margin:0">
-                            <label class="form-label">Ghi chú / Tùy chọn</label>
-                            <input type="text" id="inputThuocTinhThem" class="form-control"
-                                   placeholder="Phần lớn / Lon / Ít cay...">
-                        </div>
-                    </div>
-                    <!-- Gợi ý tùy chọn -->
-                    <div id="goiYTuyChon" style="margin-top:0.5rem; display:flex; gap:0.35rem; flex-wrap:wrap;"></div>
-                    <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
-                        <button class="btn btn-primary" onclick="themMon()">➕ Thêm vào hóa đơn</button>
-                        <button class="btn btn-secondary" onclick="huyChonMon()">✕ Hủy</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CỘT PHẢI: Hóa đơn hiện tại -->
-        <div>
-            <div class="card" id="khuVucHoaDon">
-                <div class="card-header">
-                    <h3 class="card-title">🧾 Hóa Đơn Hiện Tại</h3>
-                    <button class="btn btn-sm btn-secondary" onclick="taiLaiHoaDon()">🔄</button>
-                </div>
-
-                <!-- Trạng thái chưa chọn bàn -->
-                <div id="chuaChonBan" class="empty-state">
-                    <span class="empty-icon">👈</span>
-                    <p>Chọn bàn để xem hóa đơn</p>
-                </div>
-
-                <!-- Danh sách món đã gọi -->
-                <div id="danhSachMon" style="display:none;">
-                    <div id="bangChiTietHoaDon"></div>
-
-                    <div class="tong-tien-box">
-                        <div class="tong-tien-row tong">
-                            <span>💰 Tổng cộng:</span>
-                            <span id="tongTienHienThi">0 ₫</span>
-                        </div>
-                    </div>
-
-                    <div style="display:flex; gap:0.75rem; margin-top:1rem;">
-                        <button class="btn btn-success btn-block" onclick="thanhToan()" id="btnThanhToan">
-                            ✅ Thanh Toán & Đóng Bàn
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="js/order.js"></script>
+    <script src="js/order.js"></script>
 </body>
 </html>
