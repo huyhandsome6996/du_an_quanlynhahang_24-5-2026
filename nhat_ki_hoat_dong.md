@@ -143,15 +143,40 @@ Build succeeded.
 
 ---
 
-### 🕐 13:34 — Khởi tạo Gitflow, commit đầu tiên
+### 🕐 13:34 — Triển khai Gitflow & Commit theo User Story
 
-**Lệnh terminal:**
-```bash
-git checkout -b develop
-git add .
-git commit -m "Khởi tạo: Cấu trúc dự án Quản Lý Nhà Hàng đầy đủ"
-git push origin develop
-```
+Chúng tôi tiến hành chia nhỏ dự án thành các **User Story** và **Task** cụ thể, tạo nhánh `feature/` riêng biệt, commit bằng tiếng Việt chi tiết rồi merge `--no-ff` vào nhánh `develop`. Cuối cùng gộp về `main` và gắn tag release.
+
+**Nhánh & Lịch sử Commit chi tiết:**
+
+1. **User Story 1: Thiết lập môi trường dự án & SQLite**
+   - Nhánh: `feature/setup-moi-truong`
+   - Commit: `Tính năng: Thiết lập môi trường dự án C# và CSDL SQLite ban đầu`
+
+2. **User Story 2: Xây dựng lớp thực thể OOP**
+   - Nhánh: `feature/entities-oop`
+   - Commit: `Tính năng: Xây dựng các lớp thực thể áp dụng đầy đủ 4 tính chất OOP`
+
+3. **User Story 3: Triển khai tầng DAL & Interfaces**
+   - Nhánh: `feature/dal-layer`
+   - Commit: `Tính năng: Triển khai tầng DAL và Interfaces kết nối SQLite`
+
+4. **User Story 4: Xây dựng API Endpoints Backend**
+   - Nhánh: `feature/api-backend`
+   - Commit: `Tính năng: Xây dựng hệ thống Web API phục vụ Frontend HTML`
+
+5. **User Story 5: Thiết kế Giao diện Frontend HTML/CSS/JS**
+   - Nhánh: `feature/frontend-ui`
+   - Commit: `Tính năng: Thiết kế giao diện HTML/CSS/JS đa trang sang trọng`
+
+6. **User Story 6: Tài liệu báo cáo & Nhật ký**
+   - Nhánh: `feature/tai-lieu-du-an`
+   - Commit: `Tài liệu: Cập nhật nhật ký hoạt động chi tiết dự án`
+
+7. **Hoàn thiện Release v1.0**
+   - Nhánh: Gộp `develop` vào `main`
+   - Tag: `v1.0-Final-Release`
+   - Push toàn bộ nhánh và tag lên GitHub: `git push origin develop`, `git push origin main`, `git push origin --tags`
 
 ---
 
