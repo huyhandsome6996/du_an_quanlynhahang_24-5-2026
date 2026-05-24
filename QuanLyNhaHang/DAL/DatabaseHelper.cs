@@ -1,0 +1,113 @@
+// ============================================================
+// TẦNG DAL - DatabaseHelper
+// Khởi tạo SQLite và tạo các bảng nếu chưa tồn tại
+// ============================================================
+using Microsoft.Data.Sqlite;
+
+namespace QuanLyNhaHang.DAL
+{
+    public static class DatabaseHelper
+    {
+        // Đường dẫn file SQLite (đặt cùng thư mục chạy app)
+        private static readonly string _connectionString =
+            "Data Source=nha_hang.db;";
+
+        public static string ConnectionString => _connectionString;
+
+        /// <summary>
+        /// Tạo tất cả bảng trong SQLite khi app khởi động.
+        /// Dùng "CREATE TABLE IF NOT EXISTS" để không mất data cũ.
+        /// </summary>
+        public static void KhoiTaoCSDL()
+        {
+            using var conn = new SqliteConnection(_connectionString);
+            conn.Open();
+
+            string sql = @"
+                -- Bật hỗ trợ khóa ngoại trong SQLite
+                PRAGMA foreign_keys = ON;
+
+                -- Bảng BÀN
+                CREATE TABLE IF NOT EXISTS Ban (
+                    Id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                    TenBan    TEXT    NOT NULL,
+                    TrangThai TEXT    NOT NULL DEFAULT 'Trống'
+                );
+
+                -- Bảng SẢN PHẨM (Menu)
+                CREATE TABLE IF NOT EXISTS SanPham (
+                    Id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                    TenSanPham  TEXT    NOT NULL,
+                    GiaCoBan    DECIMAL NOT NULL CHECK(GiaCoBan >= 0),
+                    Loai        TEXT    NOT NULL,   -- 'ThucAn' hoặc 'NuocUong'
+                    DangBan     INTEGER NOT NULL DEFAULT 1  -- 1=Đang bán, 0=Ngừng bán
+                );
+
+                -- Bảng HÓA ĐƠN
+                CREATE TABLE IF NOT EXISTS HoaDon (
+                    Id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+                    BanId              INTEGER NOT NULL,
+                    ThoiGianTao        DATETIME NOT NULL,
+                    ThoiGianThanhToan  DATETIME NULL,
+                    TongTien           DECIMAL  NOT NULL DEFAULT 0,
+                    TrangThai          TEXT     NOT NULL DEFAULT 'Chưa thanh toán',
+                    FOREIGN KEY (BanId) REFERENCES Ban(Id)
+                );
+
+                -- Bảng CHI TIẾT HÓA ĐƠN
+                CREATE TABLE IF NOT EXISTS ChiTietHoaDon (
+                    Id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                    HoaDonId        INTEGER NOT NULL,
+                    SanPhamId       INTEGER NOT NULL,
+                    SoLuong         INTEGER NOT NULL CHECK(SoLuong > 0),
+                    DonGiaBan       DECIMAL NOT NULL,
+                    ThuocTinhThem   TEXT    NULL,
+                    ThanhTien       DECIMAL NOT NULL,
+                    FOREIGN KEY (HoaDonId) REFERENCES HoaDon(Id),
+                    FOREIGN KEY (SanPhamId) REFERENCES SanPham(Id)
+                );
+            ";
+
+            using var cmd = new SqliteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
+
+            // Thêm dữ liệu mẫu nếu bảng còn trống
+            ThemDuLieuMau(conn);
+
+            Console.WriteLine("✅ CSDL đã sẵn sàng: nha_hang.db");
+        }
+
+        /// <summary>
+        /// Thêm dữ liệu mẫu ban đầu để demo ứng dụng.
+        /// </summary>
+        private static void ThemDuLieuMau(SqliteConnection conn)
+        {
+            // Kiểm tra nếu đã có bàn thì không thêm nữa
+            using var checkCmd = new SqliteCommand("SELECT COUNT(*) FROM Ban", conn);
+            long soBan = (long)(checkCmd.ExecuteScalar() ?? 0);
+            if (soBan > 0) return;
+
+            string sqlMau = @"
+                INSERT INTO Ban (TenBan) VALUES
+                    ('Bàn 1'), ('Bàn 2'), ('Bàn 3'),
+                    ('Bàn 4'), ('Bàn VIP 1'), ('Phòng Lạnh 1');
+
+                INSERT INTO SanPham (TenSanPham, GiaCoBan, Loai, DangBan) VALUES
+                    ('Lẩu Thái hải sản',    350000, 'ThucAn',  1),
+                    ('Bò bít tết',          200000, 'ThucAn',  1),
+                    ('Gà nướng mật ong',    180000, 'ThucAn',  1),
+                    ('Cơm chiên dương châu',  80000, 'ThucAn',  1),
+                    ('Salad Caesar',          75000, 'ThucAn',  1),
+                    ('Nước ép dưa hấu',      40000, 'NuocUong', 1),
+                    ('Trà đào cam sả',       45000, 'NuocUong', 1),
+                    ('Coca Cola',            30000, 'NuocUong', 1),
+                    ('Bia Tiger',            35000, 'NuocUong', 1),
+                    ('Nước suối Lavie',      15000, 'NuocUong', 1);
+            ";
+
+            using var insertCmd = new SqliteCommand(sqlMau, conn);
+            insertCmd.ExecuteNonQuery();
+            Console.WriteLine("✅ Đã thêm dữ liệu mẫu (6 bàn, 10 món)");
+        }
+    }
+}
