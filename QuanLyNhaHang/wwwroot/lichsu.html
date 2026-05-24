@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Hóa Đơn - Nhà Hàng</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">🍽️ Nhà Hàng</a>
+        <div class="nav-links">
+            <a href="index.html">🪑 <span>Quản Lý Bàn</span></a>
+            <a href="menu.html">📋 <span>Thực Đơn</span></a>
+            <a href="order.html">🛒 <span>Gọi Món</span></a>
+            <a href="lichsu.html" class="active">📊 <span>Lịch Sử</span></a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="page-title"><span>📊</span> Lịch Sử Hóa Đơn</h1>
+
+    <!-- Thống kê nhanh -->
+    <div class="grid-3 mb-2">
+        <div class="card text-center">
+            <div style="font-size:2rem; margin-bottom:0.5rem;">🧾</div>
+            <div style="font-size:1.5rem; font-weight:700; color:var(--mau-chinh);" id="tongHoaDon">0</div>
+            <div class="text-nhat">Tổng hóa đơn</div>
+        </div>
+        <div class="card text-center">
+            <div style="font-size:2rem; margin-bottom:0.5rem;">✅</div>
+            <div style="font-size:1.5rem; font-weight:700; color:var(--mau-xanh);" id="daThanhToan">0</div>
+            <div class="text-nhat">Đã thanh toán</div>
+        </div>
+        <div class="card text-center">
+            <div style="font-size:2rem; margin-bottom:0.5rem;">💰</div>
+            <div style="font-size:1.3rem; font-weight:700; color:var(--mau-chinh);" id="tongDoanhThu">0 ₫</div>
+            <div class="text-nhat">Tổng doanh thu</div>
+        </div>
+    </div>
+
+    <!-- Bảng lịch sử -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Danh sách hóa đơn</h3>
+            <button class="btn btn-secondary btn-sm" onclick="taiLichSu()">🔄 Làm mới</button>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã HĐ</th>
+                        <th>Bàn</th>
+                        <th>Thời Gian Mở</th>
+                        <th>Thời Gian Đóng</th>
+                        <th>Tổng Tiền</th>
+                        <th>Trạng Thái</th>
+                        <th>Xem</th>
+                    </tr>
+                </thead>
+                <tbody id="bangLichSu">
+                    <tr>
+                        <td colspan="7" class="text-center" style="padding:2rem;">
+                            <div class="spinner"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal chi tiết hóa đơn -->
+<div class="modal-overlay" id="modalChiTietHD">
+    <div class="modal modal-lg">
+        <div class="modal-header">
+            <h3 class="modal-title" id="chiTietHDTieuDe">Chi Tiết Hóa Đơn</h3>
+            <button class="modal-close" onclick="dongModal('modalChiTietHD')">✕</button>
+        </div>
+        <div id="chiTietHDNoidung"></div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="dongModal('modalChiTietHD')">Đóng</button>
+            <button class="btn btn-primary" onclick="inHoaDon()">🖨️ In Hóa Đơn</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/lichsu.js"></script>
+</body>
+</html>

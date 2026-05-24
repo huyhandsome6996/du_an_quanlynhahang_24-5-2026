@@ -1,0 +1,598 @@
+/* ============================================================
+   STYLE.CSS - Hệ thống thiết kế cho Quản Lý Nhà Hàng
+   Font: Inter (Google Fonts)
+   Theme: Dark mode sang trọng với accent màu vàng đồng
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* --- Biến màu sắc toàn cục --- */
+:root {
+    --mau-nen:        #0f1117;
+    --mau-nen-card:   #1a1d27;
+    --mau-nen-input:  #242736;
+    --mau-vien:       #2e3347;
+    --mau-chinh:      #f5a623;   /* Vàng đồng - màu chủ đạo */
+    --mau-chinh-nhat: rgba(245, 166, 35, 0.15);
+    --mau-xanh:       #4ade80;   /* Xanh lá - trạng thái Trống */
+    --mau-do:         #f87171;   /* Đỏ - trạng thái Có khách */
+    --mau-xanh-duong: #60a5fa;   /* Xanh dương - thông tin */
+    --mau-chu:        #e2e8f0;
+    --mau-chu-nhat:   #94a3b8;
+    --bong:           0 4px 24px rgba(0,0,0,0.4);
+    --bo-goc:         12px;
+    --bo-goc-nho:     8px;
+}
+
+/* --- Reset và cài đặt chung --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--mau-nen);
+    color: var(--mau-chu);
+    min-height: 100vh;
+}
+
+/* ============================================================
+   THANH ĐIỀU HƯỚNG (NAV)
+   ============================================================ */
+.nav {
+    background: var(--mau-nen-card);
+    border-bottom: 1px solid var(--mau-vien);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--bong);
+}
+
+.nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    height: 64px;
+}
+
+.nav-logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--mau-chinh);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--mau-chu-nhat);
+    padding: 0.5rem 1rem;
+    border-radius: var(--bo-goc-nho);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.nav-links a:hover {
+    background: var(--mau-chinh-nhat);
+    color: var(--mau-chinh);
+}
+
+.nav-links a.active {
+    background: var(--mau-chinh-nhat);
+    color: var(--mau-chinh);
+    border: 1px solid rgba(245, 166, 35, 0.3);
+}
+
+/* ============================================================
+   LAYOUT CHÍNH
+   ============================================================ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--mau-chu);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.page-title span {
+    font-size: 2rem;
+}
+
+/* ============================================================
+   THẺ (CARD)
+   ============================================================ */
+.card {
+    background: var(--mau-nen-card);
+    border: 1px solid var(--mau-vien);
+    border-radius: var(--bo-goc);
+    padding: 1.5rem;
+    box-shadow: var(--bong);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--mau-vien);
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--mau-chu);
+}
+
+/* ============================================================
+   FORM INPUT
+   ============================================================ */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--mau-chu-nhat);
+    margin-bottom: 0.4rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    background: var(--mau-nen-input);
+    border: 1px solid var(--mau-vien);
+    border-radius: var(--bo-goc-nho);
+    color: var(--mau-chu);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    outline: none;
+}
+
+.form-control:focus {
+    border-color: var(--mau-chinh);
+    box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.1);
+}
+
+.form-control option {
+    background: var(--mau-nen-card);
+}
+
+/* ============================================================
+   NÚT BẤM (BUTTON)
+   ============================================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: var(--bo-goc-nho);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+    background: var(--mau-chinh);
+    color: #000;
+}
+.btn-primary:hover { background: #e8961a; box-shadow: 0 4px 16px rgba(245,166,35,0.4); }
+
+.btn-success {
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--mau-xanh);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+.btn-success:hover { background: rgba(74, 222, 128, 0.25); }
+
+.btn-danger {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--mau-do);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+.btn-danger:hover { background: rgba(248, 113, 113, 0.25); }
+
+.btn-info {
+    background: rgba(96, 165, 250, 0.15);
+    color: var(--mau-xanh-duong);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+}
+.btn-info:hover { background: rgba(96, 165, 250, 0.25); }
+
+.btn-secondary {
+    background: var(--mau-nen-input);
+    color: var(--mau-chu-nhat);
+    border: 1px solid var(--mau-vien);
+}
+.btn-secondary:hover { background: var(--mau-vien); color: var(--mau-chu); }
+
+.btn-sm { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
+.btn-lg { padding: 0.8rem 1.8rem; font-size: 1rem; }
+.btn-block { width: 100%; justify-content: center; }
+
+/* ============================================================
+   BẢNG DỮ LIỆU (TABLE)
+   ============================================================ */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--bo-goc-nho);
+    border: 1px solid var(--mau-vien);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: var(--mau-nen-input);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mau-chu-nhat);
+    border-bottom: 1px solid var(--mau-vien);
+    white-space: nowrap;
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--mau-vien);
+    transition: background 0.15s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+tbody td {
+    padding: 0.75rem 1rem;
+    color: var(--mau-chu);
+    vertical-align: middle;
+}
+
+/* ============================================================
+   BADGE TRẠNG THÁI
+   ============================================================ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-trong {
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--mau-xanh);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.badge-cokhach {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--mau-do);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.badge-thucan {
+    background: rgba(245, 166, 35, 0.15);
+    color: var(--mau-chinh);
+    border: 1px solid rgba(245, 166, 35, 0.3);
+}
+
+.badge-nuocuong {
+    background: rgba(96, 165, 250, 0.15);
+    color: var(--mau-xanh-duong);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.badge-chuathanhtoan {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badge-dathanhtoan {
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--mau-xanh);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+/* ============================================================
+   THÔNG BÁO (ALERT)
+   ============================================================ */
+.alert {
+    padding: 0.85rem 1rem;
+    border-radius: var(--bo-goc-nho);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.3s ease;
+}
+
+.alert-success {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: var(--mau-xanh);
+}
+
+.alert-error {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    color: var(--mau-do);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   TRANG BÀN (GRID BÀN)
+   ============================================================ */
+.ban-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.ban-card {
+    background: var(--mau-nen-card);
+    border: 2px solid var(--mau-vien);
+    border-radius: var(--bo-goc);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.ban-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    transition: background 0.25s;
+}
+
+.ban-card.trong::before   { background: var(--mau-xanh); }
+.ban-card.cokhach::before { background: var(--mau-do); }
+
+.ban-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.ban-card.trong:hover   { border-color: var(--mau-xanh); }
+.ban-card.cokhach:hover { border-color: var(--mau-do); }
+
+.ban-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.ban-ten {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--mau-chu);
+    margin-bottom: 0.5rem;
+}
+
+.ban-trangthai {
+    font-size: 0.8rem;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.show {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal {
+    background: var(--mau-nen-card);
+    border: 1px solid var(--mau-vien);
+    border-radius: var(--bo-goc);
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    animation: slideUp 0.25s ease;
+}
+
+.modal-lg { max-width: 750px; }
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--mau-chu);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--mau-chu-nhat);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.modal-close:hover { background: var(--mau-nen-input); color: var(--mau-do); }
+
+.modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--mau-vien);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   TỔNG KẾT TIỀN
+   ============================================================ */
+.tong-tien-box {
+    background: linear-gradient(135deg, var(--mau-chinh-nhat), rgba(245,166,35,0.05));
+    border: 1px solid rgba(245, 166, 35, 0.3);
+    border-radius: var(--bo-goc);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+}
+
+.tong-tien-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 0;
+    font-size: 0.9rem;
+    color: var(--mau-chu-nhat);
+}
+
+.tong-tien-row.tong {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--mau-chinh);
+    border-top: 1px solid rgba(245, 166, 35, 0.2);
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+}
+
+/* ============================================================
+   GRID 2 CỘT
+   ============================================================ */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+}
+
+/* ============================================================
+   LOADING SPINNER
+   ============================================================ */
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--mau-vien);
+    border-top-color: var(--mau-chinh);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 2rem auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   TIỆN ÍCH
+   ============================================================ */
+.text-center   { text-align: center; }
+.text-right    { text-align: right; }
+.text-chinh    { color: var(--mau-chinh); }
+.text-nhat     { color: var(--mau-chu-nhat); font-size: 0.85rem; }
+.text-xanh     { color: var(--mau-xanh); }
+.text-do       { color: var(--mau-do); }
+.fw-bold       { font-weight: 700; }
+.mb-1          { margin-bottom: 0.5rem; }
+.mb-2          { margin-bottom: 1rem; }
+.mb-3          { margin-bottom: 1.5rem; }
+.gap-1         { gap: 0.5rem; }
+.d-flex        { display: flex; }
+.align-center  { align-items: center; }
+.justify-between { justify-content: space-between; }
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--mau-chu-nhat);
+}
+.empty-state .empty-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .container { padding: 1rem; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .ban-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .nav-links a span { display: none; }
+}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gọi Món - Quản Lý Nhà Hàng</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .mon-item {
+            background: var(--mau-nen-input);
+            border: 1px solid var(--mau-vien);
+            border-radius: var(--bo-goc-nho);
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+        .mon-item:hover {
+            border-color: var(--mau-chinh);
+            background: var(--mau-chinh-nhat);
+        }
+        .mon-item .mon-ten { font-weight: 500; font-size: 0.9rem; }
+        .mon-item .mon-gia { color: var(--mau-chinh); font-weight: 600; font-size: 0.85rem; }
+        .menu-danh-sach {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+        /* Scrollbar đẹp */
+        .menu-danh-sach::-webkit-scrollbar { width: 6px; }
+        .menu-danh-sach::-webkit-scrollbar-track { background: var(--mau-nen); }
+        .menu-danh-sach::-webkit-scrollbar-thumb { background: var(--mau-vien); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">🍽️ Nhà Hàng</a>
+        <div class="nav-links">
+            <a href="index.html">🪑 <span>Quản Lý Bàn</span></a>
+            <a href="menu.html">📋 <span>Thực Đơn</span></a>
+            <a href="order.html" class="active">🛒 <span>Gọi Món</span></a>
+            <a href="lichsu.html">📊 <span>Lịch Sử</span></a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="page-title"><span>🛒</span> Gọi Món & Thanh Toán</h1>
+
+    <div id="thongBaoKhuVuc"></div>
+
+    <div class="grid-2">
+        <!-- CỘT TRÁI: Chọn bàn và gọi món -->
+        <div>
+            <!-- Chọn bàn -->
+            <div class="card mb-2">
+                <div class="card-header">
+                    <h3 class="card-title">1️⃣ Chọn Bàn</h3>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <select id="selectBan" class="form-control" onchange="chonBan()">
+                        <option value="">-- Chọn bàn cần phục vụ --</option>
+                    </select>
+                </div>
+                <div id="thongTinBan" style="margin-top:0.75rem; display:none;">
+                    <span class="badge" id="badgeTrangThaiBan"></span>
+                    <span id="thongBaoMoBan" style="font-size:0.85rem; color:var(--mau-chu-nhat); margin-left:0.5rem;"></span>
+                </div>
+            </div>
+
+            <!-- Gọi món -->
+            <div class="card mb-2" id="khuVucGoiMon" style="display:none;">
+                <div class="card-header">
+                    <h3 class="card-title">2️⃣ Chọn Món</h3>
+                    <!-- Lọc loại -->
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-sm btn-primary" onclick="locMenuTheoLoai('')" id="btnTatCa">Tất cả</button>
+                        <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('ThucAn')" id="btnThucAn">🍖 Thức ăn</button>
+                        <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('NuocUong')" id="btnNuocUong">🥤 Nước uống</button>
+                    </div>
+                </div>
+
+                <!-- Danh sách menu để chọn -->
+                <div id="menuDanhSach" class="menu-danh-sach"></div>
+
+                <!-- Form thêm món -->
+                <div id="formThemMon" style="display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--mau-vien);">
+                    <p style="font-size:0.85rem; color:var(--mau-chu-nhat); margin-bottom:0.75rem;">
+                        Đang thêm: <strong id="tenMonDangThem" style="color:var(--mau-chinh)"></strong>
+                    </p>
+                    <div class="grid-2" style="gap:0.75rem;">
+                        <div class="form-group" style="margin:0">
+                            <label class="form-label">Số lượng *</label>
+                            <input type="number" id="inputSoLuong" class="form-control"
+                                   value="1" min="1" placeholder="Nhập số lượng">
+                        </div>
+                        <div class="form-group" style="margin:0">
+                            <label class="form-label">Ghi chú / Tùy chọn</label>
+                            <input type="text" id="inputThuocTinhThem" class="form-control"
+                                   placeholder="Phần lớn / Lon / Ít cay...">
+                        </div>
+                    </div>
+                    <!-- Gợi ý tùy chọn -->
+                    <div id="goiYTuyChon" style="margin-top:0.5rem; display:flex; gap:0.35rem; flex-wrap:wrap;"></div>
+                    <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+                        <button class="btn btn-primary" onclick="themMon()">➕ Thêm vào hóa đơn</button>
+                        <button class="btn btn-secondary" onclick="huyChonMon()">✕ Hủy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: Hóa đơn hiện tại -->
+        <div>
+            <div class="card" id="khuVucHoaDon">
+                <div class="card-header">
+                    <h3 class="card-title">🧾 Hóa Đơn Hiện Tại</h3>
+                    <button class="btn btn-sm btn-secondary" onclick="taiLaiHoaDon()">🔄</button>
+                </div>
+
+                <!-- Trạng thái chưa chọn bàn -->
+                <div id="chuaChonBan" class="empty-state">
+                    <span class="empty-icon">👈</span>
+                    <p>Chọn bàn để xem hóa đơn</p>
+                </div>
+
+                <!-- Danh sách món đã gọi -->
+                <div id="danhSachMon" style="display:none;">
+                    <div id="bangChiTietHoaDon"></div>
+
+                    <div class="tong-tien-box">
+                        <div class="tong-tien-row tong">
+                            <span>💰 Tổng cộng:</span>
+                            <span id="tongTienHienThi">0 ₫</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:0.75rem; margin-top:1rem;">
+                        <button class="btn btn-success btn-block" onclick="thanhToan()" id="btnThanhToan">
+                            ✅ Thanh Toán & Đóng Bàn
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/order.js"></script>
+</body>
+</html>

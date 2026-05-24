@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Bàn - Nhà Hàng</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Thanh điều hướng -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">🍽️ Nhà Hàng</a>
+        <div class="nav-links">
+            <a href="index.html" class="active">🪑 <span>Quản Lý Bàn</span></a>
+            <a href="menu.html">📋 <span>Thực Đơn</span></a>
+            <a href="order.html">🛒 <span>Gọi Món</span></a>
+            <a href="lichsu.html">📊 <span>Lịch Sử</span></a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Tiêu đề trang -->
+    <h1 class="page-title"><span>🪑</span> Quản Lý Bàn</h1>
+
+    <!-- Khu vực thông báo -->
+    <div id="thongBaoKhuVuc"></div>
+
+    <!-- Toolbar -->
+    <div class="card mb-2">
+        <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="moModalThemBan()">
+                ➕ Thêm Bàn Mới
+            </button>
+            <button class="btn btn-secondary" onclick="taiDanhSachBan()">
+                🔄 Làm Mới
+            </button>
+            <div style="margin-left:auto; display:flex; gap:1rem; font-size:0.85rem; color:var(--mau-chu-nhat);">
+                <span>🟢 Trống: <strong id="soBanTrong" style="color:var(--mau-xanh)">0</strong></span>
+                <span>🔴 Có khách: <strong id="soBanCoKhach" style="color:var(--mau-do)">0</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lưới bàn -->
+    <div id="luoiBan" class="ban-grid">
+        <div class="spinner"></div>
+    </div>
+</div>
+
+<!-- Modal: Thêm/Sửa Bàn -->
+<div class="modal-overlay" id="modalBan">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalBanTieuDe">Thêm Bàn Mới</h3>
+            <button class="modal-close" onclick="dongModal('modalBan')">✕</button>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tên bàn <span style="color:var(--mau-do)">*</span></label>
+            <input type="text" id="inputTenBan" class="form-control"
+                   placeholder="VD: Bàn 7, Bàn VIP 2, Phòng Lạnh 2">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Trạng thái</label>
+            <select id="selectTrangThaiBan" class="form-control">
+                <option value="Trống">Trống</option>
+                <option value="Có khách">Có khách</option>
+            </select>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="dongModal('modalBan')">Hủy</button>
+            <button class="btn btn-primary" id="btnLuuBan" onclick="luuBan()">💾 Lưu</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Chi tiết bàn (Mở bàn / Xem hóa đơn) -->
+<div class="modal-overlay" id="modalChiTietBan">
+    <div class="modal modal-lg">
+        <div class="modal-header">
+            <h3 class="modal-title" id="chiTietBanTieuDe">Chi tiết bàn</h3>
+            <button class="modal-close" onclick="dongModal('modalChiTietBan')">✕</button>
+        </div>
+        <div id="chiTietBanNoidung"></div>
+        <div class="modal-footer" id="chiTietBanFooter"></div>
+    </div>
+</div>
+
+<script src="js/ban.js"></script>
+</body>
+</html>
