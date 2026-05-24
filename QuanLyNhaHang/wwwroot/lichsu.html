@@ -1,93 +1,323 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html class="dark" lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch Sử Hóa Đơn - Nhà Hàng</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Bistro Elite - Lịch Sử Hóa Đơn</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c0c1ff",
+                        "surface": "#0b1326",
+                        "surface-container": "#171f33",
+                        "surface-container-highest": "#2d3449",
+                        "on-surface": "#dae2fd",
+                        "on-surface-variant": "#c7c4d7",
+                        "background": "#0b1326",
+                        "primary-container": "#8083ff",
+                        "mau-xanh": "#2ecc71",
+                        "mau-do": "#e74c3c"
+                    },
+                    spacing: {
+                        "sidebar-width": "72px",
+                        "container-padding": "32px",
+                        "grid-gutter": "24px",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(192, 193, 255, 0.2);
+        }
+        .nav-btn.active {
+            color: #c0c1ff;
+            background: rgba(192, 193, 255, 0.1);
+        }
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            height: 32px;
+            width: 4px;
+            background: #c0c1ff;
+            border-radius: 0 4px 4px 0;
+        }
+        /* Style spinner đẹp */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(192, 193, 255, 0.1);
+            border-top-color: #c0c1ff;
+            border-radius: 50%;
+            margin: 2rem auto;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-trong { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.15); }
+        .badge-cokhach { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.15); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+            border-radius: 9999px;
+            cursor: pointer;
+        }
+        .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.72rem; }
+        .btn-primary { background: #c0c1ff; color: #0b1326; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: #dae2fd; border: 1px solid rgba(255,255,255,0.08); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .btn-danger { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.15); }
+        .btn-danger:hover { background: #e74c3c; color: #fff; }
+        .btn-info { background: rgba(192, 193, 255, 0.1); color: #c0c1ff; border: 1px solid rgba(192, 193, 255, 0.2); }
+        .btn-info:hover { background: rgba(192, 193, 255, 0.2); }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.2);
+            margin-top: 1rem;
+        }
+        .table-wrapper table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        .table-wrapper th { padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); color: #c7c4d7; font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .table-wrapper td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); color: #dae2fd; }
+        .table-wrapper tr:last-child td { border-bottom: none; }
+
+        .alert {
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            border: 1px solid transparent;
+        }
+        .alert-success { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.15); color: #2ecc71; }
+        .alert-error { background: rgba(231,76,60,0.1); border-color: rgba(231,76,60,0.15); color: #e74c3c; }
+
+        /* Modal Overlay CSS cho JS show/hide */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-background text-on-surface min-h-screen flex font-['Inter']">
 
-<nav class="nav">
-    <div class="nav-inner">
-        <a href="index.html" class="nav-logo">🍽️ Nhà Hàng</a>
-        <div class="nav-links">
-            <a href="index.html">🪑 <span>Quản Lý Bàn</span></a>
-            <a href="menu.html">📋 <span>Thực Đơn</span></a>
-            <a href="order.html">🛒 <span>Gọi Món</span></a>
-            <a href="lichsu.html" class="active">📊 <span>Lịch Sử</span></a>
+    <!-- SIDEBAR -->
+    <nav class="fixed left-0 top-0 h-screen w-sidebar-width z-50 bg-surface-container border-r border-white/5 flex flex-col items-center py-8 gap-6">
+        <div class="text-primary font-['Sora'] font-bold text-xl mb-4">BE</div>
+        
+        <a href="index.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Sơ đồ bàn">
+            <span class="material-symbols-outlined">layers</span>
+        </a>
+
+        <a href="menu.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Thực đơn">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+        </a>
+
+        <a href="order.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Gọi món">
+            <span class="material-symbols-outlined">point_of_sale</span>
+        </a>
+
+        <a href="lichsu.html" class="nav-btn active relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant hover:text-on-surface transition-all group" title="Lịch sử hóa đơn">
+            <span class="material-symbols-outlined">receipt_long</span>
+        </a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-sidebar-width flex-1 flex flex-col">
+        <!-- HEADER -->
+        <header class="sticky top-0 h-16 bg-surface/80 backdrop-blur-md border-b border-white/5 flex justify-between items-center px-8 z-40">
+            <h1 class="font-['Sora'] text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">history</span> Bistro Elite
+            </h1>
+            <div class="flex items-center gap-4">
+                <div class="text-right mr-4">
+                    <p class="text-xs text-on-surface-variant">Hệ thống quản lý</p>
+                    <p class="text-sm font-semibold">Bistro Elite v1.0</p>
+                </div>
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-surface-container-highest flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-8 flex-1">
+            <!-- PAGE: LỊCH SỬ HÓA ĐƠN -->
+            <section id="trang-lichsu" class="page active block">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-white/5 pb-4">
+                    <div>
+                        <h2 class="font-['Sora'] text-3xl font-bold mb-2">Lịch Sử Hóa Đơn</h2>
+                        <p class="text-on-surface-variant">Tra cứu toàn bộ hóa đơn đã thanh toán và doanh thu của nhà hàng.</p>
+                    </div>
+                </div>
+
+                <!-- Thống kê nhanh -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                    <!-- Widget 1 -->
+                    <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                            <span class="material-symbols-outlined text-primary text-2xl">receipt_long</span>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tổng hóa đơn</span>
+                            <h3 class="text-2xl font-bold text-on-surface mt-0.5" id="tongHoaDon">0</h3>
+                        </div>
+                    </div>
+                    <!-- Widget 2 -->
+                    <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-mau-xanh/10 flex items-center justify-center border border-mau-xanh/20">
+                            <span class="material-symbols-outlined text-mau-xanh text-2xl">task_alt</span>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Đã thanh toán</span>
+                            <h3 class="text-2xl font-bold text-mau-xanh mt-0.5" id="daThanhToan">0</h3>
+                        </div>
+                    </div>
+                    <!-- Widget 3 -->
+                    <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                            <span class="material-symbols-outlined text-primary text-2xl">monetization_on</span>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tổng doanh thu</span>
+                            <h3 class="text-xl font-bold text-primary mt-0.5" id="tongDoanhThu">0 ₫</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bảng lịch sử -->
+                <div class="glass-card rounded-2xl overflow-hidden shadow-xl">
+                    <div class="flex justify-between items-center px-6 py-4 border-b border-white/5 bg-white/5">
+                        <h3 class="font-bold text-xs text-primary uppercase tracking-wider flex items-center gap-1.5 font-['Sora']">
+                            <span class="material-symbols-outlined text-[18px]">list_alt</span> Danh sách hóa đơn
+                        </h3>
+                        <button class="glass-card px-4 py-1.5 rounded-xl font-semibold text-xs tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-95" onclick="taiLichSu()">
+                            <span class="material-symbols-outlined text-[16px]">refresh</span> Làm mới
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-white/5 border-b border-white/5 text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                                <tr>
+                                    <th class="px-6 py-4">Mã HĐ</th>
+                                    <th class="px-6 py-4">Bàn</th>
+                                    <th class="px-6 py-4">Thời Gian Mở</th>
+                                    <th class="px-6 py-4">Thời Gian Đóng</th>
+                                    <th class="px-6 py-4 text-right">Tổng Tiền</th>
+                                    <th class="px-6 py-4 text-center">Trạng Thái</th>
+                                    <th class="px-6 py-4 text-center">Xem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bangLichSu" class="divide-y divide-white/5 text-sm">
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12">
+                                        <div class="flex justify-center">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal chi tiết hóa đơn -->
+    <div class="modal-overlay" id="modalChiTietHD">
+        <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-2xl relative scale-95 transition-transform duration-300">
+            <button onclick="dongModal('modalChiTietHD')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3 class="font-['Sora'] text-2xl font-bold mb-6 text-primary flex items-center gap-1.5" id="chiTietHDTieuDe">
+                <span class="material-symbols-outlined">receipt_long</span> Chi Tiết Hóa Đơn
+            </h3>
+            
+            <div class="max-h-[60vh] overflow-y-auto pr-2" id="chiTietHDNoidung"></div>
+            
+            <div class="flex justify-end gap-3 pt-6 border-t border-white/5 mt-6">
+                <button onclick="dongModal('modalChiTietHD')" class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">Đóng</button>
+                <button class="bg-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1 hover:opacity-90" onclick="inHoaDon()">
+                    <span class="material-symbols-outlined text-[16px]">print</span> In Hóa Đơn
+                </button>
+            </div>
         </div>
     </div>
-</nav>
 
-<div class="container">
-    <h1 class="page-title"><span>📊</span> Lịch Sử Hóa Đơn</h1>
+    <script src="js/lichsu.js"></script>
+    <script>
+        // Đồng bộ hiệu ứng modal mượt mà
+        window.moModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('show');
+                setTimeout(() => {
+                    const child = modal.firstElementChild;
+                    if (child) {
+                        child.classList.remove('scale-95');
+                        child.classList.add('scale-100');
+                    }
+                }, 50);
+            }
+        };
 
-    <!-- Thống kê nhanh -->
-    <div class="grid-3 mb-2">
-        <div class="card text-center">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">🧾</div>
-            <div style="font-size:1.5rem; font-weight:700; color:var(--mau-chinh);" id="tongHoaDon">0</div>
-            <div class="text-nhat">Tổng hóa đơn</div>
-        </div>
-        <div class="card text-center">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">✅</div>
-            <div style="font-size:1.5rem; font-weight:700; color:var(--mau-xanh);" id="daThanhToan">0</div>
-            <div class="text-nhat">Đã thanh toán</div>
-        </div>
-        <div class="card text-center">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">💰</div>
-            <div style="font-size:1.3rem; font-weight:700; color:var(--mau-chinh);" id="tongDoanhThu">0 ₫</div>
-            <div class="text-nhat">Tổng doanh thu</div>
-        </div>
-    </div>
-
-    <!-- Bảng lịch sử -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Danh sách hóa đơn</h3>
-            <button class="btn btn-secondary btn-sm" onclick="taiLichSu()">🔄 Làm mới</button>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mã HĐ</th>
-                        <th>Bàn</th>
-                        <th>Thời Gian Mở</th>
-                        <th>Thời Gian Đóng</th>
-                        <th>Tổng Tiền</th>
-                        <th>Trạng Thái</th>
-                        <th>Xem</th>
-                    </tr>
-                </thead>
-                <tbody id="bangLichSu">
-                    <tr>
-                        <td colspan="7" class="text-center" style="padding:2rem;">
-                            <div class="spinner"></div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Modal chi tiết hóa đơn -->
-<div class="modal-overlay" id="modalChiTietHD">
-    <div class="modal modal-lg">
-        <div class="modal-header">
-            <h3 class="modal-title" id="chiTietHDTieuDe">Chi Tiết Hóa Đơn</h3>
-            <button class="modal-close" onclick="dongModal('modalChiTietHD')">✕</button>
-        </div>
-        <div id="chiTietHDNoidung"></div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="dongModal('modalChiTietHD')">Đóng</button>
-            <button class="btn btn-primary" onclick="inHoaDon()">🖨️ In Hóa Đơn</button>
-        </div>
-    </div>
-</div>
-
-<script src="js/lichsu.js"></script>
+        window.dongModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                const child = modal.firstElementChild;
+                if (child) {
+                    child.classList.remove('scale-100');
+                    child.classList.add('scale-95');
+                }
+                setTimeout(() => {
+                    modal.classList.remove('show');
+                }, 150);
+            }
+        };
+    </script>
 </body>
 </html>
