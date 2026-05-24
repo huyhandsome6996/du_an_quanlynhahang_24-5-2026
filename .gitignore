@@ -1,0 +1,23 @@
+## Bỏ qua thư mục build và cache của .NET
+bin/
+obj/
+
+## Bỏ qua file database SQLite (mỗi máy có DB riêng)
+*.db
+*.db-shm
+*.db-wal
+
+## Bỏ qua file cấu hình cá nhân của Visual Studio
+.vs/
+*.user
+*.suo
+
+## Bỏ qua file log
+*.log
+
+## Bỏ qua thư mục của các IDE
+.idea/
+.vscode/
+
+## Bỏ qua file môi trường
+.env
