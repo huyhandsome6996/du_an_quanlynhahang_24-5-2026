@@ -28,8 +28,8 @@
 
 **Lệnh terminal:**
 ```bash
-dotnet new web -n QuanLyNhaHang --no-restore -o ./QuanLyNhaHang
-dotnet add package Microsoft.Data.Sqlite --version 8.0.0
+dotnet new web -n QuanLyNhaHang --no-restore -o ./QuanLyNhaHang (Tạo bộ khung dự án C# mới)
+dotnet add package Microsoft.Data.Sqlite --version 8.0.0 (Cài đặt thư viện thao tác với CSDL SQLite)
 ```
 
 **Kết quả:** Project tạo thành công, SQLite package được cài đặt.
@@ -131,7 +131,7 @@ GET  /api/hoadon/{id}             - Chi tiết 1 hóa đơn
 
 **Lệnh terminal:**
 ```bash
-dotnet build --no-restore
+dotnet build --no-restore (Biên dịch code từ C# sang mã máy để kiểm tra xem có lỗi cú pháp không)
 ```
 
 **Kết quả:**
@@ -143,15 +143,40 @@ Build succeeded.
 
 ---
 
-### 🕐 13:34 — Khởi tạo Gitflow, commit đầu tiên
+### 🕐 13:34 — Triển khai Gitflow & Commit theo User Story
 
-**Lệnh terminal:**
-```bash
-git checkout -b develop
-git add .
-git commit -m "Khởi tạo: Cấu trúc dự án Quản Lý Nhà Hàng đầy đủ"
-git push origin develop
-```
+Chúng tôi tiến hành chia nhỏ dự án thành các **User Story** và **Task** cụ thể, tạo nhánh `feature/` riêng biệt, commit bằng tiếng Việt chi tiết rồi merge `--no-ff` vào nhánh `develop`. Cuối cùng gộp về `main` và gắn tag release.
+
+**Nhánh & Lịch sử Commit chi tiết:**
+
+1. **User Story 1: Thiết lập môi trường dự án & SQLite**
+   - Nhánh: `feature/setup-moi-truong`
+   - Commit: `Tính năng: Thiết lập môi trường dự án C# và CSDL SQLite ban đầu`
+
+2. **User Story 2: Xây dựng lớp thực thể OOP**
+   - Nhánh: `feature/entities-oop`
+   - Commit: `Tính năng: Xây dựng các lớp thực thể áp dụng đầy đủ 4 tính chất OOP`
+
+3. **User Story 3: Triển khai tầng DAL & Interfaces**
+   - Nhánh: `feature/dal-layer`
+   - Commit: `Tính năng: Triển khai tầng DAL và Interfaces kết nối SQLite`
+
+4. **User Story 4: Xây dựng API Endpoints Backend**
+   - Nhánh: `feature/api-backend`
+   - Commit: `Tính năng: Xây dựng hệ thống Web API phục vụ Frontend HTML`
+
+5. **User Story 5: Thiết kế Giao diện Frontend HTML/CSS/JS**
+   - Nhánh: `feature/frontend-ui`
+   - Commit: `Tính năng: Thiết kế giao diện HTML/CSS/JS đa trang sang trọng`
+
+6. **User Story 6: Tài liệu báo cáo & Nhật ký**
+   - Nhánh: `feature/tai-lieu-du-an`
+   - Commit: `Tài liệu: Cập nhật nhật ký hoạt động chi tiết dự án`
+
+7. **Hoàn thiện Release v1.0**
+   - Nhánh: Gộp `develop` vào `main`
+   - Tag: `v1.0-Final-Release`
+   - Push toàn bộ nhánh và tag lên GitHub: `git push origin develop` (Đẩy nhánh develop lên mạng), `git push origin main` (Đẩy nhánh main lên mạng), `git push origin --tags` (Đẩy các đánh dấu phiên bản lên)
 
 ---
 
@@ -159,8 +184,8 @@ git push origin develop
 
 ### Cách chạy ứng dụng
 ```bash
-cd QuanLyNhaHang
-dotnet run
+cd QuanLyNhaHang (Di chuyển vào thư mục chứa code)
+dotnet run (Khởi động ứng dụng, tự tạo CSDL nếu chưa có và mở cổng web)
 # Mở trình duyệt: http://localhost:5000
 ```
 
@@ -184,3 +209,50 @@ QuanLyNhaHang/
 │   └── js/
 └── Program.cs      ← API Routes (Entry Point)
 ```
+
+---
+
+### 🕐 14:50 — Nâng cấp giao diện Bistro Elite (Dark Mode & Lavender)
+
+**Công việc:**
+- Chuyển đổi toàn bộ giao diện 4 trang (`index.html`, `menu.html`, `order.html`, `lichsu.html`) sang phong cách Bistro Elite sang trọng, tinh tế.
+- Sử dụng bảng màu: Nền tối huyền bí `#0b1326`, Container `#171f33`, màu nhấn chính tím oải hương `#c0c1ff`.
+- Áp dụng hiệu ứng kính mờ `glass-card` thời thượng cùng Sidebar bên trái rộng 72px cố định.
+- Tối ưu hóa CSS để đảm bảo mọi phần tử HTML render động từ các file JavaScript riêng biệt (`ban.js`, `menu.js`, `order.js`, `lichsu.js`) hiển thị đẹp mắt, ăn khớp với thiết kế mới mà không làm thay đổi hay ảnh hưởng đến logic nghiệp vụ cũ.
+
+---
+
+## 💻 CÁC LỆNH TERMINAL ĐÃ SỬ DỤNG VÀ Ý NGHĨA CỦA CHÚNG
+*(Ghi chú đặc biệt để hiểu rõ bản chất công việc, rất tốt khi thầy giáo hỏi)*
+
+### 1. Các lệnh liên quan đến .NET (C#) & CSDL
+- `dotnet new web -n QuanLyNhaHang`:
+  - **Dùng khi nào:** Khi mới bắt đầu dự án, chưa có gì cả.
+  - **Tác dụng:** Lệnh này giúp tạo ra một bộ khung dự án Web API C# hoàn toàn mới tinh có tên là "QuanLyNhaHang". Nó tự sinh ra file `Program.cs`.
+- `dotnet add package Microsoft.Data.Sqlite`:
+  - **Dùng khi nào:** Khi cần kết nối code C# với cơ sở dữ liệu SQLite.
+  - **Tác dụng:** Tải thư viện quản lý SQLite từ mạng về và nhúng vào dự án để ta có thể viết code tạo bảng, lưu trữ dữ liệu.
+- `dotnet build`:
+  - **Dùng khi nào:** Sau khi viết xong một đống code C#, muốn kiểm tra xem có gõ sai cú pháp ở đâu không.
+  - **Tác dụng:** Biên dịch (dịch code từ tiếng người sang tiếng máy). Nếu có lỗi (Error) nó sẽ báo dòng nào bị lỗi để ta sửa. Nếu thành công nó báo "Build succeeded".
+- `dotnet run`:
+  - **Dùng khi nào:** Bất cứ khi nào muốn bật phần mềm lên để chạy và kiểm thử giao diện.
+  - **Tác dụng:** Chạy ứng dụng. Nó sẽ tự động gọi file `Program.cs`, tự động gọi `DatabaseHelper.KhoiTaoCSDL()` để **tự tạo ra file CSDL `nha_hang.db`** (nếu chưa có), và mở một cái cổng (ví dụ: cổng 5000) để trình duyệt web có thể kết nối vào xem phần mềm.
+
+### 2. Các lệnh liên quan đến GIT (Lưu trữ và Quản lý phiên bản)
+- `git add .`:
+  - **Dùng khi nào:** Khi vừa code xong một tính năng, muốn lưu lại.
+  - **Tác dụng:** Đưa tất cả các file vừa bị thay đổi vào "danh sách chờ" để chuẩn bị lưu thành một phiên bản.
+- `git commit -m "nội dung"`:
+  - **Dùng khi nào:** Dùng ngay sau lệnh `git add .`.
+  - **Tác dụng:** Chính thức đóng gói các thay đổi thành một phiên bản (commit) và đính kèm ghi chú (ví dụ: "Thêm giao diện gọi món") để sau này đọc lại biết mình đã làm gì.
+- `git push origin develop`:
+  - **Dùng khi nào:** Khi muốn đưa code từ máy tính cá nhân lên mạng (GitHub).
+  - **Tác dụng:** Đẩy (Upload) code ở nhánh `develop` lên kho lưu trữ trên mạng để thầy hoặc các thành viên khác có thể tải về.
+- `git checkout main`:
+  - **Dùng khi nào:** Khi muốn chuyển từ nhánh đang làm việc (develop) sang nhánh chính thức (main).
+  - **Tác dụng:** Đổi không gian làm việc.
+- `git merge develop`:
+  - **Dùng khi nào:** Khi nhánh `develop` đã làm xong tính năng và chạy ngon lành, muốn gộp tính năng đó vào nhánh `main` (nhánh hoàn chỉnh nhất).
+  - **Tác dụng:** Trộn code từ nhánh `develop` đắp vào nhánh `main`.
+

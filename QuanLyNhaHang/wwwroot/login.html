@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Đăng nhập - Vua Sư Tử</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        heading: ['"Be Vietnam Pro"', 'sans-serif'],
+                    },
+                    colors: {
+                        "primary": "#c0c1ff",
+                        "surface": "#0b1326",
+                        "surface-container": "#171f33",
+                        "surface-container-highest": "#2d3449",
+                        "on-surface": "#dae2fd",
+                        "on-surface-variant": "#c7c4d7",
+                        "background": "#0b1326"
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .btn-primary { background: #c0c1ff; color: #0b1326; }
+        .btn-primary:hover { opacity: 0.9; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex items-center justify-center font-sans">
+
+    <div class="glass-card w-full max-w-md p-8 rounded-3xl mx-4 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-blue-400"></div>
+        
+        <div class="text-center mb-8">
+            <img src="img/logo.png" alt="Logo Vua Sư Tử" class="w-24 h-24 mx-auto rounded-full border-2 border-primary/30 mb-4 object-cover shadow-[0_0_15px_rgba(192,193,255,0.3)]">
+            <h1 class="text-2xl font-bold tracking-tight text-primary">Nhà Hàng Vua Sư Tử</h1>
+            <p class="text-on-surface-variant text-sm mt-1" id="subtitleText">Hệ thống quản lý cao cấp</p>
+        </div>
+
+        <!-- Form Đăng Ký (Ban đầu) -->
+        <form id="registerForm" class="space-y-5 hidden" onsubmit="xuLyDangKy(event)">
+            <div class="p-3 mb-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm text-center">
+                Xin chào! Đây là lần đầu sử dụng. Vui lòng tạo tài khoản quản trị để bảo vệ hệ thống.
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-2 text-on-surface-variant">Tên tài khoản</label>
+                <input type="text" id="regUser" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface" required placeholder="Ví dụ: admin">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-2 text-on-surface-variant">Mật khẩu</label>
+                <input type="password" id="regPass" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface" required placeholder="Nhập mật khẩu an toàn">
+            </div>
+            <button type="submit" class="w-full btn-primary font-bold rounded-xl px-4 py-3 uppercase tracking-wider mt-4">Tạo Tài Khoản</button>
+        </form>
+
+        <!-- Form Đăng Nhập -->
+        <form id="loginForm" class="space-y-5 hidden" onsubmit="xuLyDangNhap(event)">
+            <div>
+                <label class="block text-sm font-semibold mb-2 text-on-surface-variant">Tên tài khoản</label>
+                <input type="text" id="logUser" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface" required>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-2 text-on-surface-variant">Mật khẩu</label>
+                <input type="password" id="logPass" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface" required>
+            </div>
+            <p id="errorMsg" class="text-red-400 text-sm text-center hidden">Tài khoản hoặc mật khẩu không đúng!</p>
+            <button type="submit" class="w-full btn-primary font-bold rounded-xl px-4 py-3 uppercase tracking-wider mt-4 flex justify-center items-center gap-2">
+                <span class="material-symbols-outlined">login</span> Đăng Nhập
+            </button>
+        </form>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasAccount = localStorage.getItem('vst_account');
+            if (!hasAccount) {
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('subtitleText').innerText = "Thiết lập tài khoản quản trị";
+            } else {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('subtitleText').innerText = "Vui lòng đăng nhập để tiếp tục";
+            }
+        });
+
+        function xuLyDangKy(e) {
+            e.preventDefault();
+            const u = document.getElementById('regUser').value.trim();
+            const p = document.getElementById('regPass').value.trim();
+            if(u && p) {
+                localStorage.setItem('vst_account', JSON.stringify({ user: u, pass: p }));
+                alert("Tạo tài khoản thành công! Vui lòng đăng nhập.");
+                window.location.reload();
+            }
+        }
+
+        function xuLyDangNhap(e) {
+            e.preventDefault();
+            const u = document.getElementById('logUser').value.trim();
+            const p = document.getElementById('logPass').value.trim();
+            const acc = JSON.parse(localStorage.getItem('vst_account'));
+            
+            if (acc && acc.user === u && acc.pass === p) {
+                sessionStorage.setItem('vst_logged_in', 'true');
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('errorMsg').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

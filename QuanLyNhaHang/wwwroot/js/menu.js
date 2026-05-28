@@ -36,44 +36,39 @@ function locTheoLoai() {
     hienThiBang(dsLoc);
 }
 
-// Vẽ bảng sản phẩm
+// Vẽ lưới sản phẩm
 function hienThiBang(ds) {
     document.getElementById('tongSoMon').textContent = ds.length;
-    const tbody = document.getElementById('bangSanPham');
+    const grid = document.getElementById('bangSanPham');
 
     if (ds.length === 0) {
-        tbody.innerHTML = `
-            <tr><td colspan="6">
+        grid.innerHTML = `
+            <div class="col-span-full">
                 <div class="empty-state">
                     <span class="empty-icon">📋</span>
                     <p>Không có món nào. Hãy thêm món mới!</p>
                 </div>
-            </td></tr>`;
+            </div>`;
         return;
     }
 
-    tbody.innerHTML = ds.map((sp, idx) => `
-        <tr>
-            <td>${idx + 1}</td>
-            <td><strong>${sp.TenSanPham}</strong></td>
-            <td>
-                <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}">
-                    ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
-                </span>
-            </td>
-            <td class="text-chinh fw-bold">${formatTien(sp.GiaCoBan)}</td>
-            <td>
-                <span class="badge ${sp.DangBan ? 'badge-trong' : 'badge-cokhach'}">
-                    ${sp.DangBan ? '✅ Đang bán' : '❌ Tạm ngừng'}
-                </span>
-            </td>
-            <td>
-                <div style="display:flex; gap:0.5rem;">
-                    <button class="btn btn-sm btn-info" onclick="moModalSua(${sp.Id})">✏️ Sửa</button>
-                    <button class="btn btn-sm btn-danger" onclick="xoa(${sp.Id}, '${sp.TenSanPham.replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+    grid.innerHTML = ds.map(sp => `
+        <div class="glass-card rounded-2xl p-5 relative cursor-pointer flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" onclick="moModalSua(${sp.Id})">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${sp.Loai === 'ThucAn' ? 'bg-primary/10 border border-primary/20' : 'bg-[#3498db]/10 border border-[#3498db]/20'}">
+                    ${sp.Loai === 'ThucAn' ? '🍖' : '🥤'}
                 </div>
-            </td>
-        </tr>`).join('');
+                <span class="badge ${sp.DangBan ? 'badge-trong' : 'badge-cokhach'}">
+                    ${sp.DangBan ? '✅ Đang bán' : '❌ Ngừng'}
+                </span>
+            </div>
+            <h3 class="font-bold text-lg text-on-surface mb-1">${sp.TenSanPham}</h3>
+            <p class="text-primary font-bold mb-4">${formatTien(sp.GiaCoBan)}</p>
+            <div class="flex gap-2 justify-end mt-auto pt-4 border-t border-white/5">
+                <button class="btn btn-sm btn-info flex-1" onclick="event.stopPropagation(); moModalSua(${sp.Id})">✏️ Sửa</button>
+                <button class="btn btn-sm btn-danger flex-1" onclick="event.stopPropagation(); xoa(${sp.Id}, '${sp.TenSanPham.replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+            </div>
+        </div>`).join('');
 }
 
 // ---- MODAL THÊM / SỬA ----

@@ -16,6 +16,13 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
+// Cấu hình JSON Options cho Minimal API (giữ nguyên PascalCase của C# Properties và hỗ trợ tiếng Việt)
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = null;
+    options.SerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+});
+
 // --- Đăng ký các DAL vào Dependency Injection ---
 builder.Services.AddSingleton<IBanDAL, BanDAL>();
 builder.Services.AddSingleton<ISanPhamDAL, SanPhamDAL>();
@@ -437,9 +444,58 @@ app.MapGet("/api/hoadon/{id:int}", (int id, IHoaDonDAL hdDAL, IChiTietHoaDonDAL 
     }
 });
 
-Console.WriteLine("🍽️  ỨNG DỤNG QUẢN LÝ NHÀ HÀNG");
-Console.WriteLine("================================");
-Console.WriteLine("➡️  Mở trình duyệt: http://localhost:5000");
-Console.WriteLine("================================");
+Console.WriteLine("🍽️  ỨNG DỤNG QUẢN LÝ NHÀ HÀNG (DESKTOP MODE)");
+Console.WriteLine("=================================");
 
-app.Run("http://localhost:5000");
+// Khởi chạy Web API dưới luồng nền (Background thread)
+_ = Task.Run(() => app.Run("http://localhost:5000"));
+
+// Khởi chạy Windows Forms trên luồng STA (Single-Threaded Apartment) để tránh lỗi COM thread mode
+var uiThread = new Thread(() =>
+{
+    System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.SystemAware);
+    System.Windows.Forms.Application.EnableVisualStyles();
+    System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+
+    var formMain = new System.Windows.Forms.Form
+    {
+        Text = "🍽️ Hệ Thống Quản Lý Nhà Hàng (Desktop App)",
+        Width = 1350,
+        Height = 850,
+        StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+    };
+
+    var webView = new Microsoft.Web.WebView2.WinForms.WebView2
+    {
+        Dock = System.Windows.Forms.DockStyle.Fill
+    };
+
+    formMain.Controls.Add(webView);
+
+    formMain.Load += async (s, e) =>
+    {
+        try
+        {
+            // Chờ 1.2 giây để server Web API khởi động hoàn tất
+            await Task.Delay(1200);
+            await webView.EnsureCoreWebView2Async();
+            webView.Source = new Uri("http://localhost:5000");
+        }
+        catch (Exception ex)
+        {
+            System.Windows.Forms.MessageBox.Show(
+                $"Không thể tải giao diện WebView2: {ex.Message}",
+                "Lỗi Giao Diện",
+                System.Windows.Forms.MessageBoxButtons.OK,
+                System.Windows.Forms.MessageBoxIcon.Error
+            );
+        }
+    };
+
+    System.Windows.Forms.Application.Run(formMain);
+});
+
+// Thiết lập luồng STA bắt buộc cho WebView2
+uiThread.SetApartmentState(ApartmentState.STA);
+uiThread.Start();
+uiThread.Join(); // Đợi luồng giao diện kết thúc thì tắt ứng dụng
