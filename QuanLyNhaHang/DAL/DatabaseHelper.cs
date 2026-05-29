@@ -75,9 +75,7 @@ namespace QuanLyNhaHang.DAL
             // Thêm cột HinhAnh vào bảng SanPham nếu đã tồn tại bảng cũ
             try
             {
-                using var alterCmd = new SqliteConnection(_connectionString);
-                alterCmd.Open();
-                using var alterColCmd = new SqliteCommand("ALTER TABLE SanPham ADD COLUMN HinhAnh TEXT NULL;", alterCmd);
+                using var alterColCmd = new SqliteCommand("ALTER TABLE SanPham ADD COLUMN HinhAnh TEXT NULL;", conn);
                 alterColCmd.ExecuteNonQuery();
             }
             catch { /* Cột đã tồn tại hoặc bảng mới đã có sẵn */ }
