@@ -49,6 +49,45 @@ du_an_quanlynhahang_24-5-2026/
 
 ---
 
+## 🔍 CHI TIẾT Ý NGHĨA VÀ TÁC DỤNG CỦA TỪNG THƯ MỤC VÀ FILE
+
+Dưới đây là mô tả chi tiết của từng phần trong cấu trúc dự án để bạn dễ dàng nắm bắt hoặc giải thích trước Hội đồng bảo vệ:
+
+### 📐 1. Thư mục `Entities/` (Lớp Thực Thể - Tầng Core OOP)
+Đây là nơi thể hiện **tính chất hướng đối tượng (OOP)** mạnh mẽ nhất thông qua việc định nghĩa các thực thể (đối tượng) có trong nhà hàng:
+*   **`SanPham.cs`**: Lớp trừu tượng (`abstract class`) đại diện cho sản phẩm nói chung. Nó đóng vai trò làm lớp cha (Base Class), chứa các thuộc tính cơ bản như `Id`, `TenSanPham`, `GiaCoBan`, `DangBan` (trạng thái bán) và đặc biệt là trường **`HinhAnh`** (lưu URL ảnh minh họa).
+*   **`ThucAn.cs` & `NuocUong.cs`**: Các lớp con kế thừa (`inheritance`) từ `SanPham`. Đây là minh chứng của tính Đa hình và Kế thừa trong OOP.
+*   **`Ban.cs`**: Mô tả đối tượng Bàn ăn trong nhà hàng với các thông tin `Id`, `TenBan` và `TrangThai` ("Trống" hoặc "Có khách").
+*   **`HoaDon.cs`**: Đại diện cho 1 hóa đơn tính tiền của bàn ăn, gồm mã hóa đơn, mã bàn, giờ mở bàn, giờ đóng bàn, trạng thái thanh toán và tổng tiền.
+*   **`ChiTietHoaDon.cs`**: Đại diện cho từng dòng món ăn được gọi trên hóa đơn (mã hóa đơn, mã sản phẩm, số lượng, giá bán tại thời điểm gọi).
+
+### 🗄️ 2. Thư mục `DAL/` (Data Access Layer - Tầng Truy Xuất Dữ Liệu)
+Nhiệm vụ của tầng này là làm việc trực tiếp với cơ sở dữ liệu SQLite (`nha_hang.db`), đọc ghi dữ liệu từ C# vào file vật lý:
+*   **`DatabaseHelper.cs`**: Quản lý kết nối CSDL, thiết lập chế độ khóa ngoại (`foreign_keys = ON`), tạo mới các bảng dữ liệu nếu chưa tồn tại và nạp (seed) dữ liệu mẫu đầu tiên vào hệ thống.
+*   **Các lớp DAL (`BanDAL.cs`, `SanPhamDAL.cs`, `HoaDonDAL.cs`, `ChiTietHoaDonDAL.cs`)**: Thực hiện các câu lệnh SQL (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) để truy vấn và cập nhật dữ liệu tương ứng.
+*   **Thư mục con `Interfaces/` (`IBanDAL.cs`, `ISanPhamDAL.cs`...)**: Định nghĩa các Interface quy định các phương thức mà một lớp DAL bắt buộc phải triển khai. Điều này thể hiện **tính Trừu tượng (Abstraction)** trong thiết kế phần mềm.
+
+### 💻 3. Thư mục `wwwroot/` (Giao diện Frontend)
+Là nơi chứa toàn bộ giao diện chạy trên trình duyệt web và WebView2 Desktop, sử dụng phong cách thiết kế **Glassmorphism (kính mờ)** hiện đại:
+*   **`login.html`**: Màn hình bảo mật, bắt buộc người dùng thiết lập mật khẩu ở lần chạy đầu tiên và đăng nhập để bảo mật cơ sở dữ liệu.
+*   **`index.html` (kèm `js/ban.js`)**: Sơ đồ lưới hiển thị danh sách bàn ăn theo thời gian thực (real-time). Cho phép thêm/sửa/xóa bàn và click chọn bàn để thanh toán hoặc gọi món.
+*   **`menu.html` (kèm `js/menu.js`)**: Trang quản lý thực đơn món ăn và thức uống. Cho phép thêm món mới kèm theo **hình ảnh minh họa (URL)**, chỉnh sửa giá cả hoặc ẩn/hiện sản phẩm.
+*   **`order.html` (kèm `js/order.js`)**: Giao diện POS bán hàng dành cho nhân viên. Hiển thị thực đơn trực quan kèm ảnh thu nhỏ giúp thao tác gọi món nhanh chóng và hỗ trợ in hóa đơn tạm tính.
+*   **`lichsu.html` (kèm `js/lichsu.js`)**: Nơi xem lại toàn bộ lịch sử hóa đơn đã thanh toán, xem chi tiết hóa đơn và tính tổng doanh thu nhà hàng.
+
+### ⚙️ 4. File cấu hình và chạy đầu tiên
+*   **`Program.cs`**: File khởi chạy của ứng dụng .NET. File này làm 2 nhiệm vụ chạy song song:
+    1.  Mở một máy chủ Web API (ASP.NET Core Minimal API) tại cổng `http://localhost:5000` để phục vụ các yêu cầu dữ liệu từ frontend.
+    2.  Khởi tạo một luồng đơn (STA Thread) chạy giao diện Windows Forms tích hợp trình duyệt WebView2, biến ứng dụng web thành một ứng dụng Desktop chuyên nghiệp độc lập.
+*   **`ChayUngDung.bat`**: File script 1-click giúp người dùng chạy nhanh dự án mà không cần gõ lệnh Terminal bằng tay.
+
+### 📝 5. Các tài liệu hướng dẫn và báo cáo
+*   **`cac_loi_hay_gap.md`**: Ghi chú các lỗi kỹ thuật thường gặp khi chạy và phát triển dự án (như lỗi cache WebView2, lỗi schema database SQLite) và cách xử lý.
+*   **`trello.md`**: Bảng quản lý tiến độ công việc được phân rã theo Epic / User Story / Task để nộp cho thầy cô đánh giá quy trình làm việc nhóm.
+*   **`yeu_cau_can_dat_tu_thay.md`**: Bản đối chiếu các tiêu chí kỹ thuật yêu cầu trong đề bài của giảng viên với các chức năng đã hoàn thành trong mã nguồn.
+
+---
+
 ## 🚀 HƯỚNG DẪN CÁCH CHẠY PHẦN MỀM
 
 Vì đây là dự án C#, cách chạy vô cùng đơn giản:
