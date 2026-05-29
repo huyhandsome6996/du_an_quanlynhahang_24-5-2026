@@ -27,9 +27,9 @@
 - **Tasks (Công việc):**
   - [x] Backend: Viết API quản lý Sản phẩm (Thức ăn/Nước uống).
   - [x] Backend: Thêm cột `HinhAnh` vào CSDL SQLite và tích hợp vào thực thể SanPham & các API.
-  - [x] Frontend: Thiết kế trường nhập URL ảnh và hiển thị ảnh trực quan của món ăn trên thẻ thực đơn (`menu.html`).
+  - [x] Frontend: Thiết kế tính năng chọn tệp tin ảnh từ máy tính (Local file picker) làm ảnh minh họa trực quan (`menu.html`).
   - [x] Frontend: Hiển thị hình ảnh thu nhỏ (thumbnail) của món ăn trên giao diện gọi món (`order.html`).
-  - [x] Logic JS: Code `menu.js` hiển thị pop-up nhập liệu và lưu trữ URL hình ảnh.
+  - [x] Logic JS: Code `menu.js` sử dụng FileReader API để chuyển đổi ảnh cục bộ sang định dạng Base64 và lưu trữ đồng bộ.
 
 ---
 
@@ -65,4 +65,17 @@
   - [x] Code tính năng Yêu cầu tạo tài khoản (Nếu mở app lần đầu) sử dụng LocalStorage.
   - [x] Code Auth Guard: Tự động đuổi người dùng về màn hình đăng nhập nếu cố tình truy cập vào `index.html` khi chưa có quyền.
 
+**User Story 8: Ứng dụng Desktop độc lập (WebView2)**
+- **Description:** Tôi là Chủ nhà hàng, tôi không muốn mở trình duyệt web rườm rà, tôi muốn có một cửa sổ phần mềm riêng biệt khởi động thẳng trên máy tính Windows.
+- **Tasks (Công việc):**
+  - [x] Tích hợp thư viện `Microsoft.Web.WebView2` vào lõi dự án Windows Forms C#.
+  - [x] Code giao diện C# form ẩn thanh công cụ trình duyệt, tạo cảm giác như một ứng dụng Native độc lập.
+  - [x] Cấu hình luồng chạy song song (STA Thread): Vừa host Web API ngầm ở cổng 5000, vừa chạy giao diện Desktop.
+  - [x] Cấu hình chống lưu bộ nhớ đệm (Cache-busting `?v=1.3`) để đồng bộ thời gian thực giao diện web và app Desktop.
 
+**User Story 9: Báo cáo & Tài liệu hướng dẫn (Documentation)**
+- **Description:** Tôi là Sinh viên, tôi cần tài liệu rõ ràng ghi lại các lỗi thường gặp, cách xử lý và mô tả cấu trúc code để dễ dàng thuyết trình bảo vệ đồ án trước giảng viên.
+- **Tasks (Công việc):**
+  - [x] Bổ sung và cập nhật chi tiết `README.md` mô tả công dụng của từng thư mục, từng file code.
+  - [x] Viết tài liệu `cac_loi_hay_gap.md` ghi chú lỗi Cache WebView2, lỗi cấu trúc Schema SQLite, lỗi Port 5000 và cách giải quyết triệt để.
+  - [x] Tạo file script `ChayUngDung.bat` để người dùng không biết code cũng có thể click 1 phát là chạy được ứng dụng.
