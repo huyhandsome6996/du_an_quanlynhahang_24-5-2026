@@ -85,6 +85,8 @@ function moModalThem() {
     document.getElementById('inputTenSanPham').value = '';
     document.getElementById('inputGiaCoBan').value = '';
     document.getElementById('inputHinhAnh').value = '';
+    document.getElementById('imgPreviewHinhAnh').src = 'img/logo.png';
+    document.getElementById('inputFileHinhAnh').value = '';
     document.getElementById('selectLoai').value = 'ThucAn';
     document.getElementById('selectDangBan').value = 'true';
     capNhatGiaoDienLoai();
@@ -100,10 +102,39 @@ function moModalSua(id) {
     document.getElementById('inputTenSanPham').value = sp.TenSanPham;
     document.getElementById('inputGiaCoBan').value = sp.GiaCoBan;
     document.getElementById('inputHinhAnh').value = sp.HinhAnh || '';
+    document.getElementById('imgPreviewHinhAnh').src = sp.HinhAnh || 'img/logo.png';
+    document.getElementById('inputFileHinhAnh').value = '';
     document.getElementById('selectLoai').value = sp.Loai;
     document.getElementById('selectDangBan').value = sp.DangBan ? 'true' : 'false';
     capNhatGiaoDienLoai();
     document.getElementById('modalSanPham').classList.add('show');
+}
+
+// Xử lý tệp hình ảnh từ máy tính (Convert sang Base64)
+function xuLyChonAnh(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Giới hạn dung lượng ảnh là 1MB để tránh làm nặng CSDL SQLite
+    if (file.size > 1 * 1024 * 1024) {
+        hienThiThongBao('Vui lòng chọn ảnh nhỏ hơn 1MB!', 'error');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64String = e.target.result;
+        document.getElementById('inputHinhAnh').value = base64String;
+        document.getElementById('imgPreviewHinhAnh').src = base64String;
+    };
+    reader.readAsDataURL(file);
+}
+
+function xoaAnhDaChon() {
+    document.getElementById('inputHinhAnh').value = '';
+    document.getElementById('imgPreviewHinhAnh').src = 'img/logo.png';
+    document.getElementById('inputFileHinhAnh').value = '';
 }
 
 // Cập nhật ghi chú phụ phí khi đổi loại (thể hiện Đa hình cho giảng viên hiểu)
