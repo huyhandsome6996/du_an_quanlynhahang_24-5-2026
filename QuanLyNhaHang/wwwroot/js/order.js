@@ -43,16 +43,24 @@ async function taiMenu() {
 function hienThiMenu(ds) {
     const kv = document.getElementById('menuDanhSach');
     if (!ds.length) { kv.innerHTML = '<p class="text-nhat text-center" style="padding:1rem;">Không có món nào.</p>'; return; }
-    kv.innerHTML = ds.map(sp => `
-        <div class="mon-item" onclick="chonMon(${sp.Id})">
-            <div>
-                <div class="mon-ten">${sp.TenSanPham}</div>
-                <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}" style="font-size:0.7rem;">
-                    ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
-                </span>
+    kv.innerHTML = ds.map(sp => {
+        const imgUrl = sp.HinhAnh ? sp.HinhAnh : 'img/logo.png';
+        return `
+        <div class="mon-item cursor-pointer" onclick="chonMon(${sp.Id})" style="padding: 0.5rem; gap: 0.75rem; justify-content: flex-start; align-items: center; display: flex;">
+            <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest border border-white/5">
+                <img src="${imgUrl}" alt="${sp.TenSanPham}" class="w-full h-full object-cover" onerror="this.src='img/logo.png'">
             </div>
-            <div class="mon-gia">${formatTien(sp.GiaCoBan)}</div>
-        </div>`).join('');
+            <div class="flex-1 min-w-0">
+                <div class="mon-ten text-sm font-semibold truncate text-on-surface" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
+                <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                    <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}" style="font-size:0.6rem; padding: 0.1rem 0.4rem;">
+                        ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
+                    </span>
+                    <span class="mon-gia text-primary font-bold text-xs">${formatTien(sp.GiaCoBan)}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
 }
 
 function locMenuTheoLoai(loai) {

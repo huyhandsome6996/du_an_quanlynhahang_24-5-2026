@@ -28,6 +28,7 @@ namespace QuanLyNhaHang.DAL
             sp.GiaCoBan = reader.GetDecimal(2);
             sp.DangBan = reader.GetInt32(3) == 1;
             sp.Loai = loai;
+            sp.HinhAnh = reader.IsDBNull(5) ? null : reader.GetString(5);
 
             return sp;
         }
@@ -39,7 +40,7 @@ namespace QuanLyNhaHang.DAL
             using var conn = new SqliteConnection(_conn);
             conn.Open();
 
-            string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai FROM SanPham ORDER BY Loai, TenSanPham";
+            string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham ORDER BY Loai, TenSanPham";
             using var cmd = new SqliteCommand(sql, conn);
             using var reader = cmd.ExecuteReader();
 
@@ -56,7 +57,7 @@ namespace QuanLyNhaHang.DAL
             using var conn = new SqliteConnection(_conn);
             conn.Open();
 
-            string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai FROM SanPham WHERE DangBan = 1 ORDER BY Loai, TenSanPham";
+            string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham WHERE DangBan = 1 ORDER BY Loai, TenSanPham";
             using var cmd = new SqliteCommand(sql, conn);
             using var reader = cmd.ExecuteReader();
 
@@ -72,7 +73,7 @@ namespace QuanLyNhaHang.DAL
             using var conn = new SqliteConnection(_conn);
             conn.Open();
 
-            string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai FROM SanPham WHERE Id = @id";
+            string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham WHERE Id = @id";
             using var cmd = new SqliteCommand(sql, conn);
             cmd.Parameters.AddWithValue("@id", id);
             using var reader = cmd.ExecuteReader();
@@ -89,13 +90,14 @@ namespace QuanLyNhaHang.DAL
             using var conn = new SqliteConnection(_conn);
             conn.Open();
 
-            string sql = @"INSERT INTO SanPham (TenSanPham, GiaCoBan, Loai, DangBan)
-                           VALUES (@ten, @gia, @loai, @dangBan)";
+            string sql = @"INSERT INTO SanPham (TenSanPham, GiaCoBan, Loai, DangBan, HinhAnh)
+                           VALUES (@ten, @gia, @loai, @dangBan, @hinhAnh)";
             using var cmd = new SqliteCommand(sql, conn);
             cmd.Parameters.AddWithValue("@ten", sanPham.TenSanPham);
             cmd.Parameters.AddWithValue("@gia", sanPham.GiaCoBan);
             cmd.Parameters.AddWithValue("@loai", sanPham.Loai);
             cmd.Parameters.AddWithValue("@dangBan", sanPham.DangBan ? 1 : 0);
+            cmd.Parameters.AddWithValue("@hinhAnh", (object?)sanPham.HinhAnh ?? DBNull.Value);
             cmd.ExecuteNonQuery();
         }
 
@@ -107,13 +109,14 @@ namespace QuanLyNhaHang.DAL
 
             string sql = @"UPDATE SanPham
                            SET TenSanPham = @ten, GiaCoBan = @gia,
-                               Loai = @loai, DangBan = @dangBan
+                               Loai = @loai, DangBan = @dangBan, HinhAnh = @hinhAnh
                            WHERE Id = @id";
             using var cmd = new SqliteCommand(sql, conn);
             cmd.Parameters.AddWithValue("@ten", sanPham.TenSanPham);
             cmd.Parameters.AddWithValue("@gia", sanPham.GiaCoBan);
             cmd.Parameters.AddWithValue("@loai", sanPham.Loai);
             cmd.Parameters.AddWithValue("@dangBan", sanPham.DangBan ? 1 : 0);
+            cmd.Parameters.AddWithValue("@hinhAnh", (object?)sanPham.HinhAnh ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@id", sanPham.Id);
             cmd.ExecuteNonQuery();
         }

@@ -40,7 +40,8 @@ namespace QuanLyNhaHang.DAL
                     TenSanPham  TEXT    NOT NULL,
                     GiaCoBan    DECIMAL NOT NULL CHECK(GiaCoBan >= 0),
                     Loai        TEXT    NOT NULL,   -- 'ThucAn' hoặc 'NuocUong'
-                    DangBan     INTEGER NOT NULL DEFAULT 1  -- 1=Đang bán, 0=Ngừng bán
+                    DangBan     INTEGER NOT NULL DEFAULT 1,  -- 1=Đang bán, 0=Ngừng bán
+                    HinhAnh     TEXT    NULL
                 );
 
                 -- Bảng HÓA ĐƠN
@@ -71,6 +72,16 @@ namespace QuanLyNhaHang.DAL
             using var cmd = new SqliteCommand(sql, conn);
             cmd.ExecuteNonQuery();
 
+            // Thêm cột HinhAnh vào bảng SanPham nếu đã tồn tại bảng cũ
+            try
+            {
+                using var alterCmd = new SqliteConnection(_connectionString);
+                alterCmd.Open();
+                using var alterColCmd = new SqliteCommand("ALTER TABLE SanPham ADD COLUMN HinhAnh TEXT NULL;", alterCmd);
+                alterColCmd.ExecuteNonQuery();
+            }
+            catch { /* Cột đã tồn tại hoặc bảng mới đã có sẵn */ }
+
             // Thêm dữ liệu mẫu nếu bảng còn trống
             ThemDuLieuMau(conn);
 
@@ -92,17 +103,17 @@ namespace QuanLyNhaHang.DAL
                     ('Bàn 1'), ('Bàn 2'), ('Bàn 3'),
                     ('Bàn 4'), ('Bàn VIP 1'), ('Phòng Lạnh 1');
 
-                INSERT INTO SanPham (TenSanPham, GiaCoBan, Loai, DangBan) VALUES
-                    ('Lẩu Thái hải sản',    350000, 'ThucAn',  1),
-                    ('Bò bít tết',          200000, 'ThucAn',  1),
-                    ('Gà nướng mật ong',    180000, 'ThucAn',  1),
-                    ('Cơm chiên dương châu',  80000, 'ThucAn',  1),
-                    ('Salad Caesar',          75000, 'ThucAn',  1),
-                    ('Nước ép dưa hấu',      40000, 'NuocUong', 1),
-                    ('Trà đào cam sả',       45000, 'NuocUong', 1),
-                    ('Coca Cola',            30000, 'NuocUong', 1),
-                    ('Bia Tiger',            35000, 'NuocUong', 1),
-                    ('Nước suối Lavie',      15000, 'NuocUong', 1);
+                INSERT INTO SanPham (TenSanPham, GiaCoBan, Loai, DangBan, HinhAnh) VALUES
+                    ('Lẩu Thái hải sản',    350000, 'ThucAn',  1, 'https://images.unsplash.com/photo-1547928576-a4a3323dce9a?w=400'),
+                    ('Bò bít tết',          200000, 'ThucAn',  1, 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400'),
+                    ('Gà nướng mật ong',    180000, 'ThucAn',  1, 'https://images.unsplash.com/photo-1598515214211-89d3e73ae83b?w=400'),
+                    ('Cơm chiên dương châu',  80000, 'ThucAn',  1, 'https://images.unsplash.com/photo-1603133872878-6967b6827050?w=400'),
+                    ('Salad Caesar',          75000, 'ThucAn',  1, 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=400'),
+                    ('Nước ép dưa hấu',      40000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1589733901241-5e514f26b437?w=400'),
+                    ('Trà đào cam sả',       45000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1556881286-fc6915169721?w=400'),
+                    ('Coca Cola',            30000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400'),
+                    ('Bia Tiger',            35000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400'),
+                    ('Nước suối Lavie',      15000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1560023907-5f67b61f904d?w=400');
             ";
 
             using var insertCmd = new SqliteCommand(sqlMau, conn);

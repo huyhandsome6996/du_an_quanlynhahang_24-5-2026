@@ -135,7 +135,7 @@ app.MapGet("/api/sanpham", (ISanPhamDAL spDAL) =>
         // Chuyển sang anonymous object để JSON dễ đọc hơn
         var ketQua = ds.Select(sp => new
         {
-            sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan
+            sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan, sp.HinhAnh
         });
         return Results.Ok(ketQua);
     }
@@ -151,7 +151,7 @@ app.MapGet("/api/sanpham/dangban", (ISanPhamDAL spDAL) =>
     var ds = spDAL.LayDangBan();
     var ketQua = ds.Select(sp => new
     {
-        sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan
+        sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan, sp.HinhAnh
     });
     return Results.Ok(ketQua);
 });
@@ -165,12 +165,14 @@ app.MapPost("/api/sanpham", (JsonElement body, ISanPhamDAL spDAL) =>
         decimal giaCoBan = body.GetProperty("GiaCoBan").GetDecimal();
         string loai = body.GetProperty("Loai").GetString() ?? "";
         bool dangBan = body.TryGetProperty("DangBan", out var db) ? db.GetBoolean() : true;
+        string? hinhAnh = body.TryGetProperty("HinhAnh", out var img) ? img.GetString() : null;
 
         // ĐA HÌNH: Tạo đúng loại object dựa trên trường 'Loai'
         SanPham sp = loai == "ThucAn" ? new ThucAn() : new NuocUong();
         sp.TenSanPham = tenSanPham;  // Có validate trong setter (Encapsulation)
         sp.GiaCoBan = giaCoBan;      // Có validate >= 0 trong setter
         sp.DangBan = dangBan;
+        sp.HinhAnh = hinhAnh;
 
         spDAL.Them(sp);
         return Results.Ok(new { thongBao = "Thêm sản phẩm thành công!" });
@@ -190,12 +192,14 @@ app.MapPut("/api/sanpham/{id:int}", (int id, JsonElement body, ISanPhamDAL spDAL
         decimal giaCoBan = body.GetProperty("GiaCoBan").GetDecimal();
         string loai = body.GetProperty("Loai").GetString() ?? "";
         bool dangBan = body.TryGetProperty("DangBan", out var db) ? db.GetBoolean() : true;
+        string? hinhAnh = body.TryGetProperty("HinhAnh", out var img) ? img.GetString() : null;
 
         SanPham sp = loai == "ThucAn" ? new ThucAn() : new NuocUong();
         sp.Id = id;
         sp.TenSanPham = tenSanPham;
         sp.GiaCoBan = giaCoBan;
         sp.DangBan = dangBan;
+        sp.HinhAnh = hinhAnh;
 
         spDAL.Sua(sp);
         return Results.Ok(new { thongBao = "Cập nhật sản phẩm thành công!" });

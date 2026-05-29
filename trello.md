@@ -26,8 +26,10 @@
 - **Description:** Tôi là Quản lý nhà hàng, tôi muốn thêm món ăn mới, sửa giá, xóa món ăn để luôn cập nhật thực đơn theo mùa.
 - **Tasks (Công việc):**
   - [x] Backend: Viết API quản lý Sản phẩm (Thức ăn/Nước uống).
-  - [x] Frontend: Thiết kế form tạo/sửa món và danh sách món dạng thẻ (Card) tại `menu.html`.
-  - [x] Logic JS: Code `menu.js` hiển thị pop-up nhập liệu.
+  - [x] Backend: Thêm cột `HinhAnh` vào CSDL SQLite và tích hợp vào thực thể SanPham & các API.
+  - [x] Frontend: Thiết kế trường nhập URL ảnh và hiển thị ảnh trực quan của món ăn trên thẻ thực đơn (`menu.html`).
+  - [x] Frontend: Hiển thị hình ảnh thu nhỏ (thumbnail) của món ăn trên giao diện gọi món (`order.html`).
+  - [x] Logic JS: Code `menu.js` hiển thị pop-up nhập liệu và lưu trữ URL hình ảnh.
 
 ---
 
@@ -62,3 +64,5 @@
   - [x] Thiết kế giao diện màn hình đăng nhập độc lập (`login.html`) có Logo Vua Sư Tử.
   - [x] Code tính năng Yêu cầu tạo tài khoản (Nếu mở app lần đầu) sử dụng LocalStorage.
   - [x] Code Auth Guard: Tự động đuổi người dùng về màn hình đăng nhập nếu cố tình truy cập vào `index.html` khi chưa có quyền.
+
+

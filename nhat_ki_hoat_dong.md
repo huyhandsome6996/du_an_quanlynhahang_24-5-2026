@@ -256,3 +256,20 @@ QuanLyNhaHang/
   - **Dùng khi nào:** Khi nhánh `develop` đã làm xong tính năng và chạy ngon lành, muốn gộp tính năng đó vào nhánh `main` (nhánh hoàn chỉnh nhất).
   - **Tác dụng:** Trộn code từ nhánh `develop` đắp vào nhánh `main`.
 
+---
+
+## 📅 Ngày 29/05/2026
+
+### 🕐 16:50 — Bổ sung tính năng hình ảnh minh họa cho món ăn
+
+**Công việc:**
+- **Tầng Entity (Entities/):** Cập nhật thực thể trừu tượng `SanPham.cs` để khai báo thêm thuộc tính `HinhAnh` (dạng chuỗi URL hoặc đường dẫn ảnh minh họa), tự động kế thừa xuống các lớp con `ThucAn.cs` và `NuocUong.cs`.
+- **Tầng DAL (DAL/):**
+  - Cập nhật `DatabaseHelper.cs` để thêm cột `HinhAnh` vào câu lệnh khởi tạo bảng `SanPham`, đồng thời chạy truy vấn phụ trợ `ALTER TABLE SanPham ADD COLUMN HinhAnh TEXT NULL;` dưới khối try-catch nhằm nâng cấp CSDL hiện có mà không làm mất dữ liệu cũ. Bổ sung các đường dẫn ảnh ẩm thực chất lượng cao từ Unsplash cho 10 món ăn mẫu.
+  - Cập nhật `SanPhamDAL.cs` để nạp/ghi thuộc tính `HinhAnh` từ/vào SQLite Reader và SQLite Parameters trong các tác vụ CRUD.
+- **Tầng Web API (Program.cs):** Đồng bộ hóa API Get, Post, Put để đóng gói và phân tích trường `HinhAnh` dưới dạng JSON.
+- **Tầng Presentation (wwwroot/):**
+  - Trang Thực đơn (`menu.html` & `menu.js`): Thêm trường nhập URL ảnh vào modal Thêm/Sửa. Thiết kế lại giao diện thẻ món ăn (Card) cực kỳ đẹp mắt với ảnh bìa lớn ở trên, các badge trạng thái/loại nằm đè lên góc ảnh, mang lại cảm giác cao cấp.
+  - Trang Gọi món POS (`order.html` & `order.js`): Thêm hình ảnh thu nhỏ (thumbnail) bên cạnh tên món trong danh sách gọi món giúp nhân viên chọn món cực kỳ nhanh và trực quan.
+
+

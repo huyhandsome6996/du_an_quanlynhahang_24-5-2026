@@ -14,18 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // Lấy danh sách sản phẩm từ API
 async function taiDanhSach() {
     document.getElementById('bangSanPham').innerHTML = `
-        <tr><td colspan="6" class="text-center" style="padding:2rem;">
+        <div class="col-span-full flex justify-center py-12">
             <div class="spinner"></div>
-        </td></tr>`;
+        </div>`;
     try {
         const res = await fetch(`${API}/sanpham`);
         danhSachSanPham = await res.json();
         locTheoLoai();
     } catch (err) {
         document.getElementById('bangSanPham').innerHTML = `
-            <tr><td colspan="6" class="text-center">
+            <div class="col-span-full">
                 <div class="alert alert-error">⚠️ Lỗi kết nối server!</div>
-            </td></tr>`;
+            </div>`;
     }
 }
 
@@ -36,7 +36,7 @@ function locTheoLoai() {
     hienThiBang(dsLoc);
 }
 
-// Vẽ lưới sản phẩm
+// Vẽ lưới sản phẩm kèm ảnh minh họa
 function hienThiBang(ds) {
     document.getElementById('tongSoMon').textContent = ds.length;
     const grid = document.getElementById('bangSanPham');
@@ -52,23 +52,30 @@ function hienThiBang(ds) {
         return;
     }
 
-    grid.innerHTML = ds.map(sp => `
-        <div class="glass-card rounded-2xl p-5 relative cursor-pointer flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" onclick="moModalSua(${sp.Id})">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${sp.Loai === 'ThucAn' ? 'bg-primary/10 border border-primary/20' : 'bg-[#3498db]/10 border border-[#3498db]/20'}">
-                    ${sp.Loai === 'ThucAn' ? '🍖' : '🥤'}
-                </div>
-                <span class="badge ${sp.DangBan ? 'badge-trong' : 'badge-cokhach'}">
+    grid.innerHTML = ds.map(sp => {
+        // Nếu không có ảnh, dùng ảnh mặc định là Logo hoặc một hình placeholder thức ăn đẹp mắt
+        const imageSrc = sp.HinhAnh ? sp.HinhAnh : 'img/logo.png';
+        return `
+        <div class="glass-card rounded-2xl overflow-hidden cursor-pointer flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" onclick="moModalSua(${sp.Id})">
+            <div class="relative h-44 w-full bg-surface-container-highest overflow-hidden border-b border-white/5">
+                <img src="${imageSrc}" alt="${sp.TenSanPham}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.src='img/logo.png'">
+                <span class="absolute top-3 right-3 badge ${sp.DangBan ? 'badge-trong' : 'badge-cokhach'}">
                     ${sp.DangBan ? '✅ Đang bán' : '❌ Ngừng'}
                 </span>
+                <span class="absolute bottom-3 left-3 badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}">
+                    ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
+                </span>
             </div>
-            <h3 class="font-bold text-lg text-on-surface mb-1">${sp.TenSanPham}</h3>
-            <p class="text-primary font-bold mb-4">${formatTien(sp.GiaCoBan)}</p>
-            <div class="flex gap-2 justify-end mt-auto pt-4 border-t border-white/5">
-                <button class="btn btn-sm btn-info flex-1" onclick="event.stopPropagation(); moModalSua(${sp.Id})">✏️ Sửa</button>
-                <button class="btn btn-sm btn-danger flex-1" onclick="event.stopPropagation(); xoa(${sp.Id}, '${sp.TenSanPham.replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+            <div class="p-5 flex-1 flex flex-col">
+                <h3 class="font-bold text-base text-on-surface mb-1 line-clamp-1">${sp.TenSanPham}</h3>
+                <p class="text-primary font-bold text-sm mb-4">${formatTien(sp.GiaCoBan)}</p>
+                <div class="flex gap-2 justify-end mt-auto pt-4 border-t border-white/5">
+                    <button class="btn btn-sm btn-info flex-1" onclick="event.stopPropagation(); moModalSua(${sp.Id})">✏️ Sửa</button>
+                    <button class="btn btn-sm btn-danger flex-1" onclick="event.stopPropagation(); xoa(${sp.Id}, '${sp.TenSanPham.replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+                </div>
             </div>
-        </div>`).join('');
+        </div>`;
+    }).join('');
 }
 
 // ---- MODAL THÊM / SỬA ----
@@ -77,6 +84,7 @@ function moModalThem() {
     document.getElementById('inputIdSanPham').value = '';
     document.getElementById('inputTenSanPham').value = '';
     document.getElementById('inputGiaCoBan').value = '';
+    document.getElementById('inputHinhAnh').value = '';
     document.getElementById('selectLoai').value = 'ThucAn';
     document.getElementById('selectDangBan').value = 'true';
     capNhatGiaoDienLoai();
@@ -91,6 +99,7 @@ function moModalSua(id) {
     document.getElementById('inputIdSanPham').value = sp.Id;
     document.getElementById('inputTenSanPham').value = sp.TenSanPham;
     document.getElementById('inputGiaCoBan').value = sp.GiaCoBan;
+    document.getElementById('inputHinhAnh').value = sp.HinhAnh || '';
     document.getElementById('selectLoai').value = sp.Loai;
     document.getElementById('selectDangBan').value = sp.DangBan ? 'true' : 'false';
     capNhatGiaoDienLoai();
@@ -114,6 +123,7 @@ async function luuSanPham() {
     const id = document.getElementById('inputIdSanPham').value;
     const ten = document.getElementById('inputTenSanPham').value.trim();
     const gia = parseFloat(document.getElementById('inputGiaCoBan').value);
+    const hinhAnh = document.getElementById('inputHinhAnh').value.trim();
     const loai = document.getElementById('selectLoai').value;
     const dangBan = document.getElementById('selectDangBan').value === 'true';
 
@@ -129,7 +139,13 @@ async function luuSanPham() {
         return;
     }
 
-    const payload = { TenSanPham: ten, GiaCoBan: gia, Loai: loai, DangBan: dangBan };
+    const payload = { 
+        TenSanPham: ten, 
+        GiaCoBan: gia, 
+        Loai: loai, 
+        DangBan: dangBan,
+        HinhAnh: hinhAnh || null 
+    };
     const isEdit = id !== '';
 
     try {
