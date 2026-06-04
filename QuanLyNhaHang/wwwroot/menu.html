@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
@@ -16,23 +16,24 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
-                        heading: ['"Be Vietnam Pro"', 'sans-serif'],
+                        sans: ['"Outfit"', 'sans-serif'],
+                        heading: ['"Playfair Display"', 'serif'],
                     },
                     colors: {
-                        "primary": "#c0c1ff",
-                        "surface": "#0b1326",
-                        "surface-container": "#171f33",
-                        "surface-container-highest": "#2d3449",
-                        "on-surface": "#dae2fd",
-                        "on-surface-variant": "#c7c4d7",
-                        "background": "#0b1326",
-                        "primary-container": "#8083ff",
-                        "mau-xanh": "#2ecc71",
-                        "mau-do": "#e74c3c"
+                        "primary": "#d4a853",
+                        "primary-soft": "#f0d68a",
+                        "surface": "#0a1628",
+                        "surface-container": "#101e35",
+                        "surface-container-highest": "#1e3050",
+                        "on-surface": "#e8ecf4",
+                        "on-surface-variant": "#8b9ab8",
+                        "background": "#0a1628",
+                        "primary-container": "#c49a42",
+                        "mau-xanh": "#4ade80",
+                        "mau-do": "#f87171"
                     },
                     spacing: {
-                        "sidebar-width": "72px",
+                        "sidebar-width": "76px",
                         "container-padding": "32px",
                         "grid-gutter": "24px",
                     }
@@ -41,181 +42,232 @@
         };
     </script>
     <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
+        /* Sidebar styles */
+        .sidebar {
+            background: linear-gradient(180deg, #0d1a30, #0a1628);
+            border-right: 1px solid rgba(212, 168, 83, 0.08);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 76px;
+            overflow: hidden;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
         }
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(192, 193, 255, 0.2);
+        .sidebar.expanded { width: 240px; }
+        .sidebar-text { display: none; white-space: nowrap; font-weight: 600; color: #e8ecf4; margin-left: 0.75rem; }
+        .sidebar.expanded .sidebar-text { display: block; animation: fadeIn 0.3s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .nav-btn {
+            position: relative;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            justify-content: flex-start;
+            padding-left: 18px;
+            width: 100%;
+            height: 52px;
         }
-        .nav-btn.active {
-            color: #c0c1ff;
-            background: rgba(192, 193, 255, 0.1);
-        }
+        .nav-btn:hover { background: rgba(212, 168, 83, 0.08); }
+        .nav-btn.active { color: #d4a853; background: rgba(212, 168, 83, 0.1); }
         .nav-btn.active::after {
             content: '';
             position: absolute;
             left: 0;
             height: 32px;
-            width: 4px;
-            background: #c0c1ff;
+            width: 3px;
+            background: linear-gradient(180deg, #d4a853, #f0d68a);
             border-radius: 0 4px 4px 0;
         }
-        /* Style spinner đẹp */
+
+        /* Glass card (True Liquid Glass) */
+        .glass-card {
+            background: linear-gradient(145deg, rgba(16, 30, 53, 0.7), rgba(10, 22, 40, 0.8));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(212, 168, 83, 0.15);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .glass-card:hover {
+            background: linear-gradient(145deg, rgba(16, 30, 53, 0.8), rgba(10, 22, 40, 0.9));
+            border-color: rgba(212, 168, 83, 0.25);
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(192, 193, 255, 0.1);
-            border-top-color: #c0c1ff;
+            width: 40px; height: 40px;
+            border: 3px solid rgba(212, 168, 83, 0.12);
+            border-top-color: #d4a853;
             border-radius: 50%;
             margin: 2rem auto;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.6rem;
-            font-size: 0.72rem;
-            font-weight: 600;
-            border-radius: 9999px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            display: inline-flex; align-items: center;
+            padding: 0.25rem 0.65rem; font-size: 0.72rem;
+            font-weight: 600; border-radius: 9999px;
+            text-transform: uppercase; letter-spacing: 0.04em;
         }
-        .badge-thucan { background: rgba(192, 193, 255, 0.1); color: #c0c1ff; border: 1px solid rgba(192, 193, 255, 0.15); }
-        .badge-nuocuong { background: rgba(52, 152, 219, 0.1); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.15); }
-        .badge-trong { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.15); }
-        .badge-cokhach { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.15); }
+        .badge-thucan { background: rgba(212, 168, 83, 0.1); color: #d4a853; border: 1px solid rgba(212, 168, 83, 0.2); }
+        .badge-nuocuong { background: rgba(96, 165, 250, 0.1); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.2); }
+        .badge-trong { background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+        .badge-cokhach { background: rgba(248, 113, 113, 0.1); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.2s;
-            border-radius: 9999px;
-            cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 600; letter-spacing: 0.03em;
+            transition: all 0.25s; border-radius: 12px;
+            cursor: pointer; border: none;
         }
-        .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.72rem; }
-        .btn-primary { background: #c0c1ff; color: #0b1326; }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-secondary { background: rgba(255,255,255,0.05); color: #dae2fd; border: 1px solid rgba(255,255,255,0.08); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-        .btn-danger { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.15); }
-        .btn-danger:hover { background: #e74c3c; color: #fff; }
-        .btn-info { background: rgba(192, 193, 255, 0.1); color: #c0c1ff; border: 1px solid rgba(192, 193, 255, 0.2); }
-        .btn-info:hover { background: rgba(192, 193, 255, 0.2); }
+        .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.75rem; border-radius: 10px; }
+        .btn-primary { background: linear-gradient(135deg, #d4a853, #f0d68a, #c49a42); color: #0a1628; box-shadow: 0 2px 12px rgba(212, 168, 83, 0.2); }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(212, 168, 83, 0.35); }
+        .btn-secondary { background: rgba(255,255,255,0.04); color: #e8ecf4; border: 1px solid rgba(255,255,255,0.08); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+        .btn-danger { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+        .btn-danger:hover { background: #f87171; color: #fff; }
+        .btn-info { background: rgba(212, 168, 83, 0.1); color: #d4a853; border: 1px solid rgba(212, 168, 83, 0.2); }
+        .btn-info:hover { background: rgba(212, 168, 83, 0.2); }
 
-        .alert {
-            padding: 0.85rem 1.25rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            border: 1px solid transparent;
-        }
-        .alert-success { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.15); color: #2ecc71; }
-        .alert-error { background: rgba(231,76,60,0.1); border-color: rgba(231,76,60,0.15); color: #e74c3c; }
+        .alert { padding: 0.85rem 1.25rem; border-radius: 12px; font-size: 0.85rem; border: 1px solid transparent; animation: slideIn 0.3s ease; }
+        .alert-success { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.15); color: #4ade80; }
+        .alert-error { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.15); color: #f87171; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Modal Overlay CSS cho JS show/hide */
+        .empty-state { text-align: center; padding: 3rem 1.5rem; }
+        .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+
         .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(5, 10, 20, 0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            align-items: center; justify-content: center; padding: 1rem;
         }
-        .modal-overlay.show {
-            display: flex;
+        .modal-overlay.show { display: flex; }
+
+        /* Product card hover glow */
+        .product-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(10, 22, 40, 0.9));
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .product-card:hover::after { opacity: 0; }
+
+        .ambient-glow {
+            position: fixed; border-radius: 50%;
+            pointer-events: none; filter: blur(100px); z-index: 0;
         }
     </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen flex font-sans">
+<body class="bg-background text-on-surface min-h-screen flex font-sans relative">
+
+    <div class="ambient-glow w-[400px] h-[400px] bg-primary/5 top-0 right-0"></div>
+    <div class="ambient-glow w-[300px] h-[300px] bg-primary/3 bottom-0 left-1/4"></div>
 
     <!-- SIDEBAR -->
-    <nav class="fixed left-0 top-0 h-screen w-sidebar-width z-50 bg-surface-container border-r border-white/5 flex flex-col items-center py-8 gap-6">
-        <img src="img/logo.png" alt="Logo" class="w-12 h-12 rounded-full border border-primary/30 object-cover shadow-[0_0_10px_rgba(192,193,255,0.2)]">
+    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" onclick="this.classList.toggle('expanded')">
+        <!-- Logo with gold ring -->
+        <div class="relative group mb-6 px-3 w-full flex justify-center">
+            <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
+            <img src="img/logo.png" alt="Logo" class="relative w-12 h-12 rounded-full border-2 border-primary/30 object-cover shadow-[0_0_15px_rgba(212,168,83,0.2)] transition-all group-hover:scale-105 shrink-0">
+            <span class="sidebar-text text-primary font-heading text-xl mt-2">Vua Sư Tử</span>
+        </div>
         
-        <a href="index.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Sơ đồ bàn">
-            <span class="material-symbols-outlined">layers</span>
+        <!-- Decorative line -->
+        <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent mb-4"></div>
+        
+        <a href="index.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Sơ đồ bàn">
+            <img src="img/table_3d.png" alt="Bàn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Sơ đồ bàn</span>
         </a>
 
-        <a href="menu.html" class="nav-btn active relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant hover:text-on-surface transition-all group" title="Thực đơn">
-            <span class="material-symbols-outlined">restaurant_menu</span>
+        <a href="menu.html" class="nav-btn active relative flex items-center group" title="Thực đơn">
+            <img src="img/menu_book_3d.png" alt="Thực đơn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Thực đơn</span>
         </a>
 
-        <a href="order.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Gọi món">
-            <span class="material-symbols-outlined">point_of_sale</span>
+        <a href="order.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Gọi món">
+            <img src="img/pos_3d.png" alt="POS" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Gọi món</span>
         </a>
 
-        <a href="lichsu.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Lịch sử hóa đơn">
-            <span class="material-symbols-outlined">receipt_long</span>
+        <a href="lichsu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Lịch sử hóa đơn">
+            <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
         </a>
+
+        <!-- Spacer + Logout ở cuối -->
+        <div class="flex-1"></div>
+        <button onclick="event.stopPropagation(); sessionStorage.clear(); window.location.href='login.html';" class="nav-btn relative flex items-center group text-on-surface-variant/40 hover:text-mau-do transition-all" title="Đăng xuất">
+            <img src="img/logout_3d.png" alt="Đăng xuất" class="w-9 h-9 object-cover rounded-[14px] bg-red-500/10 border border-red-500/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm text-red-500">Đăng xuất</span>
+        </button>
     </nav>
 
     <!-- MAIN CONTENT -->
-    <div class="ml-sidebar-width flex-1 flex flex-col">
-        <!-- HEADER -->
-        <header class="sticky top-0 h-16 bg-surface/80 backdrop-blur-md border-b border-white/5 flex justify-between items-center px-8 z-40">
-            <h1 class="text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">restaurant_menu</span> Nhà Hàng Vua Sư Tử
+    <div class="ml-sidebar-width flex-1 flex flex-col relative z-10">
+        <header class="sticky top-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-primary/5 flex justify-between items-center px-8 z-40">
+            <h1 class="font-heading text-xl font-bold tracking-tight text-on-surface flex items-center gap-2.5">
+                <img src="img/menu_book_3d.png" alt="Menu" class="w-6 h-6 object-cover rounded-md opacity-90">
+                <span class="text-primary">Vua Sư Tử</span>
+                <span class="text-on-surface-variant/40 font-light">|</span>
+                <span class="text-on-surface-variant text-sm font-normal">Thực Đơn</span>
             </h1>
             <div class="flex items-center gap-4">
-                <div class="text-right mr-4">
-                    <p class="text-xs text-on-surface-variant">Hệ thống quản lý</p>
-                    <p class="text-sm font-semibold">Vua Sư Tử v1.0</p>
+                <div class="text-right mr-3">
+                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Hệ thống quản lý</p>
+                    <p class="text-xs font-semibold text-on-surface-variant">Vua Sư Tử v2.0</p>
                 </div>
-                <div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-surface-container-highest flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+                <div class="w-10 h-10 rounded-xl overflow-hidden border border-primary/15 bg-surface-container-highest flex items-center justify-center shadow-inner">
+                    <img src="img/user_3d.png" class="w-full h-full object-cover" alt="User">
                 </div>
             </div>
         </header>
 
         <main class="p-8 flex-1">
-            <!-- PAGE: THỰC ĐƠN -->
             <section id="trang-thucdon" class="page active block">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                     <div>
-                        <h2 class="text-3xl font-bold mb-2 tracking-tight">Thực Đơn</h2>
-                        <p class="text-on-surface-variant">Quản lý danh sách món ăn cao cấp của nhà hàng.</p>
+                        <h2 class="font-heading text-3xl font-bold mb-2 tracking-tight text-on-surface">Thực Đơn</h2>
+                        <p class="text-on-surface-variant text-sm">Quản lý danh sách món ăn cao cấp của nhà hàng.</p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="moModalThem()" class="bg-primary text-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
-                            <span class="material-symbols-outlined">add</span> Thêm Món Mới
+                        <button onclick="moModalThem()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 active:scale-95 transition-all font-bold text-sm">
+                            <img src="img/add_3d.png" alt="Add" class="w-5 h-5 object-cover rounded-md shadow-sm"> Thêm Món Mới
                         </button>
-                        <button onclick="taiDanhSach()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all">
-                            <span class="material-symbols-outlined">refresh</span> Làm Mới
+                        <button onclick="taiDanhSach()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all text-sm border-none cursor-pointer">
+                            <img src="img/refresh_3d.png" alt="Refresh" class="w-5 h-5 object-cover rounded-md shadow-sm"> Làm Mới
                         </button>
                     </div>
                 </div>
 
-                <!-- Khu vực thông báo -->
                 <div id="thongBaoKhuVuc" class="mb-6"></div>
 
                 <!-- Lọc & thống kê -->
-                <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-surface-container border border-white/5 p-4 rounded-2xl mb-8">
+                <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-surface-container border border-primary/5 p-4 rounded-2xl mb-8">
                     <select id="cboLocLoai" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-xs font-semibold uppercase tracking-wider cursor-pointer" onchange="locTheoLoai()">
                         <option value="">Tất cả loại</option>
                         <option value="ThucAn">🍖 Thức ăn</option>
                         <option value="NuocUong">🥤 Nước uống</option>
                     </select>
                     
-                    <div class="text-sm bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                    <div class="text-sm bg-white/[0.04] px-4 py-2 rounded-xl border border-primary/5">
                         <span class="text-on-surface-variant">Tổng số: <strong id="tongSoMon" class="text-primary font-bold text-sm">0</strong> món</span>
                     </div>
-                    <div class="flex items-center gap-3 bg-white/5 px-3 py-2 rounded-xl border border-white/5 flex-1 max-w-xs">
-                        <span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
-                        <input type="text" id="txtTimKiemMon" class="bg-transparent border-none outline-none text-on-surface text-xs flex-1 placeholder:text-on-surface-variant/40" placeholder="Tìm kiếm món..." oninput="timKiemMon()">
+                    <div class="flex items-center gap-3 bg-white/[0.04] px-4 py-2 rounded-xl border border-primary/5 flex-1 max-w-xs transition-all focus-within:border-primary/20">
+                        <img src="img/search_3d.png" alt="Search" class="w-4 h-4 object-cover rounded-sm opacity-70">
+                        <input type="text" id="txtTimKiemMon" class="bg-transparent border-none outline-none text-on-surface text-xs flex-1 placeholder:text-on-surface-variant/35" placeholder="Tìm kiếm món..." oninput="timKiemMon()">
                     </div>
                 </div>
 
@@ -231,18 +283,18 @@
 
     <!-- Modal Thêm/Sửa Sản Phẩm -->
     <div class="modal-overlay" id="modalSanPham">
-        <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-lg relative scale-95 transition-transform duration-300">
-            <button onclick="dongModal('modalSanPham')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
-                <span class="material-symbols-outlined">close</span>
+        <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-lg relative scale-95 transition-transform duration-300 border border-primary/10">
+            <button onclick="dongModal('modalSanPham')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+                <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg hover:scale-110 transition-transform">
             </button>
-            <h3 class="text-2xl font-bold mb-6 text-primary tracking-tight" id="modalSanPhamTieuDe">Thêm Món Mới</h3>
+            <h3 class="font-heading text-2xl font-bold mb-6 text-primary tracking-tight" id="modalSanPhamTieuDe">Thêm Món Mới</h3>
 
             <input type="hidden" id="txtIdSanPham">
 
             <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tên món <span class="text-mau-do">*</span></label>
-                    <input type="text" id="txtTenSanPham" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm"
+                    <input type="text" id="txtTenSanPham" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
                            placeholder="VD: Lẩu Thái hải sản, Nước ép cam...">
                 </div>
 
@@ -256,35 +308,33 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Giá cơ bản (VNĐ) <span class="text-mau-do">*</span></label>
-                    <input type="number" id="txtGiaCoBan" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm"
+                    <input type="number" id="txtGiaCoBan" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
                            placeholder="VD: 150000" min="0" step="1000">
                 </div>
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ảnh minh họa</label>
                     <div class="flex items-center gap-3">
-                        <label class="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-on-surface border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-all active:scale-[0.98]">
-                            <span class="material-symbols-outlined text-[18px]">upload_file</span>
+                        <label class="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] text-on-surface border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-all active:scale-[0.98]">
+                            <img src="img/upload_3d.png" alt="Upload" class="w-5 h-5 object-cover rounded-md">
                             <span>Chọn từ máy tính...</span>
                             <input type="file" id="txtFileHinhAnh" accept="image/*" class="hidden" onchange="xuLyChonAnh(event)">
                         </label>
-                        <button type="button" onclick="xoaAnhDaChon()" class="bg-white/5 hover:bg-mau-do/20 text-on-surface hover:text-mau-do border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98]">
+                        <button type="button" onclick="xoaAnhDaChon()" class="bg-white/[0.04] hover:bg-mau-do/20 text-on-surface hover:text-mau-do border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98]">
                             Xóa ảnh
                         </button>
                     </div>
-                    <!-- Khung xem trước ảnh (Preview) -->
-                    <div class="relative w-full h-32 rounded-xl bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center mt-1">
+                    <div class="relative w-full h-32 rounded-xl bg-white/[0.03] border border-primary/8 overflow-hidden flex items-center justify-center mt-1">
                         <img id="imgPreviewHinhAnh" src="img/logo.png" alt="Xem trước" class="w-full h-full object-cover" onerror="this.src='img/logo.png'">
                     </div>
-                    <!-- Lưu trữ chuỗi base64 ngầm -->
                     <input type="hidden" id="txtHinhAnh">
                 </div>
 
                 <!-- Ghi chú phụ phí theo loại (Đa hình OOP) -->
-                <div id="ghiChuPhuPhi" class="bg-primary/5 border border-primary/10 rounded-xl p-4 shadow-sm">
+                <div id="ghiChuPhuPhi" class="bg-primary/[0.04] border border-primary/10 rounded-xl p-4 shadow-sm">
                     <p class="text-xs text-on-surface-variant leading-relaxed">
                         <strong class="text-primary flex items-center gap-1 mb-1">
-                            <span class="material-symbols-outlined text-[16px]">info</span> Đa hình OOP (Phụ phí tự động):
+                            <img src="img/check_3d.png" alt="Info" class="w-4 h-4 object-cover rounded-sm"> Đa hình OOP (Phụ phí tự động):
                         </strong>
                         <span id="moTaPhuPhi" class="text-on-surface font-medium italic"></span>
                     </p>
@@ -299,16 +349,15 @@
                 </div>
             </div>
 
-            <div class="flex gap-3 pt-6 border-t border-white/5 mt-6">
-                <button id="btnHuySanPham" onclick="dongModal('modalSanPham')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all">Hủy</button>
-                <button id="btnLuuSanPham" onclick="luuSanPham()" class="flex-1 bg-primary text-surface py-3 rounded-xl font-bold hover:opacity-90 transition-all">Lưu</button>
+            <div class="flex gap-3 pt-6 border-t border-primary/5 mt-6">
+                <button id="btnHuySanPham" onclick="dongModal('modalSanPham')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all border-none cursor-pointer">Hủy</button>
+                <button id="btnLuuSanPham" onclick="luuSanPham()" class="flex-1 btn btn-primary py-3 rounded-xl font-bold transition-all">Lưu</button>
             </div>
         </div>
     </div>
 
-    <script src="js/menu.js?v=1.3"></script>
+    <script src="js/menu.js?v=2.0"></script>
     <script>
-        // Đồng bộ hiệu ứng mở/đóng modal mượt mà
         window.moModal = function(id) {
             const modal = document.getElementById(id);
             if (modal) {

@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
@@ -16,23 +16,24 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
-                        heading: ['"Be Vietnam Pro"', 'sans-serif'],
+                        sans: ['"Outfit"', 'sans-serif'],
+                        heading: ['"Playfair Display"', 'serif'],
                     },
                     colors: {
-                        "primary": "#c0c1ff",
-                        "surface": "#0b1326",
-                        "surface-container": "#171f33",
-                        "surface-container-highest": "#2d3449",
-                        "on-surface": "#dae2fd",
-                        "on-surface-variant": "#c7c4d7",
-                        "background": "#0b1326",
-                        "primary-container": "#8083ff",
-                        "mau-xanh": "#2ecc71",
-                        "mau-do": "#e74c3c"
+                        "primary": "#d4a853",
+                        "primary-soft": "#f0d68a",
+                        "surface": "#0a1628",
+                        "surface-container": "#101e35",
+                        "surface-container-highest": "#1e3050",
+                        "on-surface": "#e8ecf4",
+                        "on-surface-variant": "#8b9ab8",
+                        "background": "#0a1628",
+                        "primary-container": "#c49a42",
+                        "mau-xanh": "#4ade80",
+                        "mau-do": "#f87171"
                     },
                     spacing: {
-                        "sidebar-width": "72px",
+                        "sidebar-width": "76px",
                         "container-padding": "32px",
                         "grid-gutter": "24px",
                     }
@@ -41,99 +42,112 @@
         };
     </script>
     <style>
+        .sidebar {
+            background: linear-gradient(180deg, #0d1a30, #0a1628);
+            border-right: 1px solid rgba(212, 168, 83, 0.08);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 76px;
+            overflow: hidden;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        }
+        .sidebar.expanded { width: 240px; }
+        .sidebar-text { display: none; white-space: nowrap; font-weight: 600; color: #e8ecf4; margin-left: 0.75rem; }
+        .sidebar.expanded .sidebar-text { display: block; animation: fadeIn 0.3s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .nav-btn {
+            position: relative;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            justify-content: flex-start;
+            padding-left: 18px;
+            width: 100%;
+            height: 52px;
+        }
+        .nav-btn:hover { background: rgba(212, 168, 83, 0.08); }
+
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
+            background: linear-gradient(145deg, rgba(16, 30, 53, 0.7), rgba(10, 22, 40, 0.8));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(212, 168, 83, 0.15);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(192, 193, 255, 0.2);
-        }
-        .nav-btn.active {
-            color: #c0c1ff;
-            background: rgba(192, 193, 255, 0.1);
-        }
-        .nav-btn.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            height: 32px;
-            width: 4px;
-            background: #c0c1ff;
-            border-radius: 0 4px 4px 0;
+            background: linear-gradient(145deg, rgba(16, 30, 53, 0.8), rgba(10, 22, 40, 0.9));
+            border-color: rgba(212, 168, 83, 0.25);
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        /* CSS cho các Class được JS chèn động */
+        /* Mon item card */
         .mon-item {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
+            background: rgba(16, 30, 53, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 168, 83, 0.06);
+            border-radius: 14px;
             padding: 0.85rem 1.1rem;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 0.5rem;
         }
         .mon-item:hover {
-            border-color: #c0c1ff;
-            background: rgba(192, 193, 255, 0.05);
+            border-color: rgba(212, 168, 83, 0.2);
+            background: rgba(212, 168, 83, 0.05);
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
-        .mon-item .mon-ten { font-weight: 500; font-size: 0.9rem; color: #dae2fd; }
-        .mon-item .mon-gia { color: #c0c1ff; font-weight: 600; font-size: 0.85rem; }
+        .mon-item .mon-ten { font-weight: 500; font-size: 0.9rem; color: #e8ecf4; }
+        .mon-item .mon-gia { color: #d4a853; font-weight: 600; font-size: 0.85rem; }
         
         .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.6rem;
-            font-size: 0.72rem;
-            font-weight: 600;
-            border-radius: 9999px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            display: inline-flex; align-items: center;
+            padding: 0.25rem 0.65rem; font-size: 0.72rem;
+            font-weight: 600; border-radius: 9999px;
+            text-transform: uppercase; letter-spacing: 0.04em;
         }
-        .badge-thucan { background: rgba(192,193,255,0.1); color: #c0c1ff; border: 1px solid rgba(192,193,255,0.15); }
-        .badge-nuocuong { background: rgba(52,152,219,0.1); color: #3498db; border: 1px solid rgba(52,152,219,0.15); }
-        .badge-cokhach { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.15); }
-        .badge-trong { background: rgba(46,204,113,0.1); color: #2ecc71; border: 1px solid rgba(46,204,113,0.15); }
+        .badge-thucan { background: rgba(212,168,83,0.1); color: #d4a853; border: 1px solid rgba(212,168,83,0.2); }
+        .badge-nuocuong { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+        .badge-cokhach { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+        .badge-trong { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.2s;
-            border-radius: 9999px;
-            cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 600; letter-spacing: 0.03em;
+            transition: all 0.25s; border-radius: 12px;
+            cursor: pointer; border: none;
         }
-        .btn-sm { padding: 0.4rem 1rem; font-size: 0.72rem; }
-        .btn-primary { background: #c0c1ff; color: #0b1326; }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-secondary { background: rgba(255,255,255,0.05); color: #dae2fd; border: 1px solid rgba(255,255,255,0.08); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-        .btn-danger { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.15); border-radius: 8px; padding: 0.35rem 0.6rem; }
-        .btn-danger:hover { background: #e74c3c; color: #fff; }
-        .btn-success { background: #c0c1ff; color: #0b1326; width: 100%; padding: 0.75rem; font-size: 0.85rem; border-radius: 12px; font-weight: 700; }
-        .btn-success:hover { opacity: 0.9; box-shadow: 0 4px 12px rgba(192,193,255,0.2); }
+        .btn-sm { padding: 0.4rem 1rem; font-size: 0.72rem; border-radius: 10px; }
+        .btn-primary { background: linear-gradient(135deg, #d4a853, #f0d68a, #c49a42); color: #0a1628; box-shadow: 0 2px 12px rgba(212,168,83,0.2); }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(212,168,83,0.35); }
+        .btn-secondary { background: rgba(255,255,255,0.04); color: #e8ecf4; border: 1px solid rgba(255,255,255,0.08); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+        .btn-danger { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); border-radius: 10px; padding: 0.35rem 0.65rem; }
+        .btn-danger:hover { background: #f87171; color: #fff; }
+        .btn-success {
+            background: linear-gradient(135deg, #d4a853, #f0d68a, #c49a42);
+            color: #0a1628; width: 100%; padding: 0.85rem;
+            font-size: 0.85rem; border-radius: 14px; font-weight: 700;
+            box-shadow: 0 4px 16px rgba(212,168,83,0.2);
+        }
+        .btn-success:hover { box-shadow: 0 8px 28px rgba(212,168,83,0.35); }
 
         .table-wrapper {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(0,0,0,0.2);
+            overflow-x: auto; border-radius: 14px;
+            border: 1px solid rgba(212,168,83,0.08);
+            background: rgba(10,22,40,0.4);
         }
         .table-wrapper table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-        .table-wrapper th { padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); color: #c7c4d7; font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .table-wrapper td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); color: #dae2fd; }
+        .table-wrapper th { padding: 0.75rem 1rem; background: rgba(212,168,83,0.04); color: #d4a853; font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; border-bottom: 1px solid rgba(212,168,83,0.08); }
+        .table-wrapper td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); color: #e8ecf4; }
         .table-wrapper tr:last-child td { border-bottom: none; }
+        .table-wrapper tr:hover { background: rgba(212,168,83,0.03); }
 
         .menu-danh-sach {
             display: grid;
@@ -143,106 +157,116 @@
             overflow-y: auto;
             padding-right: 0.25rem;
         }
-        /* Custom scrollbar */
         .menu-danh-sach::-webkit-scrollbar { width: 5px; }
         .menu-danh-sach::-webkit-scrollbar-track { background: transparent; }
-        .menu-danh-sach::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
-        .menu-danh-sach::-webkit-scrollbar-thumb:hover { background: #c0c1ff; }
+        .menu-danh-sach::-webkit-scrollbar-thumb { background: rgba(212,168,83,0.15); border-radius: 99px; }
+        .menu-danh-sach::-webkit-scrollbar-thumb:hover { background: #d4a853; }
         
-        .alert {
-            padding: 0.75rem 1.25rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            border: 1px solid transparent;
-        }
-        .alert-success { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.15); color: #2ecc71; }
-        .alert-error { background: rgba(231,76,60,0.1); border-color: rgba(231,76,60,0.15); color: #e74c3c; }
+        .alert { padding: 0.75rem 1.25rem; border-radius: 12px; font-size: 0.85rem; margin-bottom: 1rem; border: 1px solid transparent; animation: slideIn 0.3s ease; }
+        .alert-success { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.15); color: #4ade80; }
+        .alert-error { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.15); color: #f87171; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .empty-state {
-            text-align: center;
-            padding: 2.5rem 1.5rem;
-        }
-        .empty-icon {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 0.75rem;
-        }
-        .text-nhat {
-            color: #c7c4d7;
-            font-size: 0.85rem;
-        }
-        .text-chinh {
-            color: #c0c1ff;
+        .empty-state { text-align: center; padding: 2.5rem 1.5rem; }
+        .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+        .text-nhat { color: #8b9ab8; font-size: 0.85rem; }
+        .text-chinh { color: #d4a853; }
+        .fw-bold { font-weight: 700; }
+
+        .ambient-glow {
+            position: fixed; border-radius: 50%;
+            pointer-events: none; filter: blur(100px); z-index: 0;
         }
     </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen flex font-sans">
+<body class="bg-background text-on-surface min-h-screen flex font-sans relative">
+
+    <div class="ambient-glow w-[350px] h-[350px] bg-primary/5 top-10 right-10"></div>
+    <div class="ambient-glow w-[250px] h-[250px] bg-primary/3 bottom-20 left-1/3"></div>
 
     <!-- SIDEBAR -->
-    <nav class="fixed left-0 top-0 h-screen w-sidebar-width z-50 bg-surface-container border-r border-white/5 flex flex-col items-center py-8 gap-6">
-        <img src="img/logo.png" alt="Logo" class="w-12 h-12 rounded-full border border-primary/30 object-cover shadow-[0_0_10px_rgba(192,193,255,0.2)]">
+    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" onclick="this.classList.toggle('expanded')">
+        <!-- Logo with gold ring -->
+        <div class="relative group mb-6 px-3 w-full flex justify-center">
+            <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
+            <img src="img/logo.png" alt="Logo" class="relative w-12 h-12 rounded-full border-2 border-primary/30 object-cover shadow-[0_0_15px_rgba(212,168,83,0.2)] transition-all group-hover:scale-105 shrink-0">
+            <span class="sidebar-text text-primary font-heading text-xl mt-2">Vua Sư Tử</span>
+        </div>
         
-        <a href="index.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Sơ đồ bàn">
-            <span class="material-symbols-outlined">layers</span>
+        <!-- Decorative line -->
+        <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent mb-4"></div>
+        
+        <a href="index.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Sơ đồ bàn">
+            <img src="img/table_3d.png" alt="Bàn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Sơ đồ bàn</span>
         </a>
 
-        <a href="menu.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Thực đơn">
-            <span class="material-symbols-outlined">restaurant_menu</span>
+        <a href="menu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Thực đơn">
+            <img src="img/menu_book_3d.png" alt="Thực đơn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Thực đơn</span>
         </a>
 
-        <a href="order.html" class="nav-btn active relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant hover:text-on-surface transition-all group" title="Gọi món">
-            <span class="material-symbols-outlined">point_of_sale</span>
+        <a href="order.html" class="nav-btn active relative flex items-center group" title="Gọi món">
+            <img src="img/pos_3d.png" alt="POS" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Gọi món</span>
         </a>
 
-        <a href="lichsu.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Lịch sử hóa đơn">
-            <span class="material-symbols-outlined">receipt_long</span>
+        <a href="lichsu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Lịch sử hóa đơn">
+            <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
         </a>
+
+        <!-- Spacer + Logout ở cuối -->
+        <div class="flex-1"></div>
+        <button onclick="event.stopPropagation(); sessionStorage.clear(); window.location.href='login.html';" class="nav-btn relative flex items-center group text-on-surface-variant/40 hover:text-mau-do transition-all" title="Đăng xuất">
+            <img src="img/logout_3d.png" alt="Đăng xuất" class="w-9 h-9 object-cover rounded-[14px] bg-red-500/10 border border-red-500/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm text-red-500">Đăng xuất</span>
+        </button>
     </nav>
 
     <!-- MAIN CONTENT -->
-    <div class="ml-sidebar-width flex-1 flex flex-col">
-        <!-- HEADER -->
-        <header class="sticky top-0 h-16 bg-surface/80 backdrop-blur-md border-b border-white/5 flex justify-between items-center px-8 z-40">
-            <h1 class="text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">point_of_sale</span> Nhà Hàng Vua Sư Tử
+    <div class="ml-sidebar-width flex-1 flex flex-col relative z-10">
+        <header class="sticky top-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-primary/5 flex justify-between items-center px-8 z-40">
+            <h1 class="font-heading text-xl font-bold tracking-tight text-on-surface flex items-center gap-2.5">
+                <img src="img/pos_3d.png" alt="POS" class="w-6 h-6 object-cover rounded-md opacity-90">
+                <span class="text-primary">Vua Sư Tử</span>
+                <span class="text-on-surface-variant/40 font-light">|</span>
+                <span class="text-on-surface-variant text-sm font-normal">Gọi Món & POS</span>
             </h1>
             <div class="flex items-center gap-4">
-                <div class="text-right mr-4">
-                    <p class="text-xs text-on-surface-variant">Hệ thống quản lý</p>
-                    <p class="text-sm font-semibold">Vua Sư Tử v1.0</p>
+                <div class="text-right mr-3">
+                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Hệ thống quản lý</p>
+                    <p class="text-xs font-semibold text-on-surface-variant">Vua Sư Tử v2.0</p>
                 </div>
-                <div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-surface-container-highest flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+                <div class="w-10 h-10 rounded-xl overflow-hidden border border-primary/15 bg-surface-container-highest flex items-center justify-center shadow-inner">
+                    <img src="img/user_3d.png" class="w-full h-full object-cover" alt="User">
                 </div>
             </div>
         </header>
 
         <main class="p-8 flex-1">
-            <!-- PAGE: GỌI MÓN & POS -->
             <section id="trang-goimon" class="page active block">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-white/5 pb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-primary/5 pb-4">
                     <div>
-                        <h2 class="text-3xl font-bold mb-2 tracking-tight">Gọi Món & POS</h2>
-                        <p class="text-on-surface-variant">Phục vụ khách hàng, thêm món ăn và xử lý hóa đơn nhanh chóng.</p>
+                        <h2 class="font-heading text-3xl font-bold mb-2 tracking-tight text-on-surface">Gọi Món & POS</h2>
+                        <p class="text-on-surface-variant text-sm">Phục vụ khách hàng, thêm món ăn và xử lý hóa đơn nhanh chóng.</p>
                     </div>
                 </div>
 
-                <!-- Khu vực thông báo -->
                 <div id="thongBaoKhuVuc" class="mb-6"></div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                    <!-- CỘT TRÁI: Chọn bàn và gọi món (7/12 cột) -->
+                    <!-- CỘT TRÁI -->
                     <div class="lg:col-span-7 space-y-6">
                         <!-- Chọn bàn -->
                         <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg">
                             <div class="flex justify-between items-center mb-3">
                                 <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[16px]">touch_app</span> 1️⃣ Chọn Bàn Cần Phục Vụ
+                                    <img src="img/click_3d.png" alt="Click" class="w-5 h-5 object-cover rounded-sm"> 1️⃣ Chọn Bàn Cần Phục Vụ
                                 </h3>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-4 items-center">
-                                <select id="cboBan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer [&>option]:bg-surface [&>option]:text-on-surface" onchange="chonBan()">
+                                <select id="cboBan" class="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer [&>option]:bg-surface [&>option]:text-on-surface" onchange="chonBan()">
                                     <option value="">-- Chọn bàn cần phục vụ --</option>
                                 </select>
                             </div>
@@ -254,11 +278,10 @@
 
                         <!-- Gọi món -->
                         <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg" id="khuVucGoiMon" style="display:none;">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-white/5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-primary/5">
                                 <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[18px]">restaurant</span> 2️⃣ Chọn Món & Thêm Vào Bill
+                                    <img src="img/menu_book_3d.png" alt="Menu" class="w-5 h-5 object-cover rounded-sm"> 2️⃣ Chọn Món & Thêm Vào Bill
                                 </h3>
-                                <!-- Lọc loại -->
                                 <div class="flex gap-2">
                                     <button class="btn btn-sm btn-primary" onclick="locMenuTheoLoai('')" id="btnTatCa">Tất cả</button>
                                     <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('ThucAn')" id="btnThucAn">Thức ăn</button>
@@ -266,12 +289,11 @@
                                 </div>
                             </div>
 
-                            <!-- Danh sách menu để chọn -->
                             <div id="menuDanhSach" class="menu-danh-sach"></div>
 
                             <!-- Form thêm món -->
-                            <div id="formThemMon" class="mt-6 pt-5 border-t border-white/5" style="display:none;">
-                                <div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4">
+                            <div id="formThemMon" class="mt-6 pt-5 border-t border-primary/5" style="display:none;">
+                                <div class="bg-primary/[0.04] border border-primary/10 rounded-xl p-4 mb-4">
                                     <p class="text-xs text-on-surface-variant">Đang chọn thêm:</p>
                                     <strong id="tenMonDangThem" class="text-base text-primary block mt-0.5"></strong>
                                 </div>
@@ -279,60 +301,56 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng *</label>
-                                        <input type="number" id="txtSoLuong" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm"
+                                        <input type="number" id="txtSoLuong" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
                                                value="1" min="1" placeholder="Nhập số lượng">
                                     </div>
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ghi chú / Tùy chọn</label>
-                                        <input type="text" id="txtThuocTinhThem" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30"
+                                        <input type="text" id="txtThuocTinhThem" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30 focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
                                                placeholder="Phần lớn / Lon / Ít cay...">
                                     </div>
                                 </div>
 
-                                <!-- Gợi ý tùy chọn -->
                                 <div class="mt-3 flex flex-wrap gap-1.5" id="goiYTuyChon"></div>
 
                                 <div class="flex gap-3 mt-5">
-                                    <button id="btnThemMon" class="bg-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
-                                    <button id="btnHuyChonMon" class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all" onclick="huyChonMon()">✕ Hủy</button>
+                                    <button id="btnThemMon" class="btn btn-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider shadow-md transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
+                                    <button id="btnHuyChonMon" class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border-none cursor-pointer" onclick="huyChonMon()">✕ Hủy</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- CỘT PHẢI: Hóa đơn hiện tại (5/12 cột) -->
+                    <!-- CỘT PHẢI: Hóa đơn -->
                     <div class="lg:col-span-5">
                         <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg" id="khuVucHoaDon">
-                            <div class="flex justify-between items-center pb-3 mb-4 border-b border-white/5">
+                            <div class="flex justify-between items-center pb-3 mb-4 border-b border-primary/5">
                                 <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[18px]">receipt</span> Hóa Đơn Hiện Tại
+                                    <img src="img/bill_3d.png" alt="Bill" class="w-5 h-5 object-cover rounded-sm"> Hóa Đơn Hiện Tại
                                 </h3>
-                                <button class="glass-card w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200" onclick="taiLaiHoaDon()">
-                                    <span class="material-symbols-outlined text-[18px]">refresh</span>
+                                <button class="glass-card w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 border-none cursor-pointer" onclick="taiLaiHoaDon()">
+                                    <img src="img/refresh_3d.png" alt="Refresh" class="w-5 h-5 object-cover rounded-sm">
                                 </button>
                             </div>
 
-                            <!-- Trạng thái chưa chọn bàn -->
                             <div id="chuaChonBan" class="flex flex-col items-center justify-center py-16 text-center text-on-surface-variant">
-                                <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-2">table_bar</span>
+                                <img src="img/table_3d.png" alt="Table" class="w-16 h-16 object-cover rounded-xl opacity-30 mb-2">
                                 <p class="text-sm">Hãy chọn bàn ở cột bên trái để quản lý hoặc thanh toán.</p>
                             </div>
 
-                            <!-- Danh sách món đã gọi -->
                             <div id="danhSachMon" class="space-y-4" style="display:none;">
                                 <div id="bangChiTietHoaDon" class="max-h-[350px] overflow-y-auto"></div>
 
-                                <!-- Hộp hiển thị tổng tiền -->
-                                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex justify-between items-center shadow-inner">
+                                <div class="bg-primary/[0.04] border border-primary/10 rounded-xl p-4 flex justify-between items-center shadow-inner">
                                     <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[16px] text-primary">payments</span> Tổng thanh toán:
+                                        <img src="img/money_3d.png" alt="Money" class="w-5 h-5 object-cover rounded-sm"> Tổng thanh toán:
                                     </span>
                                     <span id="tongTienHienThi" class="text-xl font-bold text-primary">0 ₫</span>
                                 </div>
 
                                 <div class="pt-2">
-                                    <button class="btn-success flex items-center justify-center gap-2 active:scale-[0.98] shadow-md py-3 font-bold" onclick="thanhToan()" id="btnThanhToan">
-                                        <span class="material-symbols-outlined">check_circle</span> THANH TOÁN & ĐÓNG BÀN
+                                    <button class="btn-success flex items-center justify-center gap-2 active:scale-[0.98] shadow-md py-3 font-bold border-none cursor-pointer" onclick="thanhToan()" id="btnThanhToan">
+                                        <img src="img/check_3d.png" alt="Check" class="w-5 h-5 object-cover rounded-sm"> THANH TOÁN & ĐÓNG BÀN
                                     </button>
                                 </div>
                             </div>
@@ -343,6 +361,6 @@
         </main>
     </div>
 
-    <script src="js/order.js?v=1.3"></script>
+    <script src="js/order.js?v=2.0"></script>
 </body>
 </html>

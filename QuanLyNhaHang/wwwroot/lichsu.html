@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
@@ -16,329 +16,325 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        sans: ['"Outfit"', 'sans-serif'],
+                        heading: ['"Playfair Display"', 'serif'],
                     },
                     colors: {
-                        "primary": "#c0c1ff",
-                        "primary-hover": "#a8a9ff",
-                        "surface": "#0b1326",
-                        "surface-container": "#141c2f",
-                        "surface-container-highest": "#242e42",
-                        "on-surface": "#dae2fd",
-                        "on-surface-variant": "#9ca3af",
-                        "background": "#070b15"
+                        "primary": "#d4a853",
+                        "primary-hover": "#c49a42",
+                        "primary-soft": "#f0d68a",
+                        "surface": "#0a1628",
+                        "surface-container": "#101e35",
+                        "surface-container-highest": "#1e3050",
+                        "on-surface": "#e8ecf4",
+                        "on-surface-variant": "#8b9ab8",
+                        "background": "#060d1a"
                     },
                     spacing: {
-                        "sidebar-width": "72px",
+                        "sidebar-width": "76px",
                     }
                 }
             }
         };
     </script>
     <style>
+        .sidebar {
+            background: linear-gradient(180deg, #0d1a30, #0a1628);
+            border-right: 1px solid rgba(212, 168, 83, 0.08);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 76px;
+            overflow: hidden;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        }
+        .sidebar.expanded { width: 240px; }
+        .sidebar-text { display: none; white-space: nowrap; font-weight: 600; color: #e8ecf4; margin-left: 0.75rem; }
+        .sidebar.expanded .sidebar-text { display: block; animation: fadeIn 0.3s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .nav-btn {
+            position: relative;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            justify-content: flex-start;
+            padding-left: 18px;
+            width: 100%;
+            height: 52px;
+        }
+        .nav-btn:hover { background: rgba(212, 168, 83, 0.08); }
+
         .glass-card {
-            background: rgba(20, 28, 47, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, rgba(16, 30, 53, 0.7), rgba(10, 22, 40, 0.8));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(212, 168, 83, 0.15);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
         .glass-card:hover {
-            background: rgba(20, 28, 47, 0.6);
-            border-color: rgba(192, 193, 255, 0.15);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(145deg, rgba(16, 30, 53, 0.8), rgba(10, 22, 40, 0.9));
+            border-color: rgba(212, 168, 83, 0.25);
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
-        .nav-btn.active {
-            color: #c0c1ff;
-            background: rgba(192, 193, 255, 0.08);
-        }
-        .nav-btn.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            height: 28px;
-            width: 3px;
-            background: #c0c1ff;
-            border-radius: 0 4px 4px 0;
-        }
+
         .spinner {
-            width: 36px;
-            height: 36px;
-            border: 3px solid rgba(192, 193, 255, 0.1);
-            border-top-color: #c0c1ff;
+            width: 36px; height: 36px;
+            border: 3px solid rgba(212, 168, 83, 0.12);
+            border-top-color: #d4a853;
             border-radius: 50%;
             margin: 2rem auto;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Badge States */
         .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.6rem;
-            font-size: 0.72rem;
-            font-weight: 600;
-            border-radius: 8px;
+            display: inline-flex; align-items: center;
+            padding: 0.25rem 0.65rem; font-size: 0.72rem;
+            font-weight: 600; border-radius: 10px;
             letter-spacing: 0.02em;
         }
         .badge-dathanhtoan {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.15);
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.2);
         }
         .badge-chuathanhtoan {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.15);
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.2);
         }
 
-        /* Glow effect orbs */
+        /* Glow orbs */
         .glow-orb-1 {
             filter: blur(100px);
             pointer-events: none;
         }
 
-        /* Modal styling */
+        /* Modal */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background: rgba(3, 7, 18, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(3, 7, 18, 0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            align-items: center; justify-content: center;
             padding: 1rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            opacity: 0; transition: opacity 0.3s ease;
         }
-        .modal-overlay.show {
-            display: flex;
-            opacity: 1;
-        }
+        .modal-overlay.show { display: flex; opacity: 1; }
 
-        /* Table wrapper styling */
+        /* Table */
         .table-wrapper {
-            overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(7, 11, 21, 0.4);
+            overflow-x: auto; border-radius: 14px;
+            border: 1px solid rgba(212, 168, 83, 0.06);
+            background: rgba(6, 13, 26, 0.4);
             margin-top: 1rem;
         }
-        .table-wrapper table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.85rem;
-        }
+        .table-wrapper table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
         .table-wrapper th {
-            padding: 1rem;
-            background: rgba(20, 28, 47, 0.6);
-            color: #9ca3af;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem; background: rgba(16, 30, 53, 0.6);
+            color: #d4a853; font-weight: 600; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(212, 168, 83, 0.08);
         }
         .table-wrapper td {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            color: #dae2fd;
+            padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.03); color: #e8ecf4;
         }
 
-        /* Tong Tien Box inside Modal */
+        /* Tong Tien Box */
         .tong-tien-box {
             margin-top: 1.5rem;
-            background: rgba(192, 193, 255, 0.05);
-            border: 1px solid rgba(192, 193, 255, 0.1);
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.06), rgba(212, 168, 83, 0.02));
+            border: 1px solid rgba(212, 168, 83, 0.1);
             border-radius: 16px;
             padding: 1.25rem;
         }
         .tong-tien-row.tong {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #c0c1ff;
+            display: flex; justify-content: space-between;
+            font-weight: 700; font-size: 1.1rem; color: #d4a853;
         }
 
         .alert {
-            padding: 1rem 1.25rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            border: 1px solid transparent;
-            text-align: center;
+            padding: 1rem 1.25rem; border-radius: 12px;
+            font-size: 0.85rem; border: 1px solid transparent; text-align: center;
+            animation: slideIn 0.3s ease;
         }
         .alert-error {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.2);
-            color: #f87171;
+            background: rgba(248, 113, 113, 0.08);
+            border-color: rgba(248, 113, 113, 0.15); color: #f87171;
         }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .text-nhat { color: #8b9ab8; font-size: 0.85rem; }
+        .text-chinh { color: #d4a853; }
+        .fw-bold { font-weight: 700; }
+        .empty-state { text-align: center; padding: 3rem; color: #8b9ab8; }
+        .empty-state .empty-icon { font-size: 3rem; display: block; margin-bottom: 0.75rem; opacity: 0.4; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; font-weight: 600; letter-spacing: 0.03em; transition: all 0.25s; border-radius: 12px; cursor: pointer; border: none; }
+        .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.75rem; border-radius: 10px; }
+        .btn-info { background: rgba(212, 168, 83, 0.1); color: #d4a853; border: 1px solid rgba(212, 168, 83, 0.2); }
+        .btn-info:hover { background: rgba(212, 168, 83, 0.2); }
         
         /* CSS print */
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #modalChiTietHD, #modalChiTietHD * {
-                visibility: visible;
-            }
+            body * { visibility: hidden; }
+            #modalChiTietHD, #modalChiTietHD * { visibility: visible; }
             #modalChiTietHD {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white !important;
-                color: black !important;
+                position: absolute; left: 0; top: 0; width: 100%;
+                background: white !important; color: black !important;
             }
             #modalChiTietHD .glass-card {
-                background: white !important;
-                color: black !important;
-                border: none !important;
-                box-shadow: none !important;
-                backdrop-filter: none !important;
+                background: white !important; color: black !important;
+                border: none !important; box-shadow: none !important; backdrop-filter: none !important;
             }
-            #modalChiTietHD button {
-                display: none !important;
-            }
-            #modalChiTietHD th {
-                color: black !important;
-                background: #f3f4f6 !important;
-            }
-            #modalChiTietHD td {
-                color: black !important;
-                border-bottom: 1px solid #e5e7eb !important;
-            }
-            #modalChiTietHD .tong-tien-box {
-                background: #f3f4f6 !important;
-                color: black !important;
-                border: 1px solid #e5e7eb !important;
-            }
-            #modalChiTietHD .tong-tien-row.tong {
-                color: black !important;
-            }
+            #modalChiTietHD button { display: none !important; }
+            #modalChiTietHD th { color: black !important; background: #f3f4f6 !important; }
+            #modalChiTietHD td { color: black !important; border-bottom: 1px solid #e5e7eb !important; }
+            #modalChiTietHD .tong-tien-box { background: #f3f4f6 !important; color: black !important; border: 1px solid #e5e7eb !important; }
+            #modalChiTietHD .tong-tien-row.tong { color: black !important; }
+        }
+
+        /* Stat widget icon animation */
+        .stat-widget {
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-widget::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.03), transparent);
+            border-radius: inherit;
         }
     </style>
 </head>
 <body class="bg-background text-on-surface min-h-screen flex font-sans relative overflow-hidden">
 
-    <!-- Quả cầu phát sáng chạy nền -->
-    <div class="absolute top-20 right-10 w-[500px] h-[500px] rounded-full bg-primary/5 glow-orb-1"></div>
-    <div class="absolute bottom-20 left-10 w-[400px] h-[400px] rounded-full bg-blue-500/5 glow-orb-1"></div>
+    <!-- Quả cầu phát sáng -->
+    <div class="absolute top-20 right-10 w-[500px] h-[500px] rounded-full bg-primary/4 glow-orb-1"></div>
+    <div class="absolute bottom-20 left-10 w-[400px] h-[400px] rounded-full bg-primary/3 glow-orb-1"></div>
 
     <!-- SIDEBAR -->
-    <nav class="fixed left-0 top-0 h-screen w-sidebar-width z-50 bg-surface-container border-r border-white/5 flex flex-col items-center py-8 gap-6">
-        <div class="relative group mb-2">
-            <div class="absolute inset-0 rounded-full bg-primary/20 blur-sm pointer-events-none"></div>
-            <img src="img/logo.png" alt="Logo" class="relative w-12 h-12 rounded-full border border-primary/30 object-cover shadow-[0_0_10px_rgba(192,193,255,0.2)]">
+    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" onclick="this.classList.toggle('expanded')">
+        <!-- Logo with gold ring -->
+        <div class="relative group mb-6 px-3 w-full flex justify-center">
+            <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
+            <img src="img/logo.png" alt="Logo" class="relative w-12 h-12 rounded-full border-2 border-primary/30 object-cover shadow-[0_0_15px_rgba(212,168,83,0.2)] transition-all group-hover:scale-105 shrink-0">
+            <span class="sidebar-text text-primary font-heading text-xl mt-2">Vua Sư Tử</span>
         </div>
         
-        <a href="index.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Sơ đồ bàn">
-            <span class="material-symbols-outlined">layers</span>
+        <!-- Decorative line -->
+        <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent mb-4"></div>
+        
+        <a href="index.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Sơ đồ bàn">
+            <img src="img/table_3d.png" alt="Bàn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Sơ đồ bàn</span>
         </a>
 
-        <a href="menu.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Thực đơn">
-            <span class="material-symbols-outlined">restaurant_menu</span>
+        <a href="menu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Thực đơn">
+            <img src="img/menu_book_3d.png" alt="Thực đơn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Thực đơn</span>
         </a>
 
-        <a href="order.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Gọi món">
-            <span class="material-symbols-outlined">point_of_sale</span>
+        <a href="order.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Gọi món">
+            <img src="img/pos_3d.png" alt="POS" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Gọi món</span>
         </a>
 
-        <a href="lichsu.html" class="nav-btn active relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant hover:text-on-surface transition-all group" title="Lịch sử hóa đơn">
-            <span class="material-symbols-outlined">receipt_long</span>
+        <a href="lichsu.html" class="nav-btn active relative flex items-center group" title="Lịch sử hóa đơn">
+            <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
         </a>
+
+        <!-- Spacer + Logout ở cuối -->
+        <div class="flex-1"></div>
+        <button onclick="event.stopPropagation(); sessionStorage.clear(); window.location.href='login.html';" class="nav-btn relative flex items-center group text-on-surface-variant/40 hover:text-mau-do transition-all" title="Đăng xuất">
+            <img src="img/logout_3d.png" alt="Đăng xuất" class="w-9 h-9 object-cover rounded-[14px] bg-red-500/10 border border-red-500/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm text-red-500">Đăng xuất</span>
+        </button>
     </nav>
 
     <!-- MAIN CONTENT -->
     <div class="ml-sidebar-width flex-1 flex flex-col z-10 relative">
-        <!-- HEADER -->
-        <header class="sticky top-0 h-16 bg-surface/70 backdrop-blur-lg border-b border-white/5 flex justify-between items-center px-8 z-40">
-            <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">history</span> NHÀ HÀNG VUA SƯ TỬ
+        <header class="sticky top-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-primary/5 flex justify-between items-center px-8 z-40">
+            <h1 class="font-heading text-xl font-bold tracking-tight text-on-surface flex items-center gap-2.5">
+                <img src="img/bill_3d.png" alt="History" class="w-6 h-6 object-cover rounded-md opacity-90">
+                <span class="text-primary">Vua Sư Tử</span>
+                <span class="text-on-surface-variant/40 font-light">|</span>
+                <span class="text-on-surface-variant text-sm font-normal">Lịch Sử Hóa Đơn</span>
             </h1>
             <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <p class="text-[10px] font-bold text-primary tracking-widest uppercase">Hệ thống quản lý</p>
-                    <p class="text-xs text-on-surface-variant font-medium mt-0.5">Vua Sư Tử Pro v1.0</p>
+                <div class="text-right mr-3">
+                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Hệ thống quản lý</p>
+                    <p class="text-xs font-semibold text-on-surface-variant">Vua Sư Tử v2.0</p>
                 </div>
-                <div class="w-9 h-9 rounded-xl overflow-hidden border border-white/10 bg-surface-container-highest flex items-center justify-center shadow-inner">
-                    <span class="material-symbols-outlined text-on-surface-variant text-lg">account_circle</span>
+                <div class="w-10 h-10 rounded-xl overflow-hidden border border-primary/15 bg-surface-container-highest flex items-center justify-center shadow-inner">
+                    <img src="img/user_3d.png" class="w-full h-full object-cover" alt="User">
                 </div>
             </div>
         </header>
 
         <main class="p-8 flex-1 max-w-7xl w-full mx-auto">
-            <!-- PAGE: LỊCH SỬ HÓA ĐƠN -->
             <section id="trang-lichsu" class="page active block">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 pb-4">
                     <div>
-                        <h2 class="text-3xl font-extrabold mb-2 tracking-tight text-white">Lịch Sử Hóa Đơn</h2>
+                        <h2 class="font-heading text-3xl font-extrabold mb-2 tracking-tight text-on-surface">Lịch Sử Hóa Đơn</h2>
                         <p class="text-on-surface-variant text-sm">Tra cứu toàn bộ hóa đơn đã thanh toán và doanh thu tổng của nhà hàng.</p>
                     </div>
                 </div>
 
-                <!-- Thống kê nhanh dạng Thủy Tinh (Glassmorphism) -->
+                <!-- Thống kê nhanh -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <!-- Widget 1 -->
-                    <div class="glass-card rounded-2xl p-6 shadow-lg flex items-center gap-5 relative overflow-hidden">
-                        <div class="absolute -right-4 -bottom-4 text-white/5 pointer-events-none">
-                            <span class="material-symbols-outlined text-7xl">receipt_long</span>
+                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+                        <div class="z-10 flex flex-col justify-center">
+                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng hóa đơn</span>
+                            <h3 class="text-4xl font-black text-on-surface drop-shadow-md" id="tongHoaDon">0</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                            <span class="material-symbols-outlined text-primary text-2xl">receipt_long</span>
+                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+                            <img src="img/bill_3d.png" alt="Bill" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
                         </div>
-                        <div>
-                            <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tổng hóa đơn</span>
-                            <h3 class="text-3xl font-black text-white mt-1" id="tongHoaDon">0</h3>
-                        </div>
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/20"></div>
                     </div>
                     <!-- Widget 2 -->
-                    <div class="glass-card rounded-2xl p-6 shadow-lg flex items-center gap-5 relative overflow-hidden">
-                        <div class="absolute -right-4 -bottom-4 text-white/5 pointer-events-none">
-                            <span class="material-symbols-outlined text-7xl">task_alt</span>
+                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+                        <div class="z-10 flex flex-col justify-center">
+                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Đã thanh toán</span>
+                            <h3 class="text-4xl font-black text-emerald-400 drop-shadow-md" id="daThanhToan">0</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                            <span class="material-symbols-outlined text-emerald-400 text-2xl">task_alt</span>
+                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-emerald-500/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+                            <img src="img/check_3d.png" alt="Check" class="w-full h-full object-contain group-hover:rotate-6 transition-transform duration-500">
                         </div>
-                        <div>
-                            <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Đã thanh toán</span>
-                            <h3 class="text-3xl font-black text-emerald-400 mt-1" id="daThanhToan">0</h3>
-                        </div>
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-emerald-500/20"></div>
                     </div>
                     <!-- Widget 3 -->
-                    <div class="glass-card rounded-2xl p-6 shadow-lg flex items-center gap-5 relative overflow-hidden">
-                        <div class="absolute -right-4 -bottom-4 text-white/5 pointer-events-none">
-                            <span class="material-symbols-outlined text-7xl">monetization_on</span>
+                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+                        <div class="z-10 flex flex-col justify-center min-w-0 pr-4">
+                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng doanh thu</span>
+                            <h3 class="text-3xl font-black text-primary drop-shadow-md truncate" id="tongDoanhThu">0 ₫</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                            <span class="material-symbols-outlined text-primary text-2xl">monetization_on</span>
+                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+                            <img src="img/money_3d.png" alt="Money" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
                         </div>
-                        <div>
-                            <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tổng doanh thu</span>
-                            <h3 class="text-2xl font-black text-primary mt-1" id="tongDoanhThu">0 ₫</h3>
-                        </div>
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/15 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/25"></div>
                     </div>
                 </div>
 
                 <!-- Bảng lịch sử -->
-                <div class="glass-card rounded-3xl overflow-hidden shadow-2xl">
-                    <div class="flex justify-between items-center px-6 py-5 border-b border-white/5 bg-white/5">
+                <div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-primary/6">
+                    <div class="flex justify-between items-center px-6 py-5 border-b border-primary/5 bg-primary/[0.02]">
                         <h3 class="font-bold text-xs text-primary uppercase tracking-widest flex items-center gap-2">
-                            <span class="material-symbols-outlined text-lg">list_alt</span> Danh sách hóa đơn
+                            <img src="img/bill_3d.png" alt="List" class="w-5 h-5 object-cover rounded-md shadow-sm opacity-90"> Danh sách hóa đơn
                         </h3>
-                        <button class="bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] text-on-surface" onclick="taiLichSu()">
-                            <span class="material-symbols-outlined text-sm">refresh</span> Làm mới
+                        <button class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] text-on-surface cursor-pointer" onclick="taiLichSu()">
+                            <img src="img/refresh_3d.png" alt="Refresh" class="w-4 h-4 object-cover rounded-sm"> Làm mới
                         </button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
-                            <thead class="bg-white/5 border-b border-white/5 text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                            <thead class="bg-primary/[0.03] border-b border-primary/5 text-xs font-bold uppercase tracking-wider text-primary">
                                 <tr>
                                     <th class="px-6 py-4">Mã HĐ</th>
                                     <th class="px-6 py-4">Bàn</th>
@@ -349,7 +345,7 @@
                                     <th class="px-6 py-4 text-center">Xem</th>
                                 </tr>
                             </thead>
-                            <tbody id="bangLichSu" class="divide-y divide-white/5 text-sm">
+                            <tbody id="bangLichSu" class="divide-y divide-white/3 text-sm">
                                 <tr>
                                     <td colspan="7" class="px-6 py-12">
                                         <div class="flex justify-center">
@@ -367,26 +363,26 @@
 
     <!-- Modal chi tiết hóa đơn -->
     <div class="modal-overlay" id="modalChiTietHD">
-        <div class="glass-card bg-surface-container/90 border border-white/10 p-8 rounded-3xl w-full max-w-2xl relative scale-95 transition-all duration-300 shadow-2xl">
+        <div class="glass-card bg-surface-container/90 border border-primary/10 p-8 rounded-3xl w-full max-w-2xl relative scale-95 transition-all duration-300 shadow-2xl">
             <button onclick="dongModal('modalChiTietHD')" class="absolute top-5 right-5 text-on-surface-variant hover:text-on-surface transition-all">
-                <span class="material-symbols-outlined text-2xl">close</span>
+                <img src="img/close_3d.png" alt="Close" class="w-7 h-7 object-cover rounded-lg hover:scale-110 transition-transform">
             </button>
-            <h3 class="text-2xl font-extrabold mb-6 text-primary flex items-center gap-2 tracking-tight" id="chiTietHDTieuDe">
-                <span class="material-symbols-outlined text-2xl">receipt_long</span> Chi Tiết Hóa Đơn
+            <h3 class="font-heading text-2xl font-extrabold mb-6 text-primary flex items-center gap-2 tracking-tight" id="chiTietHDTieuDe">
+                <img src="img/bill_3d.png" alt="Receipt" class="w-8 h-8 object-cover rounded-lg shadow-sm"> Chi Tiết Hóa Đơn
             </h3>
             
             <div class="max-h-[55vh] overflow-y-auto pr-2" id="chiTietHDNoidung"></div>
             
-            <div class="flex justify-end gap-3 pt-6 border-t border-white/5 mt-6">
-                <button onclick="dongModal('modalChiTietHD')" class="bg-white/5 hover:bg-white/10 border border-white/10 text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all active:scale-[0.98]">Đóng</button>
-                <button class="bg-primary hover:bg-primary-hover text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1 shadow-lg shadow-primary/10 active:scale-[0.98]" onclick="inHoaDon()">
-                    <span class="material-symbols-outlined text-[16px]">print</span> In Hóa Đơn
+            <div class="flex justify-end gap-3 pt-6 border-t border-primary/5 mt-6">
+                <button onclick="dongModal('modalChiTietHD')" class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer">Đóng</button>
+                <button class="bg-gradient-to-r from-primary to-primary-soft hover:from-primary-hover hover:to-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1 shadow-lg shadow-primary/10 active:scale-[0.98] cursor-pointer border-none" onclick="inHoaDon()">
+                    <img src="img/print_3d.png" alt="Print" class="w-5 h-5 object-cover rounded-sm"> In Hóa Đơn
                 </button>
             </div>
         </div>
     </div>
 
-    <script src="js/lichsu.js?v=1.3"></script>
+    <script src="js/lichsu.js?v=2.0"></script>
     <script>
         // Đồng bộ hiệu ứng modal mượt mà
         window.moModal = function(id) {

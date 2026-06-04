@@ -37,15 +37,22 @@ function hienThiBang(ds) {
     }
     tbody.innerHTML = ds.map(hd => `
         <tr>
-            <td class="fw-bold text-chinh">#${hd.Id}</td>
-            <td>${hd.TenBan}</td>
-            <td>${formatThoiGian(hd.ThoiGianTao)}</td>
-            <td>${hd.ThoiGianThanhToan ? formatThoiGian(hd.ThoiGianThanhToan) : '<span class="text-nhat">Chưa</span>'}</td>
-            <td class="fw-bold text-chinh">${formatTien(hd.TongTien)}</td>
-            <td><span class="badge ${hd.TrangThai === 'Đã thanh toán' ? 'badge-dathanhtoan' : 'badge-chuathanhtoan'}">
-                ${hd.TrangThai === 'Đã thanh toán' ? '✅ ' : '⏳ '} ${hd.TrangThai}
-            </span></td>
-            <td><button class="btn btn-sm btn-info" onclick="xemChiTiet(${hd.Id})">🔍 Xem</button></td>
+            <td class="px-6 py-4 font-bold text-primary">#${hd.Id}</td>
+            <td class="px-6 py-4 font-medium">${hd.TenBan}</td>
+            <td class="px-6 py-4 text-on-surface-variant">${formatThoiGian(hd.ThoiGianTao)}</td>
+            <td class="px-6 py-4 text-on-surface-variant">${hd.ThoiGianThanhToan ? formatThoiGian(hd.ThoiGianThanhToan) : '<span class="text-on-surface-variant/40 italic">Chưa đóng</span>'}</td>
+            <td class="px-6 py-4 text-right font-bold text-primary">${formatTien(hd.TongTien)}</td>
+            <td class="px-6 py-4 text-center">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${hd.TrangThai === 'Đã thanh toán' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-primary/10 text-primary border-primary/20'}">
+                    <span class="w-1.5 h-1.5 rounded-full ${hd.TrangThai === 'Đã thanh toán' ? 'bg-emerald-400' : 'bg-primary'} animate-pulse"></span>
+                    ${hd.TrangThai}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+                <button class="bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-[0.95] text-on-surface flex items-center justify-center gap-1 mx-auto" onclick="xemChiTiet(${hd.Id})">
+                    <img src="img/search_3d.png" alt="Search" class="w-4 h-4 object-cover rounded-sm"> Xem
+                </button>
+            </td>
         </tr>`).join('');
 }
 

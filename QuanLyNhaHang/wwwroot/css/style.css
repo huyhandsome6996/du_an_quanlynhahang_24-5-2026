@@ -1,27 +1,30 @@
 /* ============================================================
    STYLE.CSS - Hệ thống thiết kế cho Quản Lý Nhà Hàng
-   Font: Inter (Google Fonts)
-   Theme: Dark mode sang trọng với accent màu vàng đồng
+   Font: Playfair Display + Inter (Google Fonts)
+   Theme: Luxury Navy-Blue & Royal Gold
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
 /* --- Biến màu sắc toàn cục --- */
 :root {
-    --mau-nen:        #0f1117;
-    --mau-nen-card:   #1a1d27;
-    --mau-nen-input:  #242736;
-    --mau-vien:       #2e3347;
-    --mau-chinh:      #f5a623;   /* Vàng đồng - màu chủ đạo */
-    --mau-chinh-nhat: rgba(245, 166, 35, 0.15);
+    --mau-nen:        #0a1628;
+    --mau-nen-card:   #101e35;
+    --mau-nen-input:  #162240;
+    --mau-vien:       #1e3050;
+    --mau-chinh:      #d4a853;   /* Vàng hoàng gia - màu chủ đạo */
+    --mau-chinh-nhat: rgba(212, 168, 83, 0.15);
+    --mau-chinh-dam:  #c49a42;
     --mau-xanh:       #4ade80;   /* Xanh lá - trạng thái Trống */
     --mau-do:         #f87171;   /* Đỏ - trạng thái Có khách */
     --mau-xanh-duong: #60a5fa;   /* Xanh dương - thông tin */
-    --mau-chu:        #e2e8f0;
-    --mau-chu-nhat:   #94a3b8;
-    --bong:           0 4px 24px rgba(0,0,0,0.4);
-    --bo-goc:         12px;
-    --bo-goc-nho:     8px;
+    --mau-chu:        #e8ecf4;
+    --mau-chu-nhat:   #8b9ab8;
+    --bong:           0 4px 30px rgba(0, 0, 0, 0.35);
+    --bo-goc:         16px;
+    --bo-goc-nho:     10px;
+    --gradient-vang:  linear-gradient(135deg, #d4a853, #f0d68a, #c49a42);
+    --gradient-nen:   linear-gradient(135deg, rgba(212, 168, 83, 0.08), rgba(212, 168, 83, 0.02));
 }
 
 /* --- Reset và cài đặt chung --- */
@@ -32,7 +35,16 @@ body {
     background-color: var(--mau-nen);
     color: var(--mau-chu);
     min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse at top left, rgba(212, 168, 83, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(212, 168, 83, 0.03) 0%, transparent 50%);
 }
+
+/* Custom scrollbar toàn trang */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(212, 168, 83, 0.25); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mau-chinh); }
 
 /* ============================================================
    THANH ĐIỀU HƯỚNG (NAV)
@@ -57,6 +69,7 @@ body {
 }
 
 .nav-logo {
+    font-family: 'Playfair Display', serif;
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--mau-chinh);
@@ -94,7 +107,7 @@ body {
 .nav-links a.active {
     background: var(--mau-chinh-nhat);
     color: var(--mau-chinh);
-    border: 1px solid rgba(245, 166, 35, 0.3);
+    border: 1px solid rgba(212, 168, 83, 0.3);
 }
 
 /* ============================================================
@@ -107,6 +120,7 @@ body {
 }
 
 .page-title {
+    font-family: 'Playfair Display', serif;
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--mau-chu);
@@ -141,6 +155,7 @@ body {
 }
 
 .card-title {
+    font-family: 'Playfair Display', serif;
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--mau-chu);
@@ -170,13 +185,13 @@ body {
     color: var(--mau-chu);
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
 }
 
 .form-control:focus {
     border-color: var(--mau-chinh);
-    box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.1);
+    box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.12);
 }
 
 .form-control option {
@@ -197,7 +212,7 @@ body {
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     text-decoration: none;
 }
 
@@ -205,10 +220,11 @@ body {
 .btn:active { transform: translateY(0); }
 
 .btn-primary {
-    background: var(--mau-chinh);
-    color: #000;
+    background: var(--gradient-vang);
+    color: #0a1628;
+    box-shadow: 0 2px 12px rgba(212, 168, 83, 0.25);
 }
-.btn-primary:hover { background: #e8961a; box-shadow: 0 4px 16px rgba(245,166,35,0.4); }
+.btn-primary:hover { box-shadow: 0 6px 20px rgba(212, 168, 83, 0.4); }
 
 .btn-success {
     background: rgba(74, 222, 128, 0.15);
@@ -225,11 +241,11 @@ body {
 .btn-danger:hover { background: rgba(248, 113, 113, 0.25); }
 
 .btn-info {
-    background: rgba(96, 165, 250, 0.15);
-    color: var(--mau-xanh-duong);
-    border: 1px solid rgba(96, 165, 250, 0.3);
+    background: rgba(212, 168, 83, 0.12);
+    color: var(--mau-chinh);
+    border: 1px solid rgba(212, 168, 83, 0.25);
 }
-.btn-info:hover { background: rgba(96, 165, 250, 0.25); }
+.btn-info:hover { background: rgba(212, 168, 83, 0.22); }
 
 .btn-secondary {
     background: var(--mau-nen-input);
@@ -265,7 +281,7 @@ thead th {
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--mau-chu-nhat);
+    color: var(--mau-chinh);
     border-bottom: 1px solid var(--mau-vien);
     white-space: nowrap;
 }
@@ -276,7 +292,7 @@ tbody tr {
 }
 
 tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: rgba(255,255,255,0.03); }
+tbody tr:hover { background: rgba(212, 168, 83, 0.04); }
 
 tbody td {
     padding: 0.75rem 1rem;
@@ -298,39 +314,39 @@ tbody td {
 }
 
 .badge-trong {
-    background: rgba(74, 222, 128, 0.15);
+    background: rgba(74, 222, 128, 0.12);
     color: var(--mau-xanh);
-    border: 1px solid rgba(74, 222, 128, 0.3);
+    border: 1px solid rgba(74, 222, 128, 0.25);
 }
 
 .badge-cokhach {
-    background: rgba(248, 113, 113, 0.15);
+    background: rgba(248, 113, 113, 0.12);
     color: var(--mau-do);
-    border: 1px solid rgba(248, 113, 113, 0.3);
+    border: 1px solid rgba(248, 113, 113, 0.25);
 }
 
 .badge-thucan {
-    background: rgba(245, 166, 35, 0.15);
+    background: rgba(212, 168, 83, 0.12);
     color: var(--mau-chinh);
-    border: 1px solid rgba(245, 166, 35, 0.3);
+    border: 1px solid rgba(212, 168, 83, 0.25);
 }
 
 .badge-nuocuong {
-    background: rgba(96, 165, 250, 0.15);
+    background: rgba(96, 165, 250, 0.12);
     color: var(--mau-xanh-duong);
-    border: 1px solid rgba(96, 165, 250, 0.3);
+    border: 1px solid rgba(96, 165, 250, 0.25);
 }
 
 .badge-chuathanhtoan {
-    background: rgba(251, 191, 36, 0.15);
+    background: rgba(251, 191, 36, 0.12);
     color: #fbbf24;
-    border: 1px solid rgba(251, 191, 36, 0.3);
+    border: 1px solid rgba(251, 191, 36, 0.25);
 }
 
 .badge-dathanhtoan {
-    background: rgba(74, 222, 128, 0.15);
+    background: rgba(74, 222, 128, 0.12);
     color: var(--mau-xanh);
-    border: 1px solid rgba(74, 222, 128, 0.3);
+    border: 1px solid rgba(74, 222, 128, 0.25);
 }
 
 /* ============================================================
@@ -348,14 +364,14 @@ tbody td {
 }
 
 .alert-success {
-    background: rgba(74, 222, 128, 0.1);
-    border: 1px solid rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.2);
     color: var(--mau-xanh);
 }
 
 .alert-error {
-    background: rgba(248, 113, 113, 0.1);
-    border: 1px solid rgba(248, 113, 113, 0.3);
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.2);
     color: var(--mau-do);
 }
 
@@ -375,12 +391,12 @@ tbody td {
 
 .ban-card {
     background: var(--mau-nen-card);
-    border: 2px solid var(--mau-vien);
+    border: 1px solid var(--mau-vien);
     border-radius: var(--bo-goc);
     padding: 1.5rem 1rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
@@ -393,12 +409,13 @@ tbody td {
     transition: background 0.25s;
 }
 
-.ban-card.trong::before   { background: var(--mau-xanh); }
-.ban-card.cokhach::before { background: var(--mau-do); }
+.ban-card.trong::before   { background: linear-gradient(90deg, var(--mau-xanh), transparent); }
+.ban-card.cokhach::before { background: linear-gradient(90deg, var(--mau-do), transparent); }
 
 .ban-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    border-color: rgba(212, 168, 83, 0.2);
 }
 
 .ban-card.trong:hover   { border-color: var(--mau-xanh); }
@@ -427,8 +444,9 @@ tbody td {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
+    background: rgba(5, 10, 20, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 999;
     align-items: center;
     justify-content: center;
@@ -441,13 +459,13 @@ tbody td {
 
 .modal {
     background: var(--mau-nen-card);
-    border: 1px solid var(--mau-vien);
+    border: 1px solid rgba(212, 168, 83, 0.15);
     border-radius: var(--bo-goc);
     padding: 2rem;
     width: 100%;
     max-width: 500px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
-    animation: slideUp 0.25s ease;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(212, 168, 83, 0.08);
+    animation: slideUp 0.3s ease;
 }
 
 .modal-lg { max-width: 750px; }
@@ -460,9 +478,10 @@ tbody td {
 }
 
 .modal-title {
+    font-family: 'Playfair Display', serif;
     font-size: 1.15rem;
     font-weight: 700;
-    color: var(--mau-chu);
+    color: var(--mau-chinh);
 }
 
 .modal-close {
@@ -502,8 +521,8 @@ tbody td {
    TỔNG KẾT TIỀN
    ============================================================ */
 .tong-tien-box {
-    background: linear-gradient(135deg, var(--mau-chinh-nhat), rgba(245,166,35,0.05));
-    border: 1px solid rgba(245, 166, 35, 0.3);
+    background: var(--gradient-nen);
+    border: 1px solid rgba(212, 168, 83, 0.2);
     border-radius: var(--bo-goc);
     padding: 1.25rem 1.5rem;
     margin-top: 1rem;
@@ -522,7 +541,7 @@ tbody td {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--mau-chinh);
-    border-top: 1px solid rgba(245, 166, 35, 0.2);
+    border-top: 1px solid rgba(212, 168, 83, 0.15);
     margin-top: 0.5rem;
     padding-top: 0.75rem;
 }
@@ -546,9 +565,9 @@ tbody td {
    LOADING SPINNER
    ============================================================ */
 .spinner {
-    width: 32px;
-    height: 32px;
-    border: 3px solid var(--mau-vien);
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(212, 168, 83, 0.15);
     border-top-color: var(--mau-chinh);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
