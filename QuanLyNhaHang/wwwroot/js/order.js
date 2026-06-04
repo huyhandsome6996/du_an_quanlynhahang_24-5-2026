@@ -79,7 +79,7 @@ async function chonBan() {
     if (!banId) {
         thongTin.style.display = 'none';
         khuVucGoiMon.style.display = 'none';
-        document.getElementById('chuaChonBan').innerHTML = '<span class="empty-icon">👈</span><p>Chọn bàn để xem hóa đơn</p>';
+        document.getElementById('chuaChonBan').innerHTML = '<div class="flex flex-col items-center justify-center opacity-70"><img src="img/click_3d.png" class="w-12 h-12 object-cover mb-4"></div><p>Chọn bàn để xem hóa đơn</p>';
         document.getElementById('chuaChonBan').style.display = 'block';
         document.getElementById('danhSachMon').style.display = 'none';
         return;
@@ -104,9 +104,11 @@ async function chonBan() {
         thongBaoMoBan.textContent = '– Cần mở bàn trước';
         khuVucGoiMon.style.display = 'none';
         document.getElementById('chuaChonBan').innerHTML = `
-            <span class="empty-icon">🪑</span>
-            <p style="margin-bottom:0.75rem;">${ban.TenBan} đang <strong style="color:var(--mau-xanh)">Trống</strong></p>
-            <button class="btn btn-primary btn-lg" onclick="moBanVaGoiMon(${banId})">🚀 Mở Bàn Đón Khách</button>`;
+            <div class="flex justify-center mb-4"><img src="img/table_3d.png" class="w-16 h-16 object-cover rounded-xl shadow-lg opacity-90"></div>
+            <p style="margin-bottom:1rem;">${ban.TenBan} đang <strong style="color:var(--mau-xanh)">Trống</strong></p>
+            <button class="bg-gradient-to-r from-primary to-primary-soft hover:from-primary-hover hover:to-primary text-surface px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 mx-auto border-none cursor-pointer" onclick="moBanVaGoiMon(${banId})">
+                <img src="img/add_3d.png" class="w-5 h-5 object-cover rounded-sm shadow-sm"> Mở Bàn Đón Khách
+            </button>`;
         document.getElementById('chuaChonBan').style.display = 'block';
         document.getElementById('danhSachMon').style.display = 'none';
     }
@@ -149,9 +151,9 @@ function hienThiHoaDon(hd, chiTiet) {
 
     const bang = document.getElementById('bangChiTietHoaDon');
     if (!chiTiet.length) {
-        bang.innerHTML = `<div class="empty-state" style="padding:1.5rem;">
-            <span class="empty-icon" style="font-size:2rem;">🍽️</span>
-            <p>Chưa có món nào. Hãy chọn món từ menu!</p></div>`;
+        bang.innerHTML = `<div class="empty-state flex flex-col items-center justify-center py-8">
+            <img src="img/menu_book_3d.png" class="w-14 h-14 object-cover rounded-xl mb-3 shadow-md opacity-80">
+            <p class="text-on-surface-variant text-sm">Chưa có món nào. Hãy chọn món từ menu!</p></div>`;
     } else {
         bang.innerHTML = `<div class="table-wrapper">
             <table>
@@ -162,7 +164,7 @@ function hienThiHoaDon(hd, chiTiet) {
                         <td><span class="text-nhat">${ct.ThuocTinhThem || '-'}</span></td>
                         <td class="text-center">${ct.SoLuong}</td>
                         <td class="text-chinh fw-bold">${formatTien(ct.ThanhTien)}</td>
-                        <td><button class="btn btn-sm btn-danger" onclick="xoaMon(${ct.Id})">🗑️</button></td>
+                        <td><button class="bg-white/[0.05] hover:bg-red-500/20 border border-red-500/10 p-2 rounded-lg transition-all active:scale-95 cursor-pointer" onclick="xoaMon(${ct.Id})" title="Xóa"><img src="img/close_3d.png" class="w-3.5 h-3.5 object-cover"></button></td>
                     </tr>`).join('')}
                 </tbody>
             </table></div>`;
@@ -239,7 +241,7 @@ async function thanhToan() {
             document.getElementById('cboBan').value = '';
             document.getElementById('thongTinBan').style.display = 'none';
             document.getElementById('khuVucGoiMon').style.display = 'none';
-            document.getElementById('chuaChonBan').innerHTML = '<span class="empty-icon">👈</span><p>Chọn bàn để xem hóa đơn</p>';
+            document.getElementById('chuaChonBan').innerHTML = '<div class="flex flex-col items-center justify-center opacity-70"><img src="img/click_3d.png" class="w-12 h-12 object-cover mb-4"></div><p>Chọn bàn để xem hóa đơn</p>';
             document.getElementById('chuaChonBan').style.display = 'block';
             document.getElementById('danhSachMon').style.display = 'none';
             hoaDonHienTai = null;

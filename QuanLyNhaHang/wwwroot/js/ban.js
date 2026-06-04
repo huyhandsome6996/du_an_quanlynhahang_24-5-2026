@@ -45,7 +45,7 @@ function hienThiBan(dsBan) {
     document.getElementById('soBanCoKhach').textContent = soCoKhach;
 
     if (dsBan.length === 0) {
-        luoi.innerHTML = '<div class="empty-state"><span class="empty-icon">🪑</span><p>Chưa có bàn nào. Hãy thêm bàn mới!</p></div>';
+        luoi.innerHTML = '<div class="empty-state flex flex-col items-center"><img src="img/chair_3d.png" class="empty-icon w-16 h-16 object-contain rounded-xl drop-shadow-md mb-2"><p>Chưa có bàn nào. Hãy thêm bàn mới!</p></div>';
         return;
     }
 
@@ -55,7 +55,7 @@ function hienThiBan(dsBan) {
         <div class="ban-card ${laTrong ? 'trong' : 'cokhach'}"
              onclick="clickVaoBan(${ban.Id})"
              title="${ban.TenBan} - ${ban.TrangThai}">
-            <div class="ban-icon">${laTrong ? '🪑' : '👥'}</div>
+            <div class="ban-icon flex justify-center mb-2">${laTrong ? '<img src="img/chair_3d.png" class="w-12 h-12 object-contain rounded-lg border border-primary/20 shadow-md">' : '<img src="img/user_3d.png" class="w-12 h-12 object-contain rounded-lg border border-primary/20 shadow-md">'}</div>
             <div class="ban-ten">${ban.TenBan}</div>
             <div class="ban-trangthai">
                 <span class="badge ${laTrong ? 'badge-trong' : 'badge-cokhach'}">
@@ -81,15 +81,15 @@ async function clickVaoBan(banId) {
     if (ban.TrangThai === 'Trống') {
         // Bàn trống: hiển thị nút mở bàn
         document.getElementById('chiTietBanNoidung').innerHTML = `
-            <div class="empty-state">
-                <span class="empty-icon">🪑</span>
+            <div class="empty-state flex flex-col items-center">
+                <img src="img/chair_3d.png" class="w-20 h-20 object-contain rounded-2xl drop-shadow-md mb-3 border border-primary/20">
                 <p style="margin-bottom:0.5rem; color:var(--mau-chu);">${ban.TenBan} hiện đang <strong style="color:var(--mau-xanh)">Trống</strong></p>
                 <p class="text-nhat">Nhấn "Mở Bàn" để tạo hóa đơn mới đón khách.</p>
             </div>`;
         document.getElementById('chiTietBanFooter').innerHTML = `
             <button class="btn btn-secondary" onclick="dongModal('modalChiTietBan')">Hủy</button>
-            <button class="btn btn-primary btn-lg" onclick="moBan(${ban.Id})">
-                🚀 Mở Bàn Đón Khách
+            <button class="btn btn-primary btn-lg flex items-center justify-center gap-1" onclick="moBan(${ban.Id})">
+                <img src="img/add_3d.png" class="w-4 h-4 object-cover rounded-sm inline-block mr-1"> Mở Bàn Đón Khách
             </button>`;
     } else {
         // Bàn có khách: tải hóa đơn và hiển thị
@@ -139,15 +139,15 @@ async function hienThiHoaDonCuaBan(banId) {
             ${danhSachMon}
             <div class="tong-tien-box">
                 <div class="tong-tien-row tong">
-                    <span>💰 Tổng cộng:</span>
+                    <span class="flex items-center gap-1"><img src="img/money_3d.png" class="w-4 h-4 object-cover rounded-sm inline-block"> Tổng cộng:</span>
                     <span>${formatTien(hoaDon.TongTien)}</span>
                 </div>
             </div>`;
 
         document.getElementById('chiTietBanFooter').innerHTML = `
-            <a href="order.html" class="btn btn-info">🛒 Gọi thêm món</a>
-            <button class="btn btn-success" onclick="thanhToanNhanhTuModal(${banId})">
-                ✅ Thanh Toán Ngay
+            <a href="order.html" class="btn btn-info flex items-center gap-1 justify-center"><img src="img/pos_3d.png" class="w-4 h-4 object-cover inline-block"> Gọi thêm món</a>
+            <button class="btn btn-success flex items-center gap-1 justify-center" onclick="thanhToanNhanhTuModal(${banId})">
+                <img src="img/check_3d.png" class="w-4 h-4 object-cover inline-block"> Thanh Toán Ngay
             </button>`;
     } catch (err) {
         document.getElementById('chiTietBanNoidung').innerHTML =
