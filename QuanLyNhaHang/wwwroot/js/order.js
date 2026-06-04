@@ -19,7 +19,7 @@ async function taiDanhSachBan() {
     try {
         const res = await fetch(`${API}/ban`);
         const dsBan = await res.json();
-        const select = document.getElementById('selectBan');
+        const select = document.getElementById('cboBan');
         select.innerHTML = '<option value="">-- Chọn bàn cần phục vụ --</option>';
         dsBan.forEach(b => {
             const opt = document.createElement('option');
@@ -43,16 +43,24 @@ async function taiMenu() {
 function hienThiMenu(ds) {
     const kv = document.getElementById('menuDanhSach');
     if (!ds.length) { kv.innerHTML = '<p class="text-nhat text-center" style="padding:1rem;">Không có món nào.</p>'; return; }
-    kv.innerHTML = ds.map(sp => `
-        <div class="mon-item" onclick="chonMon(${sp.Id})">
-            <div>
-                <div class="mon-ten">${sp.TenSanPham}</div>
-                <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}" style="font-size:0.7rem;">
-                    ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
-                </span>
+    kv.innerHTML = ds.map(sp => {
+        const imgUrl = sp.HinhAnh ? sp.HinhAnh : 'img/logo.png';
+        return `
+        <div class="mon-item cursor-pointer" onclick="chonMon(${sp.Id})" style="padding: 0.5rem; gap: 0.75rem; justify-content: flex-start; align-items: center; display: flex;">
+            <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest border border-white/5">
+                <img src="${imgUrl}" alt="${sp.TenSanPham}" class="w-full h-full object-cover" onerror="this.src='img/logo.png'">
             </div>
-            <div class="mon-gia">${formatTien(sp.GiaCoBan)}</div>
-        </div>`).join('');
+            <div class="flex-1 min-w-0">
+                <div class="mon-ten text-sm font-semibold truncate text-on-surface" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
+                <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                    <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}" style="font-size:0.6rem; padding: 0.1rem 0.4rem;">
+                        ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
+                    </span>
+                    <span class="mon-gia text-primary font-bold text-xs">${formatTien(sp.GiaCoBan)}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
 }
 
 function locMenuTheoLoai(loai) {
@@ -64,7 +72,7 @@ function locMenuTheoLoai(loai) {
 }
 
 async function chonBan() {
-    const banId = document.getElementById('selectBan').value;
+    const banId = document.getElementById('cboBan').value;
     const thongTin = document.getElementById('thongTinBan');
     const khuVucGoiMon = document.getElementById('khuVucGoiMon');
 
@@ -111,7 +119,7 @@ async function moBanVaGoiMon(banId) {
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');
             await taiDanhSachBan();
-            document.getElementById('selectBan').value = banId;
+            document.getElementById('cboBan').value = banId;
             await chonBan();
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
@@ -120,7 +128,7 @@ async function moBanVaGoiMon(banId) {
 }
 
 async function taiLaiHoaDon() {
-    const banId = document.getElementById('selectBan').value;
+    const banId = document.getElementById('cboBan').value;
     if (!banId) return;
     try {
         const res = await fetch(`${API}/ban/${banId}/hoadon`);
@@ -167,8 +175,8 @@ function chonMon(sanPhamId) {
     if (!sp) return;
     monDangChon = sp;
     document.getElementById('tenMonDangThem').textContent = `${sp.TenSanPham} - ${formatTien(sp.GiaCoBan)}`;
-    document.getElementById('inputSoLuong').value = 1;
-    document.getElementById('inputThuocTinhThem').value = '';
+    document.getElementById('txtSoLuong').value = 1;
+    document.getElementById('txtThuocTinhThem').value = '';
     document.getElementById('formThemMon').style.display = 'block';
 
     const goiY = sp.Loai === 'ThucAn' ? GOI_Y_THUC_AN : GOI_Y_NUOC_UONG;
@@ -176,19 +184,19 @@ function chonMon(sanPhamId) {
         `<button class="btn btn-sm btn-secondary" onclick="chonGoiY('${opt}')">${opt}</button>`).join('');
 }
 
-function chonGoiY(text) { document.getElementById('inputThuocTinhThem').value = text; }
+function chonGoiY(text) { document.getElementById('txtThuocTinhThem').value = text; }
 function huyChonMon()   { monDangChon = null; document.getElementById('formThemMon').style.display = 'none'; }
 
 async function themMon() {
     if (!monDangChon || !hoaDonHienTai) {
         hienThiThongBao('Vui lòng chọn bàn và món trước!', 'error'); return;
     }
-    const soLuong = parseInt(document.getElementById('inputSoLuong').value);
-    const thuocTinhThem = document.getElementById('inputThuocTinhThem').value.trim();
+    const soLuong = parseInt(document.getElementById('txtSoLuong').value);
+    const thuocTinhThem = document.getElementById('txtThuocTinhThem').value.trim();
 
     if (!soLuong || soLuong <= 0) {
         hienThiThongBao('Số lượng phải lớn hơn 0!', 'error');
-        document.getElementById('inputSoLuong').focus(); return;
+        document.getElementById('txtSoLuong').focus(); return;
     }
 
     try {
@@ -219,7 +227,7 @@ async function xoaMon(chiTietId) {
 }
 
 async function thanhToan() {
-    const banId = document.getElementById('selectBan').value;
+    const banId = document.getElementById('cboBan').value;
     if (!banId) return;
     if (!confirm(`Xác nhận thanh toán ${formatTien(hoaDonHienTai?.TongTien || 0)} và đóng bàn?`)) return;
 
@@ -228,7 +236,7 @@ async function thanhToan() {
         const data = await res.json();
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao} | Đã thu: ${formatTien(data.tongTien)}`, 'success');
-            document.getElementById('selectBan').value = '';
+            document.getElementById('cboBan').value = '';
             document.getElementById('thongTinBan').style.display = 'none';
             document.getElementById('khuVucGoiMon').style.display = 'none';
             document.getElementById('chuaChonBan').innerHTML = '<span class="empty-icon">👈</span><p>Chọn bàn để xem hóa đơn</p>';

@@ -28,8 +28,8 @@
 
 **Lệnh terminal:**
 ```bash
-dotnet new web -n QuanLyNhaHang --no-restore -o ./QuanLyNhaHang
-dotnet add package Microsoft.Data.Sqlite --version 8.0.0
+dotnet new web -n QuanLyNhaHang --no-restore -o ./QuanLyNhaHang (Tạo bộ khung dự án C# mới)
+dotnet add package Microsoft.Data.Sqlite --version 8.0.0 (Cài đặt thư viện thao tác với CSDL SQLite)
 ```
 
 **Kết quả:** Project tạo thành công, SQLite package được cài đặt.
@@ -131,7 +131,7 @@ GET  /api/hoadon/{id}             - Chi tiết 1 hóa đơn
 
 **Lệnh terminal:**
 ```bash
-dotnet build --no-restore
+dotnet build --no-restore (Biên dịch code từ C# sang mã máy để kiểm tra xem có lỗi cú pháp không)
 ```
 
 **Kết quả:**
@@ -176,7 +176,7 @@ Chúng tôi tiến hành chia nhỏ dự án thành các **User Story** và **Ta
 7. **Hoàn thiện Release v1.0**
    - Nhánh: Gộp `develop` vào `main`
    - Tag: `v1.0-Final-Release`
-   - Push toàn bộ nhánh và tag lên GitHub: `git push origin develop`, `git push origin main`, `git push origin --tags`
+   - Push toàn bộ nhánh và tag lên GitHub: `git push origin develop` (Đẩy nhánh develop lên mạng), `git push origin main` (Đẩy nhánh main lên mạng), `git push origin --tags` (Đẩy các đánh dấu phiên bản lên)
 
 ---
 
@@ -184,8 +184,8 @@ Chúng tôi tiến hành chia nhỏ dự án thành các **User Story** và **Ta
 
 ### Cách chạy ứng dụng
 ```bash
-cd QuanLyNhaHang
-dotnet run
+cd QuanLyNhaHang (Di chuyển vào thư mục chứa code)
+dotnet run (Khởi động ứng dụng, tự tạo CSDL nếu chưa có và mở cổng web)
 # Mở trình duyệt: http://localhost:5000
 ```
 
@@ -219,4 +219,57 @@ QuanLyNhaHang/
 - Sử dụng bảng màu: Nền tối huyền bí `#0b1326`, Container `#171f33`, màu nhấn chính tím oải hương `#c0c1ff`.
 - Áp dụng hiệu ứng kính mờ `glass-card` thời thượng cùng Sidebar bên trái rộng 72px cố định.
 - Tối ưu hóa CSS để đảm bảo mọi phần tử HTML render động từ các file JavaScript riêng biệt (`ban.js`, `menu.js`, `order.js`, `lichsu.js`) hiển thị đẹp mắt, ăn khớp với thiết kế mới mà không làm thay đổi hay ảnh hưởng đến logic nghiệp vụ cũ.
+
+---
+
+## 💻 CÁC LỆNH TERMINAL ĐÃ SỬ DỤNG VÀ Ý NGHĨA CỦA CHÚNG
+*(Ghi chú đặc biệt để hiểu rõ bản chất công việc, rất tốt khi thầy giáo hỏi)*
+
+### 1. Các lệnh liên quan đến .NET (C#) & CSDL
+- `dotnet new web -n QuanLyNhaHang`:
+  - **Dùng khi nào:** Khi mới bắt đầu dự án, chưa có gì cả.
+  - **Tác dụng:** Lệnh này giúp tạo ra một bộ khung dự án Web API C# hoàn toàn mới tinh có tên là "QuanLyNhaHang". Nó tự sinh ra file `Program.cs`.
+- `dotnet add package Microsoft.Data.Sqlite`:
+  - **Dùng khi nào:** Khi cần kết nối code C# với cơ sở dữ liệu SQLite.
+  - **Tác dụng:** Tải thư viện quản lý SQLite từ mạng về và nhúng vào dự án để ta có thể viết code tạo bảng, lưu trữ dữ liệu.
+- `dotnet build`:
+  - **Dùng khi nào:** Sau khi viết xong một đống code C#, muốn kiểm tra xem có gõ sai cú pháp ở đâu không.
+  - **Tác dụng:** Biên dịch (dịch code từ tiếng người sang tiếng máy). Nếu có lỗi (Error) nó sẽ báo dòng nào bị lỗi để ta sửa. Nếu thành công nó báo "Build succeeded".
+- `dotnet run`:
+  - **Dùng khi nào:** Bất cứ khi nào muốn bật phần mềm lên để chạy và kiểm thử giao diện.
+  - **Tác dụng:** Chạy ứng dụng. Nó sẽ tự động gọi file `Program.cs`, tự động gọi `DatabaseHelper.KhoiTaoCSDL()` để **tự tạo ra file CSDL `nha_hang.db`** (nếu chưa có), và mở một cái cổng (ví dụ: cổng 5000) để trình duyệt web có thể kết nối vào xem phần mềm.
+
+### 2. Các lệnh liên quan đến GIT (Lưu trữ và Quản lý phiên bản)
+- `git add .`:
+  - **Dùng khi nào:** Khi vừa code xong một tính năng, muốn lưu lại.
+  - **Tác dụng:** Đưa tất cả các file vừa bị thay đổi vào "danh sách chờ" để chuẩn bị lưu thành một phiên bản.
+- `git commit -m "nội dung"`:
+  - **Dùng khi nào:** Dùng ngay sau lệnh `git add .`.
+  - **Tác dụng:** Chính thức đóng gói các thay đổi thành một phiên bản (commit) và đính kèm ghi chú (ví dụ: "Thêm giao diện gọi món") để sau này đọc lại biết mình đã làm gì.
+- `git push origin develop`:
+  - **Dùng khi nào:** Khi muốn đưa code từ máy tính cá nhân lên mạng (GitHub).
+  - **Tác dụng:** Đẩy (Upload) code ở nhánh `develop` lên kho lưu trữ trên mạng để thầy hoặc các thành viên khác có thể tải về.
+- `git checkout main`:
+  - **Dùng khi nào:** Khi muốn chuyển từ nhánh đang làm việc (develop) sang nhánh chính thức (main).
+  - **Tác dụng:** Đổi không gian làm việc.
+- `git merge develop`:
+  - **Dùng khi nào:** Khi nhánh `develop` đã làm xong tính năng và chạy ngon lành, muốn gộp tính năng đó vào nhánh `main` (nhánh hoàn chỉnh nhất).
+  - **Tác dụng:** Trộn code từ nhánh `develop` đắp vào nhánh `main`.
+
+---
+
+## 📅 Ngày 29/05/2026
+
+### 🕐 16:50 — Bổ sung tính năng hình ảnh minh họa cho món ăn
+
+**Công việc:**
+- **Tầng Entity (Entities/):** Cập nhật thực thể trừu tượng `SanPham.cs` để khai báo thêm thuộc tính `HinhAnh` (dạng chuỗi URL hoặc đường dẫn ảnh minh họa), tự động kế thừa xuống các lớp con `ThucAn.cs` và `NuocUong.cs`.
+- **Tầng DAL (DAL/):**
+  - Cập nhật `DatabaseHelper.cs` để thêm cột `HinhAnh` vào câu lệnh khởi tạo bảng `SanPham`, đồng thời chạy truy vấn phụ trợ `ALTER TABLE SanPham ADD COLUMN HinhAnh TEXT NULL;` dưới khối try-catch nhằm nâng cấp CSDL hiện có mà không làm mất dữ liệu cũ. Bổ sung các đường dẫn ảnh ẩm thực chất lượng cao từ Unsplash cho 10 món ăn mẫu.
+  - Cập nhật `SanPhamDAL.cs` để nạp/ghi thuộc tính `HinhAnh` từ/vào SQLite Reader và SQLite Parameters trong các tác vụ CRUD.
+- **Tầng Web API (Program.cs):** Đồng bộ hóa API Get, Post, Put để đóng gói và phân tích trường `HinhAnh` dưới dạng JSON.
+- **Tầng Presentation (wwwroot/):**
+  - Trang Thực đơn (`menu.html` & `menu.js`): Thêm trường nhập URL ảnh vào modal Thêm/Sửa. Thiết kế lại giao diện thẻ món ăn (Card) cực kỳ đẹp mắt với ảnh bìa lớn ở trên, các badge trạng thái/loại nằm đè lên góc ảnh, mang lại cảm giác cao cấp.
+  - Trang Gọi món POS (`order.html` & `order.js`): Thêm hình ảnh thu nhỏ (thumbnail) bên cạnh tên món trong danh sách gọi món giúp nhân viên chọn món cực kỳ nhanh và trực quan.
+
 

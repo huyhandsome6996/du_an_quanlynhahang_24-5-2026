@@ -56,6 +56,9 @@ namespace QuanLyNhaHang.Entities
             set => _dangBan = value;
         }
 
+        // URL hoặc đường dẫn ảnh minh họa
+        public string? HinhAnh { get; set; }
+
         // -------------------------------------------------------
         // TRỪU TƯỢNG: Phương thức bắt buộc lớp con phải ghi đè
         // Đây là nền tảng của Đa hình (Polymorphism)

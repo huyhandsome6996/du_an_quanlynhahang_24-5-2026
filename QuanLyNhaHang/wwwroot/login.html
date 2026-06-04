@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Đăng nhập - Vua Sư Tử</title>
+    <!-- FAVICON: Thay đổi biểu tượng chương trình -->
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                    },
+                    colors: {
+                        "primary": "#c0c1ff",
+                        "primary-hover": "#a8a9ff",
+                        "surface": "#0b1326",
+                        "surface-container": "#141c2f",
+                        "on-surface": "#dae2fd",
+                        "on-surface-variant": "#9ca3af",
+                        "background": "#070b15"
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(20, 28, 47, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Hiệu ứng trôi nổi của các quả cầu phát sáng nền */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.15); }
+        }
+        @keyframes float-reverse {
+            0%, 100% { transform: translateY(0px) scale(1.1); }
+            50% { transform: translateY(20px) scale(0.9); }
+        }
+        .glow-orb-1 {
+            animation: float-slow 12s ease-in-out infinite;
+            filter: blur(80px);
+        }
+        .glow-orb-2 {
+            animation: float-reverse 15s ease-in-out infinite;
+            filter: blur(85px);
+        }
+
+        /* Animation xuất hiện của Card */
+        @keyframes card-appear {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-card {
+            animation: card-appear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Custom input focus ring glow */
+        .premium-input:focus {
+            box-shadow: 0 0 15px rgba(192, 193, 255, 0.2);
+            border-color: #c0c1ff !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex items-center justify-center font-sans relative overflow-hidden">
+
+    <!-- Quả cầu phát sáng chạy nền thẩm mỹ -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/20 glow-orb-1 pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-[450px] h-[450px] rounded-full bg-blue-500/10 glow-orb-2 pointer-events-none"></div>
+
+    <div class="glass-card w-full max-w-md p-8 rounded-3xl mx-4 relative overflow-hidden animate-card z-10">
+        <!-- Viền neon mỏng trên cùng card -->
+        <div class="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary/30 via-primary to-blue-500/30"></div>
+        
+        <div class="text-center mb-8 relative">
+            <div class="relative w-24 h-24 mx-auto mb-4 group">
+                <!-- Vòng tròn phát sáng bên dưới logo -->
+                <div class="absolute inset-0 rounded-full bg-primary/20 blur-md group-hover:bg-primary/30 transition duration-300"></div>
+                <img src="img/logo.png" alt="Logo Vua Sư Tử" class="relative w-24 h-24 mx-auto rounded-full border border-primary/40 object-cover shadow-[0_0_20px_rgba(192,193,255,0.25)] transition duration-300 group-hover:scale-105">
+            </div>
+            <h1 class="text-3xl font-extrabold tracking-tight text-white bg-clip-text">NHÀ HÀNG VUA SƯ TỬ</h1>
+            <p class="text-on-surface-variant text-sm mt-2 font-medium tracking-wide" id="subtitleText">HỆ THỐNG QUẢN LÝ CAO CẤP</p>
+        </div>
+
+        <!-- Form Đăng Ký (Ban đầu) -->
+        <form id="registerForm" class="space-y-6 hidden" onsubmit="xuLyDangKy(event)">
+            <div class="p-3.5 rounded-xl bg-primary/5 border border-primary/10 text-primary text-sm text-center font-medium leading-relaxed">
+                👋 Chào mừng bạn! Vui lòng thiết lập tài khoản quản trị hệ thống để tiếp tục.
+            </div>
+            
+            <div class="space-y-1">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">Tên tài khoản</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">person</span>
+                    <input type="text" id="txtRegUser" class="premium-input w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 focus:ring-0 focus:border-primary outline-none text-on-surface placeholder-white/20 transition-all text-sm font-medium" required placeholder="Tên đăng nhập mới (tối thiểu 3 ký tự)">
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">Mật khẩu</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">lock</span>
+                    <input type="password" id="txtRegPass" class="premium-input w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 py-3.5 focus:ring-0 focus:border-primary outline-none text-on-surface placeholder-white/20 transition-all text-sm font-medium" required placeholder="••••••••  (tối thiểu 4 ký tự)">
+                    <button type="button" onclick="togglePassword('txtRegPass', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface focus:outline-none">
+                        <span class="material-symbols-outlined text-lg">visibility</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thông báo lỗi đăng ký -->
+            <div id="regErrorMsg" class="flex items-center gap-2 text-red-400 text-xs justify-center hidden bg-red-500/10 border border-red-500/20 py-2 rounded-xl">
+                <span class="material-symbols-outlined text-sm">error</span>
+                <span id="regErrorText">Lỗi đăng ký!</span>
+            </div>
+
+            <button type="submit" id="btnDangKy" class="w-full bg-primary hover:bg-primary-hover text-surface font-bold rounded-2xl py-4 shadow-[0_4px_20px_rgba(192,193,255,0.2)] transition-all duration-300 transform active:scale-[0.98] uppercase text-xs tracking-widest mt-4">
+                Thiết Lập Tài Khoản
+            </button>
+
+            <div class="text-center mt-4 pt-2">
+                <p class="text-xs text-on-surface-variant">Đã có tài khoản? <a href="#" onclick="chuyenForm('login')" class="text-primary hover:text-primary-hover font-bold transition-colors">Đăng nhập ngay</a></p>
+            </div>
+        </form>
+
+        <!-- Form Đăng Nhập -->
+        <form id="loginForm" class="space-y-6 hidden" onsubmit="xuLyDangNhap(event)">
+            <div class="space-y-1">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">Tên tài khoản</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">person</span>
+                    <input type="text" id="txtLogUser" class="premium-input w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 focus:ring-0 focus:border-primary outline-none text-on-surface placeholder-white/20 transition-all text-sm font-medium" required placeholder="Nhập tài khoản">
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">Mật khẩu</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">lock</span>
+                    <input type="password" id="txtLogPass" class="premium-input w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 py-3.5 focus:ring-0 focus:border-primary outline-none text-on-surface placeholder-white/20 transition-all text-sm font-medium" required placeholder="••••••••">
+                    <button type="button" onclick="togglePassword('txtLogPass', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface focus:outline-none">
+                        <span class="material-symbols-outlined text-lg">visibility</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="errorMsg" class="flex items-center gap-2 text-red-400 text-xs justify-center hidden bg-red-500/10 border border-red-500/20 py-2 rounded-xl">
+                <span class="material-symbols-outlined text-sm">error</span>
+                <span id="errorText">Tài khoản hoặc mật khẩu không chính xác!</span>
+            </div>
+
+            <button type="submit" id="btnDangNhap" class="w-full bg-primary hover:bg-primary-hover text-surface font-bold rounded-2xl py-4 shadow-[0_4px_20px_rgba(192,193,255,0.2)] transition-all duration-300 transform active:scale-[0.98] uppercase text-xs tracking-widest mt-4 flex justify-center items-center gap-2">
+                <span class="material-symbols-outlined text-base">login</span> Đăng Nhập
+            </button>
+
+            <div class="text-center mt-4 pt-2">
+                <p class="text-xs text-on-surface-variant">Chưa có tài khoản? <a href="#" onclick="chuyenForm('register')" class="text-primary hover:text-primary-hover font-bold transition-colors">Tạo tài khoản mới</a></p>
+            </div>
+        </form>
+
+    </div>
+
+    <script>
+        const API = 'http://localhost:5000/api';
+
+        // Kiểm tra hệ thống đã có tài khoản chưa (qua API)
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch(`${API}/auth/check`);
+                const data = await res.json();
+                if (!data.coNguoiDung) {
+                    document.getElementById('registerForm').classList.remove('hidden');
+                    document.getElementById('subtitleText').innerText = "THIẾT LẬP TÀI KHOẢN QUẢN TRỊ";
+                } else {
+                    document.getElementById('loginForm').classList.remove('hidden');
+                    document.getElementById('subtitleText').innerText = "VUI LÒNG ĐĂNG NHẬP ĐỂ TIẾP TỤC";
+                }
+            } catch {
+                // Fallback nếu server chưa sẵn sàng: hiện form đăng ký
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('subtitleText').innerText = "THIẾT LẬP TÀI KHOẢN QUẢN TRỊ";
+            }
+        });
+
+        function chuyenForm(formName) {
+            if (formName === 'login') {
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('subtitleText').innerText = "VUI LÒNG ĐĂNG NHẬP ĐỂ TIẾP TỤC";
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('subtitleText').innerText = "TẠO TÀI KHOẢN MỚI";
+            }
+        }
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('.material-symbols-outlined');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerText = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.innerText = 'visibility';
+            }
+        }
+
+        // Đăng ký tài khoản - gửi lên API, mật khẩu được băm SHA256 phía server
+        async function xuLyDangKy(e) {
+            e.preventDefault();
+            const u = document.getElementById('txtRegUser').value.trim();
+            const p = document.getElementById('txtRegPass').value.trim();
+            
+            // Validation phía client
+            if (u.length < 3) {
+                hienLoiDangKy('Tên đăng nhập phải có ít nhất 3 ký tự!');
+                return;
+            }
+            if (p.length < 4) {
+                hienLoiDangKy('Mật khẩu phải có ít nhất 4 ký tự!');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/auth/dangky`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ TenDangNhap: u, MatKhau: p })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("✅ " + data.thongBao);
+                    window.location.reload();
+                } else {
+                    hienLoiDangKy(data.thongBao || 'Lỗi đăng ký!');
+                }
+            } catch {
+                hienLoiDangKy('Không kết nối được server! Hãy chạy dotnet run trước.');
+            }
+        }
+
+        function hienLoiDangKy(msg) {
+            const el = document.getElementById('regErrorMsg');
+            document.getElementById('regErrorText').textContent = msg;
+            el.classList.remove('hidden');
+            // Hiệu ứng lắc
+            const card = document.querySelector('.glass-card');
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'shake 0.4s ease-in-out';
+        }
+
+        // Đăng nhập - gửi lên API, server so sánh SHA256 hash
+        async function xuLyDangNhap(e) {
+            e.preventDefault();
+            const u = document.getElementById('txtLogUser').value.trim();
+            const p = document.getElementById('txtLogPass').value.trim();
+
+            if (!u || !p) {
+                hienLoiDangNhap('Vui lòng nhập đầy đủ thông tin!');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/auth/dangnhap`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ TenDangNhap: u, MatKhau: p })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    sessionStorage.setItem('vst_logged_in', 'true');
+                    sessionStorage.setItem('vst_user', data.tenDangNhap);
+                    window.location.href = 'index.html';
+                } else if (res.status === 401) {
+                    hienLoiDangNhap('Tài khoản hoặc mật khẩu không chính xác!');
+                } else {
+                    const data = await res.json();
+                    hienLoiDangNhap(data.thongBao || 'Lỗi đăng nhập!');
+                }
+            } catch {
+                hienLoiDangNhap('Không kết nối được server!');
+            }
+        }
+
+        function hienLoiDangNhap(msg) {
+            const el = document.getElementById('errorMsg');
+            document.getElementById('errorText').textContent = msg;
+            el.classList.remove('hidden');
+            // Hiệu ứng lắc khi sai mật khẩu
+            const card = document.querySelector('.glass-card');
+            card.style.animation = 'none';
+            card.offsetHeight; // Kích hoạt repaint
+            card.style.animation = 'shake 0.4s ease-in-out';
+        }
+    </script>
+    
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+    </style>
+</body>
+</html>

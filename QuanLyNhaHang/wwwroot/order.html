@@ -3,15 +3,22 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Bistro Elite - Gọi Món & Thanh Toán</title>
+    <title>Vua Sư Tử - Gọi Món & Thanh Toán</title>
+    <!-- FAVICON: Thay đổi biểu tượng chương trình -->
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        heading: ['"Be Vietnam Pro"', 'sans-serif'],
+                    },
                     colors: {
                         "primary": "#c0c1ff",
                         "surface": "#0b1326",
@@ -170,11 +177,11 @@
         }
     </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen flex font-['Inter']">
+<body class="bg-background text-on-surface min-h-screen flex font-sans">
 
     <!-- SIDEBAR -->
     <nav class="fixed left-0 top-0 h-screen w-sidebar-width z-50 bg-surface-container border-r border-white/5 flex flex-col items-center py-8 gap-6">
-        <div class="text-primary font-['Sora'] font-bold text-xl mb-4">BE</div>
+        <img src="img/logo.png" alt="Logo" class="w-12 h-12 rounded-full border border-primary/30 object-cover shadow-[0_0_10px_rgba(192,193,255,0.2)]">
         
         <a href="index.html" class="nav-btn relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant/60 hover:text-on-surface transition-all group" title="Sơ đồ bàn">
             <span class="material-symbols-outlined">layers</span>
@@ -197,13 +204,13 @@
     <div class="ml-sidebar-width flex-1 flex flex-col">
         <!-- HEADER -->
         <header class="sticky top-0 h-16 bg-surface/80 backdrop-blur-md border-b border-white/5 flex justify-between items-center px-8 z-40">
-            <h1 class="font-['Sora'] text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">point_of_sale</span> Bistro Elite
+            <h1 class="text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">point_of_sale</span> Nhà Hàng Vua Sư Tử
             </h1>
             <div class="flex items-center gap-4">
                 <div class="text-right mr-4">
                     <p class="text-xs text-on-surface-variant">Hệ thống quản lý</p>
-                    <p class="text-sm font-semibold">Bistro Elite v1.0</p>
+                    <p class="text-sm font-semibold">Vua Sư Tử v1.0</p>
                 </div>
                 <div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-surface-container-highest flex items-center justify-center">
                     <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
@@ -216,7 +223,7 @@
             <section id="trang-goimon" class="page active block">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-white/5 pb-4">
                     <div>
-                        <h2 class="font-['Sora'] text-3xl font-bold mb-2">Gọi Món & POS</h2>
+                        <h2 class="text-3xl font-bold mb-2 tracking-tight">Gọi Món & POS</h2>
                         <p class="text-on-surface-variant">Phục vụ khách hàng, thêm món ăn và xử lý hóa đơn nhanh chóng.</p>
                     </div>
                 </div>
@@ -230,12 +237,12 @@
                         <!-- Chọn bàn -->
                         <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg">
                             <div class="flex justify-between items-center mb-3">
-                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 font-['Sora']">
+                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
                                     <span class="material-symbols-outlined text-[16px]">touch_app</span> 1️⃣ Chọn Bàn Cần Phục Vụ
                                 </h3>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-4 items-center">
-                                <select id="selectBan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer" onchange="chonBan()">
+                                <select id="cboBan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer [&>option]:bg-surface [&>option]:text-on-surface" onchange="chonBan()">
                                     <option value="">-- Chọn bàn cần phục vụ --</option>
                                 </select>
                             </div>
@@ -248,7 +255,7 @@
                         <!-- Gọi món -->
                         <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg" id="khuVucGoiMon" style="display:none;">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-white/5">
-                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 font-['Sora']">
+                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
                                     <span class="material-symbols-outlined text-[18px]">restaurant</span> 2️⃣ Chọn Món & Thêm Vào Bill
                                 </h3>
                                 <!-- Lọc loại -->
@@ -272,12 +279,12 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng *</label>
-                                        <input type="number" id="inputSoLuong" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm"
+                                        <input type="number" id="txtSoLuong" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm"
                                                value="1" min="1" placeholder="Nhập số lượng">
                                     </div>
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ghi chú / Tùy chọn</label>
-                                        <input type="text" id="inputThuocTinhThem" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30"
+                                        <input type="text" id="txtThuocTinhThem" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30"
                                                placeholder="Phần lớn / Lon / Ít cay...">
                                     </div>
                                 </div>
@@ -286,8 +293,8 @@
                                 <div class="mt-3 flex flex-wrap gap-1.5" id="goiYTuyChon"></div>
 
                                 <div class="flex gap-3 mt-5">
-                                    <button class="bg-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
-                                    <button class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all" onclick="huyChonMon()">✕ Hủy</button>
+                                    <button id="btnThemMon" class="bg-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
+                                    <button id="btnHuyChonMon" class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all" onclick="huyChonMon()">✕ Hủy</button>
                                 </div>
                             </div>
                         </div>
@@ -297,7 +304,7 @@
                     <div class="lg:col-span-5">
                         <div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg" id="khuVucHoaDon">
                             <div class="flex justify-between items-center pb-3 mb-4 border-b border-white/5">
-                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 font-['Sora']">
+                                <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
                                     <span class="material-symbols-outlined text-[18px]">receipt</span> Hóa Đơn Hiện Tại
                                 </h3>
                                 <button class="glass-card w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200" onclick="taiLaiHoaDon()">
@@ -336,6 +343,6 @@
         </main>
     </div>
 
-    <script src="js/order.js"></script>
+    <script src="js/order.js?v=1.3"></script>
 </body>
 </html>

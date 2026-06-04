@@ -3,15 +3,22 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Bistro Elite - Quản Lý Bàn</title>
+    <title>Vua Sư Tử - Quản Lý Bàn</title>
+    <!-- FAVICON: Thay đổi biểu tượng chương trình -->
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        heading: ['"Be Vietnam Pro"', 'sans-serif'],
+                    },
                     colors: {
                         "primary": "#c0c1ff",
                         "surface": "#0b1326",
@@ -99,7 +106,6 @@
             margin-bottom: 0.5rem;
         }
         .ban-card .ban-ten {
-            font-family: 'Sora', sans-serif;
             font-weight: 600;
             font-size: 1.1rem;
             color: #dae2fd;
@@ -216,11 +222,11 @@
         }
     </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen flex font-['Inter']">
+<body class="bg-background text-on-surface min-h-screen flex font-sans">
 
     <!-- SIDEBAR -->
     <nav class="fixed left-0 top-0 h-screen w-sidebar-width z-50 bg-surface-container border-r border-white/5 flex flex-col items-center py-8 gap-6">
-        <div class="text-primary font-['Sora'] font-bold text-xl mb-4">BE</div>
+        <img src="img/logo.png" alt="Logo" class="w-12 h-12 rounded-full border border-primary/30 object-cover shadow-[0_0_10px_rgba(192,193,255,0.2)]">
         
         <a href="index.html" class="nav-btn active relative flex items-center justify-center w-12 h-12 rounded-xl text-on-surface-variant hover:text-on-surface transition-all group" title="Sơ đồ bàn">
             <span class="material-symbols-outlined">layers</span>
@@ -243,13 +249,13 @@
     <div class="ml-sidebar-width flex-1 flex flex-col">
         <!-- HEADER -->
         <header class="sticky top-0 h-16 bg-surface/80 backdrop-blur-md border-b border-white/5 flex justify-between items-center px-8 z-40">
-            <h1 class="font-['Sora'] text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">layers</span> Bistro Elite
+            <h1 class="text-xl font-semibold tracking-tight text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">layers</span> Nhà Hàng Vua Sư Tử
             </h1>
             <div class="flex items-center gap-4">
                 <div class="text-right mr-4">
                     <p class="text-xs text-on-surface-variant">Hệ thống quản lý</p>
-                    <p class="text-sm font-semibold">Bistro Elite v1.0</p>
+                    <p class="text-sm font-semibold">Vua Sư Tử v1.0</p>
                 </div>
                 <div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-surface-container-highest flex items-center justify-center">
                     <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
@@ -262,16 +268,24 @@
             <section id="trang-ban" class="page active block">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                     <div>
-                        <h2 class="font-['Sora'] text-3xl font-bold mb-2">Sơ đồ bàn</h2>
+                        <h2 class="text-3xl font-bold mb-2 tracking-tight">Sơ đồ bàn</h2>
                         <p class="text-on-surface-variant">Quản lý trạng thái và thông tin bàn ăn trong thời gian thực.</p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="moModalThemBan()" class="bg-primary text-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+                        <button id="btnThemBan" onclick="moModalThemBan()" class="bg-primary text-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
                             <span class="material-symbols-outlined">add</span> Thêm Bàn Mới
                         </button>
-                        <button onclick="taiDanhSachBan()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all">
+                        <button id="btnLamMoiBan" onclick="taiDanhSachBan()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all">
                             <span class="material-symbols-outlined">refresh</span> Làm Mới
                         </button>
+                    </div>
+                </div>
+
+                <!-- Ô Tìm Kiếm -->
+                <div class="mb-6">
+                    <div class="flex items-center gap-3 bg-surface-container border border-white/5 px-4 py-2 rounded-2xl w-full max-w-md">
+                        <span class="material-symbols-outlined text-on-surface-variant">search</span>
+                        <input type="text" id="txtTimKiemBan" class="bg-transparent border-none outline-none text-on-surface text-sm flex-1 placeholder:text-on-surface-variant/40" placeholder="Tìm kiếm bàn theo tên..." oninput="timKiemBan()">
                     </div>
                 </div>
 
@@ -306,25 +320,25 @@
             <button onclick="dongModal('modalBan')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
                 <span class="material-symbols-outlined">close</span>
             </button>
-            <h3 class="font-['Sora'] text-2xl font-bold mb-6 text-primary" id="modalBanTieuDe">Thêm Bàn Mới</h3>
+            <h3 class="text-2xl font-bold mb-6 text-primary tracking-tight" id="modalBanTieuDe">Thêm Bàn Mới</h3>
             
             <div class="space-y-4">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tên bàn <span class="text-mau-do">*</span></label>
-                    <input type="text" id="inputTenBan" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm"
+                    <input type="text" id="txtTenBan" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm"
                            placeholder="VD: Bàn 7, Bàn VIP 2, Phòng Lạnh 2">
                 </div>
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Trạng thái</label>
-                    <select id="selectTrangThaiBan" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer">
+                    <select id="cboTrangThaiBan" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer">
                         <option value="Trống">Trống</option>
                         <option value="Có khách">Có khách</option>
                     </select>
                 </div>
 
                 <div class="flex gap-3 pt-4">
-                    <button onclick="dongModal('modalBan')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all">Hủy</button>
+                    <button id="btnHuyBan" onclick="dongModal('modalBan')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all">Hủy</button>
                     <button id="btnLuuBan" onclick="luuBan()" class="flex-1 bg-primary text-surface py-3 rounded-xl font-bold hover:opacity-90 transition-all">Lưu</button>
                 </div>
             </div>
@@ -337,7 +351,7 @@
             <button onclick="dongModal('modalChiTietBan')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface">
                 <span class="material-symbols-outlined">close</span>
             </button>
-            <h3 class="font-['Sora'] text-2xl font-bold mb-6 text-primary" id="chiTietBanTieuDe">Chi tiết bàn</h3>
+            <h3 class="text-2xl font-bold mb-6 text-primary tracking-tight" id="chiTietBanTieuDe">Chi tiết bàn</h3>
             
             <div class="flex-1 overflow-y-auto pr-2" id="chiTietBanNoidung"></div>
             
@@ -345,7 +359,7 @@
         </div>
     </div>
 
-    <script src="js/ban.js"></script>
+    <script src="js/ban.js?v=1.3"></script>
     <script>
         // Đồng bộ hiệu ứng mở/đóng modal mượt mà
         window.moModal = function(id) {
