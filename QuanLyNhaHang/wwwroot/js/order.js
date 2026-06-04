@@ -252,10 +252,40 @@ async function thanhToan() {
     } catch { hienThiThongBao('Lỗi kết nối server!', 'error'); }
 }
 
+// ---- Hàm tiện ích ----
+
+// Hiển thị thông báo nội tuyến + Toast notification
 function hienThiThongBao(noiDung, loai = 'success') {
+    // Inline notification (bảo toàn cho học thuật)
     const kv = document.getElementById('thongBaoKhuVuc');
-    kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
-    setTimeout(() => kv.innerHTML = '', 5000);
+    if (kv) {
+        kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
+        setTimeout(() => kv.innerHTML = '', 5000);
+    }
+    // Toast notification (UX cao cấp)
+    hienToast(noiDung, loai);
+}
+
+// Toast notification — Hiển thị thông báo nổi góc phải trên cùng
+function hienToast(noiDung, loai = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${loai}`;
+    const icon = loai === 'success' ? '✅' : '❌';
+    toast.innerHTML = `<span style="font-size:1.1rem;">${icon}</span><span>${noiDung}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
 }
 
 function formatTien(so) {

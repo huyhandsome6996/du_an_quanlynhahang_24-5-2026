@@ -68,7 +68,7 @@ function hienThiBang(ds) {
         // Nếu không có ảnh, dùng ảnh mặc định là Logo hoặc một hình placeholder thức ăn đẹp mắt
         const imageSrc = sp.HinhAnh ? sp.HinhAnh : 'img/logo.png';
         return `
-        <div class="glass-card rounded-2xl overflow-hidden cursor-pointer flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" onclick="moModalSua(${sp.Id})">
+        <div class="glass-card product-card rounded-2xl overflow-hidden cursor-pointer flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" onclick="moModalSua(${sp.Id})">
             <div class="relative h-44 w-full bg-surface-container-highest overflow-hidden border-b border-white/5">
                 <img src="${imageSrc}" alt="${sp.TenSanPham}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.src='img/logo.png'">
                 <span class="absolute top-3 right-3 badge ${sp.DangBan ? 'badge-trong' : 'badge-cokhach'}">
@@ -232,23 +232,70 @@ async function xoa(id, ten) {
 }
 
 // ---- Hàm tiện ích ----
-function dongModal(id) {
-    document.getElementById(id).classList.remove('show');
+
+// Hiển thị thông báo nội tuyến + Toast notification
+function hienThiThongBao(noiDung, loai = 'success') {
+    // Inline notification (bảo toàn cho học thuật)
+    const kv = document.getElementById('thongBaoKhuVuc');
+    if (kv) {
+        kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
+        setTimeout(() => kv.innerHTML = '', 4000);
+    }
+    // Toast notification (UX cao cấp)
+    hienToast(noiDung, loai);
 }
 
-function hienThiThongBao(noiDung, loai = 'success') {
-    const kv = document.getElementById('thongBaoKhuVuc');
-    kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
-    setTimeout(() => kv.innerHTML = '', 4000);
+// Toast notification — Hiển thị thông báo nổi góc phải trên cùng
+function hienToast(noiDung, loai = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${loai}`;
+    const icon = loai === 'success' ? '✅' : '❌';
+    toast.innerHTML = `<span style="font-size:1.1rem;">${icon}</span><span>${noiDung}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
 }
 
 function formatTien(so) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(so);
 }
 
-// MODAL BEHAVIOR: KHÔNG cho đóng khi click bên ngoài (ShowDialog)
-// Chỉ đóng khi nhấn nút Đóng/Hủy bên trong modal
+// MODAL — Mở/đóng modal mượt mà với hiệu ứng scale
 function moModal(id) {
-    document.getElementById(id).classList.add('show');
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.add('show');
+        setTimeout(() => {
+            const child = modal.firstElementChild;
+            if (child) {
+                child.classList.remove('scale-95');
+                child.classList.add('scale-100');
+            }
+        }, 50);
+    }
 }
-// => KHÔNG thêm event click vào overlay
+
+function dongModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        const child = modal.firstElementChild;
+        if (child) {
+            child.classList.remove('scale-100');
+            child.classList.add('scale-95');
+        }
+        setTimeout(() => {
+            modal.classList.remove('show');
+        }, 150);
+    }
+}

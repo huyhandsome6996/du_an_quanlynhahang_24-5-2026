@@ -85,8 +85,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .premium-input:focus {
-            box-shadow: 0 0 20px rgba(212, 168, 83, 0.15), 0 0 0 3px rgba(212, 168, 83, 0.1);
+            box-shadow: 0 0 24px rgba(212, 168, 83, 0.2), 0 0 0 3px rgba(212, 168, 83, 0.12);
             border-color: #d4a853 !important;
+            background: rgba(255,255,255,0.06);
         }
 
         /* Decorative patterns */
@@ -102,6 +103,10 @@
             position: relative;
             overflow: hidden;
         }
+        .btn-gold:hover {
+            box-shadow: 0 6px 28px rgba(212,168,83,0.35);
+            transform: translateY(-1px);
+        }
         .btn-gold::after {
             content: '';
             position: absolute;
@@ -110,7 +115,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shimmer 3s infinite;
+            animation: shimmer 2.5s infinite;
         }
         @keyframes shimmer {
             0% { left: -100%; }
@@ -125,14 +130,46 @@
         .logo-glow {
             animation: logoGlow 3s ease-in-out infinite;
         }
+
+        /* Subtle floating particles */
+        @keyframes float-particle {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-30px) rotate(180deg); opacity: 0.6; }
+        }
+        .bg-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(212, 168, 83, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-particle 8s ease-in-out infinite;
+        }
+
+        /* Login card hover effect */
+        .login-card {
+            transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .login-card:hover {
+            box-shadow: 
+                0 32px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(212, 168, 83, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
     </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen flex items-center justify-center font-sans relative overflow-hidden pattern-overlay">
+<body class="bg-[#060d1a] text-on-surface min-h-screen flex items-center justify-center font-sans relative overflow-hidden pattern-overlay">
+
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Quả cầu phát sáng chạy nền thẩm mỹ -->
     <div class="absolute -top-40 -left-40 w-[400px] h-[400px] rounded-full bg-primary/15 glow-orb-1 pointer-events-none"></div>
     <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-primary/8 glow-orb-2 pointer-events-none"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-amber-600/5 glow-orb-3 pointer-events-none"></div>
+
+    <div class="bg-particle" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
+    <div class="bg-particle" style="top: 60%; left: 80%; animation-delay: 2s;"></div>
+    <div class="bg-particle" style="top: 80%; left: 25%; animation-delay: 4s;"></div>
 
     <div class="login-card w-full max-w-md p-8 rounded-3xl mx-4 relative overflow-hidden animate-card z-10">
         <!-- Viền neon vàng kim trên cùng card -->

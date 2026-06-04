@@ -141,6 +141,13 @@
         .table-wrapper td {
             padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.03); color: #e8ecf4;
         }
+        .table-wrapper tr {
+            transition: all 0.2s ease;
+        }
+        .table-wrapper tbody tr:hover {
+            background: rgba(212, 168, 83, 0.05);
+            transform: scale(1.005);
+        }
 
         /* Tong Tien Box */
         .tong-tien-box {
@@ -200,6 +207,11 @@
         .stat-widget {
             position: relative;
             overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .stat-widget:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
         }
         .stat-widget::before {
             content: '';
@@ -208,9 +220,31 @@
             background: linear-gradient(135deg, rgba(212, 168, 83, 0.03), transparent);
             border-radius: inherit;
         }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stat-number { animation: countUp 0.5s ease forwards; }
+
+        #modalChiTietHD > .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #d4a853, transparent);
+            border-radius: 24px 24px 0 0;
+        }
     </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen flex font-sans relative overflow-hidden">
+<body class="bg-[#0a1628] text-on-surface min-h-screen flex font-sans relative">
+
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Quả cầu phát sáng -->
     <div class="absolute top-20 right-10 w-[500px] h-[500px] rounded-full bg-primary/4 glow-orb-1"></div>
@@ -276,7 +310,7 @@
             </div>
         </header>
 
-        <main class="p-8 flex-1 max-w-7xl w-full mx-auto">
+        <main class="p-8 flex-1 max-w-7xl w-full mx-auto" style="animation: slideUp 0.5s ease forwards">
             <section id="trang-lichsu" class="page active block">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 pb-4">
                     <div>
