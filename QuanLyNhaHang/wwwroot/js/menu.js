@@ -31,9 +31,21 @@ async function taiDanhSach() {
 
 // Lọc theo loại và hiển thị bảng
 function locTheoLoai() {
-    const loai = document.getElementById('locLoai').value;
-    const dsLoc = loai ? danhSachSanPham.filter(sp => sp.Loai === loai) : danhSachSanPham;
+    const loai = document.getElementById('cboLocLoai').value;
+    let dsLoc = loai ? danhSachSanPham.filter(sp => sp.Loai === loai) : danhSachSanPham;
+    
+    // Áp dụng tìm kiếm nếu có
+    const tuKhoa = document.getElementById('txtTimKiemMon')?.value.trim().toLowerCase();
+    if (tuKhoa) {
+        dsLoc = dsLoc.filter(sp => sp.TenSanPham.toLowerCase().includes(tuKhoa));
+    }
+    
     hienThiBang(dsLoc);
+}
+
+// TÌM KIẾM món theo tên
+function timKiemMon() {
+    locTheoLoai(); // Gọi lại lọc (sẽ kết hợp cả bộ lọc loại + từ khóa)
 }
 
 // Vẽ lưới sản phẩm kèm ảnh minh họa
@@ -71,7 +83,7 @@ function hienThiBang(ds) {
                 <p class="text-primary font-bold text-sm mb-4">${formatTien(sp.GiaCoBan)}</p>
                 <div class="flex gap-2 justify-end mt-auto pt-4 border-t border-white/5">
                     <button class="btn btn-sm btn-info flex-1" onclick="event.stopPropagation(); moModalSua(${sp.Id})">✏️ Sửa</button>
-                    <button class="btn btn-sm btn-danger flex-1" onclick="event.stopPropagation(); xoa(${sp.Id}, '${sp.TenSanPham.replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+                    <button class="btn btn-sm btn-danger flex-1" onclick="event.stopPropagation(); xoa(${sp.Id}, '${sp.TenSanPham.replace(/'/g, "\\\'")}')">🗑️ Xóa</button>
                 </div>
             </div>
         </div>`;
@@ -81,16 +93,16 @@ function hienThiBang(ds) {
 // ---- MODAL THÊM / SỬA ----
 function moModalThem() {
     document.getElementById('modalSanPhamTieuDe').textContent = 'Thêm Món Mới';
-    document.getElementById('inputIdSanPham').value = '';
-    document.getElementById('inputTenSanPham').value = '';
-    document.getElementById('inputGiaCoBan').value = '';
-    document.getElementById('inputHinhAnh').value = '';
+    document.getElementById('txtIdSanPham').value = '';
+    document.getElementById('txtTenSanPham').value = '';
+    document.getElementById('txtGiaCoBan').value = '';
+    document.getElementById('txtHinhAnh').value = '';
     document.getElementById('imgPreviewHinhAnh').src = 'img/logo.png';
-    document.getElementById('inputFileHinhAnh').value = '';
-    document.getElementById('selectLoai').value = 'ThucAn';
-    document.getElementById('selectDangBan').value = 'true';
+    document.getElementById('txtFileHinhAnh').value = '';
+    document.getElementById('cboLoai').value = 'ThucAn';
+    document.getElementById('cboDangBan').value = 'true';
     capNhatGiaoDienLoai();
-    document.getElementById('modalSanPham').classList.add('show');
+    moModal('modalSanPham');
 }
 
 function moModalSua(id) {
@@ -98,16 +110,16 @@ function moModalSua(id) {
     if (!sp) return;
 
     document.getElementById('modalSanPhamTieuDe').textContent = `Sửa: ${sp.TenSanPham}`;
-    document.getElementById('inputIdSanPham').value = sp.Id;
-    document.getElementById('inputTenSanPham').value = sp.TenSanPham;
-    document.getElementById('inputGiaCoBan').value = sp.GiaCoBan;
-    document.getElementById('inputHinhAnh').value = sp.HinhAnh || '';
+    document.getElementById('txtIdSanPham').value = sp.Id;
+    document.getElementById('txtTenSanPham').value = sp.TenSanPham;
+    document.getElementById('txtGiaCoBan').value = sp.GiaCoBan;
+    document.getElementById('txtHinhAnh').value = sp.HinhAnh || '';
     document.getElementById('imgPreviewHinhAnh').src = sp.HinhAnh || 'img/logo.png';
-    document.getElementById('inputFileHinhAnh').value = '';
-    document.getElementById('selectLoai').value = sp.Loai;
-    document.getElementById('selectDangBan').value = sp.DangBan ? 'true' : 'false';
+    document.getElementById('txtFileHinhAnh').value = '';
+    document.getElementById('cboLoai').value = sp.Loai;
+    document.getElementById('cboDangBan').value = sp.DangBan ? 'true' : 'false';
     capNhatGiaoDienLoai();
-    document.getElementById('modalSanPham').classList.add('show');
+    moModal('modalSanPham');
 }
 
 // Xử lý tệp hình ảnh từ máy tính (Convert sang Base64)
@@ -125,21 +137,21 @@ function xuLyChonAnh(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         const base64String = e.target.result;
-        document.getElementById('inputHinhAnh').value = base64String;
+        document.getElementById('txtHinhAnh').value = base64String;
         document.getElementById('imgPreviewHinhAnh').src = base64String;
     };
     reader.readAsDataURL(file);
 }
 
 function xoaAnhDaChon() {
-    document.getElementById('inputHinhAnh').value = '';
+    document.getElementById('txtHinhAnh').value = '';
     document.getElementById('imgPreviewHinhAnh').src = 'img/logo.png';
-    document.getElementById('inputFileHinhAnh').value = '';
+    document.getElementById('txtFileHinhAnh').value = '';
 }
 
 // Cập nhật ghi chú phụ phí khi đổi loại (thể hiện Đa hình cho giảng viên hiểu)
 function capNhatGiaoDienLoai() {
-    const loai = document.getElementById('selectLoai').value;
+    const loai = document.getElementById('cboLoai').value;
     const moTa = document.getElementById('moTaPhuPhi');
 
     if (loai === 'ThucAn') {
@@ -151,22 +163,22 @@ function capNhatGiaoDienLoai() {
 
 // Lưu sản phẩm (Thêm hoặc Sửa)
 async function luuSanPham() {
-    const id = document.getElementById('inputIdSanPham').value;
-    const ten = document.getElementById('inputTenSanPham').value.trim();
-    const gia = parseFloat(document.getElementById('inputGiaCoBan').value);
-    const hinhAnh = document.getElementById('inputHinhAnh').value.trim();
-    const loai = document.getElementById('selectLoai').value;
-    const dangBan = document.getElementById('selectDangBan').value === 'true';
+    const id = document.getElementById('txtIdSanPham').value;
+    const ten = document.getElementById('txtTenSanPham').value.trim();
+    const gia = parseFloat(document.getElementById('txtGiaCoBan').value);
+    const hinhAnh = document.getElementById('txtHinhAnh').value.trim();
+    const loai = document.getElementById('cboLoai').value;
+    const dangBan = document.getElementById('cboDangBan').value === 'true';
 
     // --- Validation phía client ---
     if (!ten) {
         hienThiThongBao('Vui lòng nhập tên món!', 'error');
-        document.getElementById('inputTenSanPham').focus();
+        document.getElementById('txtTenSanPham').focus();
         return;
     }
     if (isNaN(gia) || gia < 0) {
         hienThiThongBao('Giá cơ bản phải là số và không được âm!', 'error');
-        document.getElementById('inputGiaCoBan').focus();
+        document.getElementById('txtGiaCoBan').focus();
         return;
     }
 
@@ -234,8 +246,9 @@ function formatTien(so) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(so);
 }
 
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay) overlay.classList.remove('show');
-    });
-});
+// MODAL BEHAVIOR: KHÔNG cho đóng khi click bên ngoài (ShowDialog)
+// Chỉ đóng khi nhấn nút Đóng/Hủy bên trong modal
+function moModal(id) {
+    document.getElementById(id).classList.add('show');
+}
+// => KHÔNG thêm event click vào overlay

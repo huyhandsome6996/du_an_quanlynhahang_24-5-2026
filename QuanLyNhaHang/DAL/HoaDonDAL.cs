@@ -1,6 +1,7 @@
 // ============================================================
 // TẦNG DAL - HoaDonDAL
 // Implement interface IHoaDonDAL: thao tác với bảng HoaDon
+// Sử dụng try-catch-finally + conn.Close() trong finally
 // ============================================================
 using Microsoft.Data.Sqlite;
 using QuanLyNhaHang.DAL.Interfaces;
@@ -16,120 +17,201 @@ namespace QuanLyNhaHang.DAL
         public List<HoaDon> LayTatCa()
         {
             var ds = new List<HoaDon>();
-            using var conn = new SqliteConnection(_conn);
-            conn.Open();
+            SqliteConnection? conn = null;
+            try
+            {
+                conn = new SqliteConnection(_conn);
+                conn.Open();
 
-            string sql = @"
-                SELECT hd.Id, hd.BanId, b.TenBan, hd.ThoiGianTao,
-                       hd.ThoiGianThanhToan, hd.TongTien, hd.TrangThai
-                FROM HoaDon hd
-                INNER JOIN Ban b ON hd.BanId = b.Id
-                ORDER BY hd.ThoiGianTao DESC";
+                string sql = @"
+                    SELECT hd.Id, hd.BanId, b.TenBan, hd.ThoiGianTao,
+                           hd.ThoiGianThanhToan, hd.TongTien, hd.TrangThai
+                    FROM HoaDon hd
+                    INNER JOIN Ban b ON hd.BanId = b.Id
+                    ORDER BY hd.ThoiGianTao DESC";
 
-            using var cmd = new SqliteCommand(sql, conn);
-            using var reader = cmd.ExecuteReader();
+                using var cmd = new SqliteCommand(sql, conn);
+                using var reader = cmd.ExecuteReader();
 
-            while (reader.Read())
-                ds.Add(DocTuReader(reader));
+                while (reader.Read())
+                    ds.Add(DocTuReader(reader));
 
-            return ds;
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi LayTatCa HoaDon: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                // Bắt buộc đóng kết nối trong finally
+                if (conn != null) conn.Close();
+            }
         }
 
         // Lấy 1 hóa đơn theo Id
         public HoaDon? LayTheoId(int id)
         {
-            using var conn = new SqliteConnection(_conn);
-            conn.Open();
+            SqliteConnection? conn = null;
+            try
+            {
+                conn = new SqliteConnection(_conn);
+                conn.Open();
 
-            string sql = @"
-                SELECT hd.Id, hd.BanId, b.TenBan, hd.ThoiGianTao,
-                       hd.ThoiGianThanhToan, hd.TongTien, hd.TrangThai
-                FROM HoaDon hd
-                INNER JOIN Ban b ON hd.BanId = b.Id
-                WHERE hd.Id = @id";
+                string sql = @"
+                    SELECT hd.Id, hd.BanId, b.TenBan, hd.ThoiGianTao,
+                           hd.ThoiGianThanhToan, hd.TongTien, hd.TrangThai
+                    FROM HoaDon hd
+                    INNER JOIN Ban b ON hd.BanId = b.Id
+                    WHERE hd.Id = @id";
 
-            using var cmd = new SqliteCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@id", id);
-            using var reader = cmd.ExecuteReader();
+                using var cmd = new SqliteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@id", id);
+                using var reader = cmd.ExecuteReader();
 
-            if (reader.Read())
-                return DocTuReader(reader);
+                if (reader.Read())
+                    return DocTuReader(reader);
 
-            return null;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi LayTheoId HoaDon: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                // Bắt buộc đóng kết nối trong finally
+                if (conn != null) conn.Close();
+            }
         }
 
         // Lấy hóa đơn chưa thanh toán của 1 bàn cụ thể
         public HoaDon? LayHoaDonChuaThanhToanTheoBan(int banId)
         {
-            using var conn = new SqliteConnection(_conn);
-            conn.Open();
+            SqliteConnection? conn = null;
+            try
+            {
+                conn = new SqliteConnection(_conn);
+                conn.Open();
 
-            string sql = @"
-                SELECT hd.Id, hd.BanId, b.TenBan, hd.ThoiGianTao,
-                       hd.ThoiGianThanhToan, hd.TongTien, hd.TrangThai
-                FROM HoaDon hd
-                INNER JOIN Ban b ON hd.BanId = b.Id
-                WHERE hd.BanId = @banId AND hd.TrangThai = 'Chưa thanh toán'
-                LIMIT 1";
+                string sql = @"
+                    SELECT hd.Id, hd.BanId, b.TenBan, hd.ThoiGianTao,
+                           hd.ThoiGianThanhToan, hd.TongTien, hd.TrangThai
+                    FROM HoaDon hd
+                    INNER JOIN Ban b ON hd.BanId = b.Id
+                    WHERE hd.BanId = @banId AND hd.TrangThai = 'Chưa thanh toán'
+                    LIMIT 1";
 
-            using var cmd = new SqliteCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@banId", banId);
-            using var reader = cmd.ExecuteReader();
+                using var cmd = new SqliteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@banId", banId);
+                using var reader = cmd.ExecuteReader();
 
-            if (reader.Read())
-                return DocTuReader(reader);
+                if (reader.Read())
+                    return DocTuReader(reader);
 
-            return null;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi LayHoaDonChuaThanhToan: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                // Bắt buộc đóng kết nối trong finally
+                if (conn != null) conn.Close();
+            }
         }
 
         // Tạo hóa đơn mới, trả về Id vừa tạo
         public int Them(HoaDon hoaDon)
         {
-            using var conn = new SqliteConnection(_conn);
-            conn.Open();
+            SqliteConnection? conn = null;
+            try
+            {
+                conn = new SqliteConnection(_conn);
+                conn.Open();
 
-            string sql = @"
-                INSERT INTO HoaDon (BanId, ThoiGianTao, TongTien, TrangThai)
-                VALUES (@banId, @tgt, @tongTien, @tt);
-                SELECT last_insert_rowid();";
+                string sql = @"
+                    INSERT INTO HoaDon (BanId, ThoiGianTao, TongTien, TrangThai)
+                    VALUES (@banId, @tgt, @tongTien, @tt);
+                    SELECT last_insert_rowid();";
 
-            using var cmd = new SqliteCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@banId", hoaDon.BanId);
-            cmd.Parameters.AddWithValue("@tgt", hoaDon.ThoiGianTao.ToString("yyyy-MM-dd HH:mm:ss"));
-            cmd.Parameters.AddWithValue("@tongTien", hoaDon.TongTien);
-            cmd.Parameters.AddWithValue("@tt", hoaDon.TrangThai);
+                using var cmd = new SqliteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@banId", hoaDon.BanId);
+                cmd.Parameters.AddWithValue("@tgt", hoaDon.ThoiGianTao.ToString("yyyy-MM-dd HH:mm:ss"));
+                cmd.Parameters.AddWithValue("@tongTien", hoaDon.TongTien);
+                cmd.Parameters.AddWithValue("@tt", hoaDon.TrangThai);
 
-            return Convert.ToInt32(cmd.ExecuteScalar());
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                // Bắt buộc đóng kết nối trong finally
+                if (conn != null) conn.Close();
+            }
         }
 
         // Cập nhật tổng tiền sau khi thêm/xóa món
         public void CapNhatTongTien(int hoaDonId, decimal tongTien)
         {
-            using var conn = new SqliteConnection(_conn);
-            conn.Open();
+            SqliteConnection? conn = null;
+            try
+            {
+                conn = new SqliteConnection(_conn);
+                conn.Open();
 
-            string sql = "UPDATE HoaDon SET TongTien = @tongTien WHERE Id = @id";
-            using var cmd = new SqliteCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@tongTien", tongTien);
-            cmd.Parameters.AddWithValue("@id", hoaDonId);
-            cmd.ExecuteNonQuery();
+                string sql = "UPDATE HoaDon SET TongTien = @tongTien WHERE Id = @id";
+                using var cmd = new SqliteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@tongTien", tongTien);
+                cmd.Parameters.AddWithValue("@id", hoaDonId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                // Bắt buộc đóng kết nối trong finally
+                if (conn != null) conn.Close();
+            }
         }
 
         // Thanh toán hóa đơn: cập nhật thời gian và trạng thái
         public void ThanhToan(int hoaDonId)
         {
-            using var conn = new SqliteConnection(_conn);
-            conn.Open();
+            SqliteConnection? conn = null;
+            try
+            {
+                conn = new SqliteConnection(_conn);
+                conn.Open();
 
-            string sql = @"
-                UPDATE HoaDon
-                SET ThoiGianThanhToan = @tgtt, TrangThai = 'Đã thanh toán'
-                WHERE Id = @id";
+                string sql = @"
+                    UPDATE HoaDon
+                    SET ThoiGianThanhToan = @tgtt, TrangThai = 'Đã thanh toán'
+                    WHERE Id = @id";
 
-            using var cmd = new SqliteCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@tgtt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            cmd.Parameters.AddWithValue("@id", hoaDonId);
-            cmd.ExecuteNonQuery();
+                using var cmd = new SqliteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@tgtt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                cmd.Parameters.AddWithValue("@id", hoaDonId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                // Bắt buộc đóng kết nối trong finally
+                if (conn != null) conn.Close();
+            }
         }
 
         // Helper: đọc dữ liệu từ reader sang object HoaDon

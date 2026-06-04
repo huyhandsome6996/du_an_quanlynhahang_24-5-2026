@@ -2,6 +2,8 @@
 // PROGRAM.CS - Entry Point của ứng dụng
 // Đăng ký toàn bộ API Routes và khởi động web server
 // ============================================================
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using QuanLyNhaHang.DAL;
 using QuanLyNhaHang.DAL.Interfaces;
@@ -28,6 +30,7 @@ builder.Services.AddSingleton<IBanDAL, BanDAL>();
 builder.Services.AddSingleton<ISanPhamDAL, SanPhamDAL>();
 builder.Services.AddSingleton<IHoaDonDAL, HoaDonDAL>();
 builder.Services.AddSingleton<IChiTietHoaDonDAL, ChiTietHoaDonDAL>();
+builder.Services.AddSingleton<INguoiDungDAL, NguoiDungDAL>();
 
 var app = builder.Build();
 
@@ -44,6 +47,103 @@ var jsonOptions = new JsonSerializerOptions
     PropertyNamingPolicy = null,
     Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
 };
+
+// ============================================================
+// ====    HÀM TIỆN ÍCH: BĂM MẬT KHẨU SHA256              ====
+// ============================================================
+static string BamSHA256(string matKhau)
+{
+    using var sha256 = SHA256.Create();
+    byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(matKhau));
+    var sb = new StringBuilder();
+    foreach (byte b in bytes)
+        sb.Append(b.ToString("x2")); // Chuyển sang chuỗi hex
+    return sb.ToString();
+}
+
+// ============================================================
+// ====          API - ĐĂNG KÝ / ĐĂNG NHẬP                 ====
+// ============================================================
+
+// GET /api/auth/check - Kiểm tra hệ thống đã có tài khoản chưa
+app.MapGet("/api/auth/check", (INguoiDungDAL ndDAL) =>
+{
+    try
+    {
+        bool coNguoiDung = ndDAL.KiemTraCoNguoiDung();
+        return Results.Ok(new { coNguoiDung });
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new { thongBao = ex.Message });
+    }
+});
+
+// POST /api/auth/dangky - Đăng ký tài khoản mới (mật khẩu băm SHA256)
+app.MapPost("/api/auth/dangky", (JsonElement body, INguoiDungDAL ndDAL) =>
+{
+    try
+    {
+        string tenDangNhap = body.GetProperty("TenDangNhap").GetString() ?? "";
+        string matKhau = body.GetProperty("MatKhau").GetString() ?? "";
+
+        // Validation
+        if (string.IsNullOrWhiteSpace(tenDangNhap) || tenDangNhap.Length < 3)
+            return Results.BadRequest(new { thongBao = "Tên đăng nhập phải có ít nhất 3 ký tự!" });
+        if (string.IsNullOrWhiteSpace(matKhau) || matKhau.Length < 4)
+            return Results.BadRequest(new { thongBao = "Mật khẩu phải có ít nhất 4 ký tự!" });
+
+        // Băm mật khẩu bằng SHA256 trước khi lưu vào CSDL
+        string matKhauHash = BamSHA256(matKhau);
+
+        var nguoiDung = new NguoiDung
+        {
+            TenDangNhap = tenDangNhap.Trim(),
+            MatKhauHash = matKhauHash,
+            VaiTro = "QuanTri",
+            NgayTao = DateTime.Now
+        };
+
+        ndDAL.Them(nguoiDung);
+        return Results.Ok(new { thongBao = "Đăng ký thành công! Vui lòng đăng nhập." });
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new { thongBao = ex.Message });
+    }
+});
+
+// POST /api/auth/dangnhap - Đăng nhập (so sánh hash SHA256)
+app.MapPost("/api/auth/dangnhap", (JsonElement body, INguoiDungDAL ndDAL) =>
+{
+    try
+    {
+        string tenDangNhap = body.GetProperty("TenDangNhap").GetString() ?? "";
+        string matKhau = body.GetProperty("MatKhau").GetString() ?? "";
+
+        if (string.IsNullOrWhiteSpace(tenDangNhap) || string.IsNullOrWhiteSpace(matKhau))
+            return Results.BadRequest(new { thongBao = "Vui lòng nhập đầy đủ thông tin!" });
+
+        var nguoiDung = ndDAL.LayTheoTenDangNhap(tenDangNhap.Trim());
+        if (nguoiDung == null)
+            return Results.Unauthorized();
+
+        // So sánh hash SHA256 của mật khẩu nhập vào với hash trong CSDL
+        string matKhauHash = BamSHA256(matKhau);
+        if (nguoiDung.MatKhauHash != matKhauHash)
+            return Results.Unauthorized();
+
+        return Results.Ok(new { 
+            thongBao = "Đăng nhập thành công!", 
+            tenDangNhap = nguoiDung.TenDangNhap,
+            vaiTro = nguoiDung.VaiTro 
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new { thongBao = ex.Message });
+    }
+});
 
 // ============================================================
 // ====               API - QUẢN LÝ BÀN                   ====
@@ -468,6 +568,17 @@ var uiThread = new Thread(() =>
         Height = 850,
         StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
     };
+
+    try
+    {
+        string iconPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "logo.png");
+        if (File.Exists(iconPath))
+        {
+            using var bitmap = new System.Drawing.Bitmap(iconPath);
+            formMain.Icon = System.Drawing.Icon.FromHandle(bitmap.GetHicon());
+        }
+    }
+    catch { /* Ignore if icon fails to load */ }
 
     var webView = new Microsoft.Web.WebView2.WinForms.WebView2
     {

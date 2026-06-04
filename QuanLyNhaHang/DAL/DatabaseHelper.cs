@@ -67,6 +67,15 @@ namespace QuanLyNhaHang.DAL
                     FOREIGN KEY (HoaDonId) REFERENCES HoaDon(Id),
                     FOREIGN KEY (SanPhamId) REFERENCES SanPham(Id)
                 );
+
+                -- Bảng NGƯỜI DÙNG (Đăng nhập / Đăng ký)
+                CREATE TABLE IF NOT EXISTS NguoiDung (
+                    Id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                    TenDangNhap   TEXT    NOT NULL UNIQUE,
+                    MatKhauHash   TEXT    NOT NULL,  -- Mật khẩu được băm SHA256
+                    VaiTro        TEXT    NOT NULL DEFAULT 'QuanTri',
+                    NgayTao       DATETIME NOT NULL
+                );
             ";
 
             using var cmd = new SqliteCommand(sql, conn);

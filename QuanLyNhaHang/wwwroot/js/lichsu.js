@@ -51,7 +51,7 @@ function hienThiBang(ds) {
 
 async function xemChiTiet(id) {
     document.getElementById('chiTietHDNoidung').innerHTML = '<div class="spinner"></div>';
-    document.getElementById('modalChiTietHD').classList.add('show');
+    moModal('modalChiTietHD');
 
     try {
         const res = await fetch(`${API}/hoadon/${id}`);
@@ -116,8 +116,9 @@ function formatThoiGian(chuoi) {
     return new Date(chuoi).toLocaleString('vi-VN');
 }
 
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay) overlay.classList.remove('show');
-    });
-});
+// MODAL BEHAVIOR: KHÔNG cho đóng khi click bên ngoài (ShowDialog)
+// Chỉ đóng khi nhấn nút Đóng bên trong modal
+function moModal(id) {
+    document.getElementById(id).classList.add('show');
+}
+// => KHÔNG thêm event click vào overlay

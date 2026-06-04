@@ -4,6 +4,8 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Vua Sư Tử - Gọi Món & Thanh Toán</title>
+    <!-- FAVICON: Thay đổi biểu tượng chương trình -->
+    <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -240,7 +242,7 @@
                                 </h3>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-4 items-center">
-                                <select id="selectBan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer [&>option]:bg-surface [&>option]:text-on-surface" onchange="chonBan()">
+                                <select id="cboBan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer [&>option]:bg-surface [&>option]:text-on-surface" onchange="chonBan()">
                                     <option value="">-- Chọn bàn cần phục vụ --</option>
                                 </select>
                             </div>
@@ -277,12 +279,12 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng *</label>
-                                        <input type="number" id="inputSoLuong" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm"
+                                        <input type="number" id="txtSoLuong" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm"
                                                value="1" min="1" placeholder="Nhập số lượng">
                                     </div>
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ghi chú / Tùy chọn</label>
-                                        <input type="text" id="inputThuocTinhThem" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30"
+                                        <input type="text" id="txtThuocTinhThem" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30"
                                                placeholder="Phần lớn / Lon / Ít cay...">
                                     </div>
                                 </div>
@@ -291,8 +293,8 @@
                                 <div class="mt-3 flex flex-wrap gap-1.5" id="goiYTuyChon"></div>
 
                                 <div class="flex gap-3 mt-5">
-                                    <button class="bg-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
-                                    <button class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all" onclick="huyChonMon()">✕ Hủy</button>
+                                    <button id="btnThemMon" class="bg-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90 transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
+                                    <button id="btnHuyChonMon" class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all" onclick="huyChonMon()">✕ Hủy</button>
                                 </div>
                             </div>
                         </div>

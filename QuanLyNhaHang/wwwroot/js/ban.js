@@ -24,6 +24,17 @@ async function taiDanhSachBan() {
     }
 }
 
+// TÌM KIẾM bàn theo tên
+function timKiemBan() {
+    const tuKhoa = document.getElementById('txtTimKiemBan').value.trim().toLowerCase();
+    if (!tuKhoa) {
+        hienThiBan(danhSachBan);
+        return;
+    }
+    const dsLoc = danhSachBan.filter(b => b.TenBan.toLowerCase().includes(tuKhoa));
+    hienThiBan(dsLoc);
+}
+
 // Vẽ lưới bàn lên giao diện
 function hienThiBan(dsBan) {
     const luoi = document.getElementById('luoiBan');
@@ -84,12 +95,12 @@ async function clickVaoBan(banId) {
         // Bàn có khách: tải hóa đơn và hiển thị
         document.getElementById('chiTietBanNoidung').innerHTML = '<div class="spinner"></div>';
         document.getElementById('chiTietBanFooter').innerHTML = '';
-        modal.classList.add('show');
+        moModal('modalChiTietBan');
         await hienThiHoaDonCuaBan(ban.Id);
         return;
     }
 
-    modal.classList.add('show');
+    moModal('modalChiTietBan');
 }
 
 // Hiển thị hóa đơn của bàn đang có khách
@@ -183,9 +194,9 @@ async function thanhToanNhanhTuModal(banId) {
 function moModalThemBan() {
     idBanDangSua = null;
     document.getElementById('modalBanTieuDe').textContent = 'Thêm Bàn Mới';
-    document.getElementById('inputTenBan').value = '';
-    document.getElementById('selectTrangThaiBan').value = 'Trống';
-    document.getElementById('modalBan').classList.add('show');
+    document.getElementById('txtTenBan').value = '';
+    document.getElementById('cboTrangThaiBan').value = 'Trống';
+    moModal('modalBan');
 }
 
 function moModalSuaBan(banId) {
@@ -193,19 +204,19 @@ function moModalSuaBan(banId) {
     if (!ban) return;
     idBanDangSua = banId;
     document.getElementById('modalBanTieuDe').textContent = `Sửa ${ban.TenBan}`;
-    document.getElementById('inputTenBan').value = ban.TenBan;
-    document.getElementById('selectTrangThaiBan').value = ban.TrangThai;
-    document.getElementById('modalBan').classList.add('show');
+    document.getElementById('txtTenBan').value = ban.TenBan;
+    document.getElementById('cboTrangThaiBan').value = ban.TrangThai;
+    moModal('modalBan');
 }
 
 async function luuBan() {
-    const tenBan = document.getElementById('inputTenBan').value.trim();
-    const trangThai = document.getElementById('selectTrangThaiBan').value;
+    const tenBan = document.getElementById('txtTenBan').value.trim();
+    const trangThai = document.getElementById('cboTrangThaiBan').value;
 
     // Validation phía client
     if (!tenBan) {
         hienThiThongBao('Vui lòng nhập tên bàn!', 'error');
-        document.getElementById('inputTenBan').focus();
+        document.getElementById('txtTenBan').focus();
         return;
     }
 
@@ -253,10 +264,6 @@ async function xoaBan(banId, tenBan) {
 }
 
 // ---- Hàm tiện ích ----
-function dongModal(id) {
-    document.getElementById(id).classList.remove('show');
-}
-
 function hienThiThongBao(noiDung, loai = 'success') {
     const kv = document.getElementById('thongBaoKhuVuc');
     kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
@@ -272,9 +279,9 @@ function formatThoiGian(chuoi) {
     return new Date(chuoi).toLocaleString('vi-VN');
 }
 
-// Đóng modal khi click bên ngoài
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay) overlay.classList.remove('show');
-    });
-});
+// MODAL BEHAVIOR: KHÔNG cho đóng khi click bên ngoài (ShowDialog)
+// Chỉ đóng khi nhấn nút Đóng/Hủy bên trong modal
+function moModal(id) {
+    document.getElementById(id).classList.add('show');
+}
+// => KHÔNG thêm event click vào overlay
