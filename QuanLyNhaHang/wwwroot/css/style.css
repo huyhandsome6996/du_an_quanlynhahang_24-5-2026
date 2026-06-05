@@ -8,30 +8,38 @@
 
 /* --- Biến màu sắc toàn cục --- */
 :root {
-    --mau-nen:        #0a1628;
-    --mau-nen-card:   #101e35;
-    --mau-nen-input:  #162240;
-    --mau-vien:       #1e3050;
-    --mau-chinh:      #d4a853;   /* Vàng hoàng gia - màu chủ đạo */
+    --mau-nen: #0a1628;
+    --mau-nen-card: #101e35;
+    --mau-nen-input: #162240;
+    --mau-vien: #1e3050;
+    --mau-chinh: #d4a853;
+    /* Vàng hoàng gia - màu chủ đạo */
     --mau-chinh-nhat: rgba(212, 168, 83, 0.15);
-    --mau-chinh-dam:  #c49a42;
-    --mau-chinh-mem:  #f0d68a;
-    --mau-xanh:       #4ade80;   /* Xanh lá - trạng thái Trống */
-    --mau-do:         #f87171;   /* Đỏ - trạng thái Có khách */
-    --mau-xanh-duong: #60a5fa;   /* Xanh dương - thông tin */
-    --mau-chu:        #e8ecf4;
-    --mau-chu-nhat:   #8b9ab8;
-    --bong:           0 4px 30px rgba(0, 0, 0, 0.35);
-    --bong-glass:     0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    --mau-chinh-dam: #c49a42;
+    --mau-chinh-mem: #f0d68a;
+    --mau-xanh: #4ade80;
+    /* Xanh lá - trạng thái Trống */
+    --mau-do: #f87171;
+    /* Đỏ - trạng thái Có khách */
+    --mau-xanh-duong: #60a5fa;
+    /* Xanh dương - thông tin */
+    --mau-chu: #e8ecf4;
+    --mau-chu-nhat: #8b9ab8;
+    --bong: 0 4px 30px rgba(0, 0, 0, 0.35);
+    --bong-glass: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     --bong-glass-hover: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    --bo-goc:         16px;
-    --bo-goc-nho:     10px;
-    --gradient-vang:  linear-gradient(135deg, #d4a853, #f0d68a, #c49a42);
-    --gradient-nen:   linear-gradient(135deg, rgba(212, 168, 83, 0.08), rgba(212, 168, 83, 0.02));
+    --bo-goc: 16px;
+    --bo-goc-nho: 10px;
+    --gradient-vang: linear-gradient(135deg, #d4a853, #f0d68a, #c49a42);
+    --gradient-nen: linear-gradient(135deg, rgba(212, 168, 83, 0.08), rgba(212, 168, 83, 0.02));
 }
 
 /* --- Reset và cài đặt chung --- */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 html {
     scroll-behavior: smooth;
@@ -42,20 +50,30 @@ body {
     background-color: var(--mau-nen);
     color: var(--mau-chu);
     min-height: 100vh;
-    background-image: 
+    background-image:
         radial-gradient(ellipse at top left, rgba(212, 168, 83, 0.05) 0%, transparent 50%),
         radial-gradient(ellipse at bottom right, rgba(212, 168, 83, 0.03) 0%, transparent 50%);
 }
 
 /* Custom scrollbar toàn trang — thanh cuộn vàng kim sang trọng */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { 
-    background: rgba(212, 168, 83, 0.25); 
-    border-radius: 99px; 
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(212, 168, 83, 0.25);
+    border-radius: 99px;
     transition: background 0.2s;
 }
-::-webkit-scrollbar-thumb:hover { background: var(--mau-chinh); }
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mau-chinh);
+}
 
 /* Selection highlight vàng */
 ::selection {
@@ -72,20 +90,26 @@ body {
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: 76px;
     overflow: hidden;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
 }
-.sidebar.expanded { width: 240px; }
-.sidebar-text { 
-    display: none; 
-    white-space: nowrap; 
-    font-weight: 600; 
-    color: #e8ecf4; 
-    margin-left: 0.75rem; 
+
+.sidebar.expanded {
+    width: 240px;
 }
-.sidebar.expanded .sidebar-text { 
-    display: block; 
-    animation: fadeIn 0.3s forwards; 
+
+.sidebar-text {
+    display: none;
+    white-space: nowrap;
+    font-weight: 600;
+    color: #e8ecf4;
+    margin-left: 0.75rem;
 }
+
+.sidebar.expanded .sidebar-text {
+    display: block;
+    animation: fadeIn 0.3s forwards;
+}
+
 .nav-btn {
     position: relative;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -94,8 +118,16 @@ body {
     width: 100%;
     height: 52px;
 }
-.nav-btn:hover { background: rgba(212, 168, 83, 0.08); }
-.nav-btn.active { color: #d4a853; background: rgba(212, 168, 83, 0.1); }
+
+.nav-btn:hover {
+    background: rgba(212, 168, 83, 0.08);
+}
+
+.nav-btn.active {
+    color: #d4a853;
+    background: rgba(212, 168, 83, 0.1);
+}
+
 .nav-btn.active::after {
     content: '';
     position: absolute;
@@ -115,14 +147,15 @@ body {
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(212, 168, 83, 0.15);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 
+    box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
+
 .glass-card:hover {
     background: linear-gradient(145deg, rgba(16, 30, 53, 0.8), rgba(10, 22, 40, 0.9));
     border-color: rgba(212, 168, 83, 0.25);
-    box-shadow: 
+    box-shadow:
         0 16px 40px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
     transform: translateY(-2px);
@@ -148,7 +181,9 @@ body {
     gap: 0.75rem;
 }
 
-.page-title span { font-size: 2rem; }
+.page-title span {
+    font-size: 2rem;
+}
 
 /* ============================================================
    BÀN CARD — Thẻ bàn với Liquid Glass
@@ -165,31 +200,59 @@ body {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
-    box-shadow: 
+    box-shadow:
         0 8px 24px rgba(0, 0, 0, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
+
 .ban-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.ban-card.trong::before { background: linear-gradient(90deg, #4ade80, transparent); }
-.ban-card.cokhach::before { background: linear-gradient(90deg, #f87171, transparent); }
+
+.ban-card.trong::before {
+    background: linear-gradient(90deg, #4ade80, transparent);
+}
+
+.ban-card.cokhach::before {
+    background: linear-gradient(90deg, #f87171, transparent);
+}
+
 .ban-card:hover {
     transform: translateY(-4px);
     background: rgba(16, 30, 53, 0.85);
-    box-shadow: 
+    box-shadow:
         0 16px 40px rgba(0, 0, 0, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
-.ban-card:active { transform: scale(0.97) translateY(0); }
-.ban-card.trong:hover { border-color: rgba(74, 222, 128, 0.25); }
-.ban-card.cokhach:hover { border-color: rgba(248, 113, 113, 0.25); }
-.ban-card .ban-icon { margin-bottom: 0.5rem; }
-.ban-card .ban-ten { font-weight: 600; font-size: 1.05rem; color: #e8ecf4; margin-bottom: 0.25rem; }
+
+.ban-card:active {
+    transform: scale(0.97) translateY(0);
+}
+
+.ban-card.trong:hover {
+    border-color: rgba(74, 222, 128, 0.25);
+}
+
+.ban-card.cokhach:hover {
+    border-color: rgba(248, 113, 113, 0.25);
+}
+
+.ban-card .ban-icon {
+    margin-bottom: 0.5rem;
+}
+
+.ban-card .ban-ten {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #e8ecf4;
+    margin-bottom: 0.25rem;
+}
 
 /* ============================================================
    BADGE — Nhãn trạng thái
@@ -204,12 +267,42 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
-.badge-trong { background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
-.badge-cokhach { background: rgba(248, 113, 113, 0.1); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
-.badge-thucan { background: rgba(212, 168, 83, 0.1); color: #d4a853; border: 1px solid rgba(212, 168, 83, 0.2); }
-.badge-nuocuong { background: rgba(96, 165, 250, 0.1); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.2); }
-.badge-chuathanhtoan { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
-.badge-dathanhtoan { background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+
+.badge-trong {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.badge-cokhach {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.badge-thucan {
+    background: rgba(212, 168, 83, 0.1);
+    color: #d4a853;
+    border: 1px solid rgba(212, 168, 83, 0.2);
+}
+
+.badge-nuocuong {
+    background: rgba(96, 165, 250, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.badge-chuathanhtoan {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.badge-dathanhtoan {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
 
 /* ============================================================
    BUTTONS — Nút bấm với phản hồi xúc giác
@@ -225,46 +318,77 @@ body {
     cursor: pointer;
     border: none;
 }
-.btn:hover { transform: translateY(-1px); }
-.btn:active { transform: scale(0.95) translateY(0); }
 
-.btn-sm { padding: 0.4rem 0.85rem; font-size: 0.75rem; border-radius: 10px; }
-.btn-lg { padding: 0.75rem 1.5rem; font-size: 0.85rem; border-radius: 14px; }
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: scale(0.95) translateY(0);
+}
+
+.btn-sm {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.75rem;
+    border-radius: 10px;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    border-radius: 14px;
+}
 
 .btn-primary {
     background: linear-gradient(135deg, #d4a853, #f0d68a, #c49a42);
     color: #0a1628;
     box-shadow: 0 2px 12px rgba(212, 168, 83, 0.2);
 }
-.btn-primary:hover { box-shadow: 0 6px 20px rgba(212, 168, 83, 0.35); }
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(212, 168, 83, 0.35);
+}
 
 .btn-secondary {
-    background: rgba(255,255,255,0.04);
+    background: rgba(255, 255, 255, 0.04);
     color: #e8ecf4;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
-.btn-secondary:hover { background: rgba(255,255,255,0.08); }
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
 
 .btn-danger {
-    background: rgba(248,113,113,0.1);
+    background: rgba(248, 113, 113, 0.1);
     color: #f87171;
-    border: 1px solid rgba(248,113,113,0.2);
+    border: 1px solid rgba(248, 113, 113, 0.2);
 }
-.btn-danger:hover { background: #f87171; color: #fff; }
+
+.btn-danger:hover {
+    background: #f87171;
+    color: #fff;
+}
 
 .btn-info {
     background: rgba(212, 168, 83, 0.1);
     color: #d4a853;
     border: 1px solid rgba(212, 168, 83, 0.2);
 }
-.btn-info:hover { background: rgba(212, 168, 83, 0.2); }
+
+.btn-info:hover {
+    background: rgba(212, 168, 83, 0.2);
+}
 
 .btn-success {
     background: linear-gradient(135deg, #d4a853, #f0d68a, #c49a42);
     color: #0a1628;
     font-weight: 700;
 }
-.btn-success:hover { box-shadow: 0 6px 20px rgba(212, 168, 83, 0.35); }
+
+.btn-success:hover {
+    box-shadow: 0 6px 20px rgba(212, 168, 83, 0.35);
+}
 
 /* ============================================================
    TABLE — Bảng dữ liệu
@@ -276,7 +400,14 @@ body {
     background: rgba(10, 22, 40, 0.4);
     margin-top: 1rem;
 }
-.table-wrapper table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
 .table-wrapper th {
     padding: 0.85rem 1rem;
     background: rgba(212, 168, 83, 0.04);
@@ -287,13 +418,20 @@ body {
     letter-spacing: 0.05em;
     border-bottom: 1px solid rgba(212, 168, 83, 0.08);
 }
+
 .table-wrapper td {
     padding: 0.95rem 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     color: #e8ecf4;
 }
-.table-wrapper tr:last-child td { border-bottom: none; }
-.table-wrapper tr:hover { background: rgba(212, 168, 83, 0.03); }
+
+.table-wrapper tr:last-child td {
+    border-bottom: none;
+}
+
+.table-wrapper tr:hover {
+    background: rgba(212, 168, 83, 0.03);
+}
 
 /* ============================================================
    TỔNG KẾT TIỀN
@@ -305,8 +443,18 @@ body {
     background: linear-gradient(135deg, rgba(212, 168, 83, 0.08), rgba(212, 168, 83, 0.03));
     border: 1px solid rgba(212, 168, 83, 0.12);
 }
-.tong-tien-row { display: flex; justify-content: space-between; align-items: center; }
-.tong-tien-row.tong { font-size: 1.15rem; font-weight: 700; color: #d4a853; }
+
+.tong-tien-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tong-tien-row.tong {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #d4a853;
+}
 
 /* ============================================================
    ALERT / THÔNG BÁO
@@ -318,8 +466,18 @@ body {
     border: 1px solid transparent;
     animation: slideIn 0.3s ease;
 }
-.alert-success { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.15); color: #4ade80; }
-.alert-error { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.15); color: #f87171; }
+
+.alert-success {
+    background: rgba(74, 222, 128, 0.08);
+    border-color: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+}
+
+.alert-error {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.15);
+    color: #f87171;
+}
 
 /* ============================================================
    TOAST NOTIFICATION — Thông báo nổi góc phải
@@ -334,6 +492,7 @@ body {
     gap: 0.75rem;
     pointer-events: none;
 }
+
 .toast {
     pointer-events: auto;
     min-width: 320px;
@@ -342,35 +501,54 @@ body {
     border-radius: 16px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     font-size: 0.85rem;
     font-weight: 500;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
+
 .toast.toast-success {
     background: linear-gradient(145deg, rgba(16, 30, 53, 0.9), rgba(10, 22, 40, 0.95));
     border-left: 3px solid #4ade80;
     color: #4ade80;
 }
+
 .toast.toast-error {
     background: linear-gradient(145deg, rgba(16, 30, 53, 0.9), rgba(10, 22, 40, 0.95));
     border-left: 3px solid #f87171;
     color: #f87171;
 }
+
 .toast.toast-out {
     animation: toastSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
 @keyframes toastSlideIn {
-    from { opacity: 0; transform: translateX(100px) scale(0.95); }
-    to { opacity: 1; transform: translateX(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateX(100px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
 }
+
 @keyframes toastSlideOut {
-    from { opacity: 1; transform: translateX(0) scale(1); }
-    to { opacity: 0; transform: translateX(100px) scale(0.95); }
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(100px) scale(0.95);
+    }
 }
 
 /* ============================================================
@@ -401,7 +579,10 @@ body {
     justify-content: center;
     padding: 1rem;
 }
-.modal-overlay.show { display: flex; }
+
+.modal-overlay.show {
+    display: flex;
+}
 
 /* ============================================================
    AMBIENT GLOW — Quả cầu phát sáng nền
@@ -419,6 +600,7 @@ body {
     position: relative;
     overflow: hidden;
 }
+
 .stat-widget::before {
     content: '';
     position: absolute;
@@ -430,62 +612,330 @@ body {
 /* ============================================================
    TIỆN ÍCH
    ============================================================ */
-.text-nhat { color: #8b9ab8; font-size: 0.85rem; }
-.text-chinh { color: #d4a853; }
-.fw-bold { font-weight: 700; }
-.empty-state { text-align: center; padding: 3rem 1.5rem; }
-.empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+.text-nhat {
+    color: #8b9ab8;
+    font-size: 0.85rem;
+}
+
+.text-chinh {
+    color: #d4a853;
+}
+
+.fw-bold {
+    font-weight: 700;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.75rem;
+}
 
 /* ============================================================
    ANIMATIONS
    ============================================================ */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
+
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
+
 @keyframes pulse-gold {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.15); }
-    50% { box-shadow: 0 0 0 8px rgba(212, 168, 83, 0); }
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.15);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(212, 168, 83, 0);
+    }
 }
 
 /* ============================================================
    CSS PRINT — In hóa đơn
    ============================================================ */
 @media print {
-    body * { visibility: hidden; }
-    #modalChiTietHD, #modalChiTietHD * { visibility: visible; }
+    body * {
+        visibility: hidden;
+    }
+
+    #modalChiTietHD,
+    #modalChiTietHD * {
+        visibility: visible;
+    }
+
     #modalChiTietHD {
-        position: absolute; left: 0; top: 0; width: 100%;
-        background: white !important; color: black !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        color: black !important;
     }
+
     #modalChiTietHD .glass-card {
-        background: white !important; color: black !important;
-        border: none !important; box-shadow: none !important; backdrop-filter: none !important;
+        background: white !important;
+        color: black !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
     }
-    #modalChiTietHD button { display: none !important; }
-    #modalChiTietHD th { color: black !important; background: #f3f4f6 !important; }
-    #modalChiTietHD td { color: black !important; border-bottom: 1px solid #e5e7eb !important; }
-    #modalChiTietHD .tong-tien-box { background: #f3f4f6 !important; color: black !important; border: 1px solid #e5e7eb !important; }
-    #modalChiTietHD .tong-tien-row.tong { color: black !important; }
+
+    #modalChiTietHD button {
+        display: none !important;
+    }
+
+    #modalChiTietHD th {
+        color: black !important;
+        background: #f3f4f6 !important;
+    }
+
+    #modalChiTietHD td {
+        color: black !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    #modalChiTietHD .tong-tien-box {
+        background: #f3f4f6 !important;
+        color: black !important;
+        border: 1px solid #e5e7eb !important;
+    }
+
+    #modalChiTietHD .tong-tien-row.tong {
+        color: black !important;
+    }
+}
+
+/* ============================================================
+   ORDER PAGE SPECIFIC STYLES
+   ============================================================ */
+.menu-danh-sach {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.menu-danh-sach::-webkit-scrollbar {
+    width: 5px;
+}
+
+.menu-danh-sach::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.menu-danh-sach::-webkit-scrollbar-thumb {
+    background: rgba(212, 168, 83, 0.15);
+    border-radius: 99px;
+}
+
+.menu-danh-sach::-webkit-scrollbar-thumb:hover {
+    background: #d4a853;
+}
+
+.mon-item {
+    background: linear-gradient(145deg, rgba(16, 30, 53, 0.4), rgba(10, 22, 40, 0.5));
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 168, 83, 0.08);
+    border-radius: 16px;
+    /* Bo tròn góc tinh tế */
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mon-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(212, 168, 83, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.mon-item:hover::before {
+    opacity: 1;
+}
+
+.mon-item:hover {
+    border-color: rgba(212, 168, 83, 0.3);
+    background: rgba(212, 168, 83, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+}
+
+.mon-item:active {
+    transform: scale(0.96) translateY(0);
+}
+
+.mon-item .mon-ten {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #e8ecf4;
+    margin-bottom: 0.25rem;
+}
+
+.mon-item .mon-gia {
+    color: #d4a853;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: rgba(212, 168, 83, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+/* Custom button cho Checkout */
+.btn-success {
+    background: linear-gradient(135deg, #d4a853, #f0d68a, #c49a42);
+    color: #0a1628 !important;
+    width: auto;
+    /* Thu hẹp lại để có thể dịch ra giữa */
+    min-width: 280px;
+    padding: 1rem 2rem;
+    font-size: 0.95rem;
+    border-radius: 9999px !important;
+    /* Bo tròn mạnh hai đầu */
+    font-weight: 800;
+    box-shadow: 0 8px 24px rgba(212, 168, 83, 0.25);
+    position: relative;
+    overflow: hidden;
+    margin: 1.5rem auto 0 auto;
+    /* Căn giữa */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-success::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 3s infinite;
+}
+
+.btn-success:hover {
+    box-shadow: 0 12px 32px rgba(212, 168, 83, 0.4);
+    transform: translateY(-2px);
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+/* Container for checkout button to help center it */
+.checkout-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {
-    .container { padding: 1rem; }
-    .sidebar { width: 0; }
-    .sidebar.expanded { width: 240px; }
-    .ml-sidebar-width { margin-left: 0 !important; }
+    .container {
+        padding: 1rem;
+    }
+
+    .sidebar {
+        width: 0;
+    }
+
+    .sidebar.expanded {
+        width: 240px;
+    }
+
+    .ml-sidebar-width {
+        margin-left: 0 !important;
+    }
 }
+
+.smooth-form {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(-10px);
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-width: 0 !important;
+}
+
+.smooth-form.show {
+    opacity: 1;
+    max-height: 600px;
+    transform: translateY(0);
+    margin-top: 1rem !important;
+    /* mt-4 is 1rem */
+    padding-top: 1.25rem !important;
+    /* p-5 is 1.25rem */
+    padding-bottom: 1.25rem !important;
+    border-width: 1px !important;
+}

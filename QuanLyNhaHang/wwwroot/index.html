@@ -53,7 +53,12 @@
     <div class="ambient-glow w-[300px] h-[300px] bg-primary/3 bottom-0 left-1/4"></div>
 
     <!-- SIDEBAR -->
-    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" onclick="this.classList.toggle('expanded')">
+    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" id="mainSidebar">
+        <script>
+            if (sessionStorage.getItem('sidebarExpanded') === 'true') {
+                document.getElementById('mainSidebar').classList.add('expanded');
+            }
+        </script>
         <!-- Logo with gold ring -->
         <div class="relative group mb-6 px-3 w-full flex justify-center">
             <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
@@ -213,6 +218,7 @@
         </div>
     </div>
 
+    <script src="js/sidebar.js"></script>
     <script src="js/ban.js?v=2.0"></script>
     <script>
         // Đồng bộ hiệu ứng mở/đóng modal mượt mà

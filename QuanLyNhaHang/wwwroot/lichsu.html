@@ -58,7 +58,12 @@
     <div class="absolute bottom-20 left-10 w-[400px] h-[400px] rounded-full bg-primary/3 glow-orb-1"></div>
 
     <!-- SIDEBAR -->
-    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" onclick="this.classList.toggle('expanded')">
+    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" id="mainSidebar">
+        <script>
+            if (sessionStorage.getItem('sidebarExpanded') === 'true') {
+                document.getElementById('mainSidebar').classList.add('expanded');
+            }
+        </script>
         <!-- Logo with gold ring -->
         <div class="relative group mb-6 px-3 w-full flex justify-center">
             <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
@@ -223,6 +228,7 @@
         </div>
     </div>
 
+    <script src="js/sidebar.js"></script>
     <script src="js/lichsu.js?v=2.0"></script>
     <script>
         // Đồng bộ hiệu ứng modal mượt mà

@@ -46,19 +46,15 @@ function hienThiMenu(ds) {
     kv.innerHTML = ds.map(sp => {
         const imgUrl = sp.HinhAnh ? sp.HinhAnh : 'img/logo.png';
         return `
-        <div class="mon-item cursor-pointer" onclick="chonMon(${sp.Id})" style="padding: 0.5rem; gap: 0.75rem; justify-content: flex-start; align-items: center; display: flex;">
-            <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest border border-white/5">
+        <div class="mon-item cursor-pointer" onclick="chonMon(${sp.Id})">
+            <div class="w-20 h-20 rounded-full overflow-hidden shadow-inner border-2 border-primary/20 mb-1">
                 <img src="${imgUrl}" alt="${sp.TenSanPham}" class="w-full h-full object-cover" onerror="this.src='img/logo.png'">
             </div>
-            <div class="flex-1 min-w-0">
-                <div class="mon-ten text-sm font-semibold truncate text-on-surface" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
-                <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                    <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}" style="font-size:0.6rem; padding: 0.1rem 0.4rem;">
-                        ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
-                    </span>
-                    <span class="mon-gia text-primary font-bold text-xs">${formatTien(sp.GiaCoBan)}</span>
-                </div>
-            </div>
+            <div class="mon-ten" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
+            <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'} text-[10px] uppercase tracking-widest px-2 py-0.5">
+                ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
+            </span>
+            <span class="mon-gia">${formatTien(sp.GiaCoBan)}</span>
         </div>`;
     }).join('');
 }
@@ -179,7 +175,7 @@ function chonMon(sanPhamId) {
     document.getElementById('tenMonDangThem').textContent = `${sp.TenSanPham} - ${formatTien(sp.GiaCoBan)}`;
     document.getElementById('txtSoLuong').value = 1;
     document.getElementById('txtThuocTinhThem').value = '';
-    document.getElementById('formThemMon').style.display = 'block';
+    document.getElementById('formThemMon').classList.add('show');
 
     const goiY = sp.Loai === 'ThucAn' ? GOI_Y_THUC_AN : GOI_Y_NUOC_UONG;
     document.getElementById('goiYTuyChon').innerHTML = goiY.map(opt =>
@@ -187,7 +183,7 @@ function chonMon(sanPhamId) {
 }
 
 function chonGoiY(text) { document.getElementById('txtThuocTinhThem').value = text; }
-function huyChonMon()   { monDangChon = null; document.getElementById('formThemMon').style.display = 'none'; }
+function huyChonMon()   { monDangChon = null; document.getElementById('formThemMon').classList.remove('show'); }
 
 async function themMon() {
     if (!monDangChon || !hoaDonHienTai) {
