@@ -595,14 +595,6 @@ app.MapGet("/api/baocao/doanhthu", (IHoaDonDAL hdDAL) =>
     catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// Helper class cho thống kê món bán chạy
-public class ThongKeMon
-{
-    public int SanPhamId { get; set; }
-    public string TenSanPham { get; set; } = "";
-    public int TongSoLuong { get; set; }
-    public decimal TongDoanhThu { get; set; }
-}
 
 // ============================================================
 // KHỞI CHẠY ỨNG DỤNG (DESKTOP MODE)
@@ -611,6 +603,8 @@ public class ThongKeMon
 Console.WriteLine("🍽️  ỨNG DỤNG QUẢN LÝ NHÀ HÀNG V2 (DESKTOP MODE)");
 Console.WriteLine("=================================");
 
+
+//Chạy sever web
 _ = Task.Run(() => app.Run("http://localhost:5000"));
 
 var uiThread = new Thread(() =>
@@ -619,8 +613,10 @@ var uiThread = new Thread(() =>
     System.Windows.Forms.Application.EnableVisualStyles();
     System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
+
+// Dòng : Mở cửa sổ desktop (WebView2)
     var formMain = new System.Windows.Forms.Form
-    {
+{
         Text = "🍽️ Hệ Thống Quản Lý Nhà Hàng (Desktop App)",
         Width = 1350,
         Height = 850,
@@ -629,6 +625,8 @@ var uiThread = new Thread(() =>
 
     try
     {
+
+        //Chỗ này dùng để thay logo app////////////////////
         string iconPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "logo.png");
         if (File.Exists(iconPath))
         {
@@ -642,7 +640,7 @@ var uiThread = new Thread(() =>
     {
         Dock = System.Windows.Forms.DockStyle.Fill
     };
-
+/////////////////////////////////////////////////////////////////////////////////
     formMain.Controls.Add(webView);
 
     formMain.Load += async (s, e) =>
@@ -670,3 +668,12 @@ var uiThread = new Thread(() =>
 uiThread.SetApartmentState(ApartmentState.STA);
 uiThread.Start();
 uiThread.Join();
+
+// Helper class cho thống kê món bán chạy
+public class ThongKeMon
+{
+    public int SanPhamId { get; set; }
+    public string TenSanPham { get; set; } = "";
+    public int TongSoLuong { get; set; }
+    public decimal TongDoanhThu { get; set; }
+}
