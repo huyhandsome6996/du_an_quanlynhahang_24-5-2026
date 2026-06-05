@@ -11,6 +11,12 @@ namespace QuanLyNhaHang.Entities
         public DateTime ThoiGianTao { get; set; }
         public DateTime? ThoiGianThanhToan { get; set; } // Nullable: chưa thanh toán
         public decimal TongTien { get; set; } = 0;
+        // VAT 10% tự động
+        public decimal VAT { get; set; } = 0;
+        // Số tiền giảm giá
+        public decimal GiamGia { get; set; } = 0;
+        // Phương thức thanh toán: TienMat, The, QR, ChuyenKhoan
+        public string PhuongThucThanhToan { get; set; } = "TienMat";
         // Trạng thái: "Chưa thanh toán" hoặc "Đã thanh toán"
         public string TrangThai { get; set; } = "Chưa thanh toán";
     }

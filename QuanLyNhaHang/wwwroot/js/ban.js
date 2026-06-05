@@ -39,9 +39,11 @@ function timKiemBan() {
 function hienThiBan(dsBan) {
     const luoi = document.getElementById('luoiBan');
     const soTrong   = dsBan.filter(b => b.TrangThai === 'Trống').length;
+    const soDaDat   = dsBan.filter(b => b.TrangThai === 'Đã đặt').length;
     const soCoKhach = dsBan.filter(b => b.TrangThai === 'Có khách').length;
 
     document.getElementById('soBanTrong').textContent   = soTrong;
+    document.getElementById('soBanDaDat').textContent   = soDaDat;
     document.getElementById('soBanCoKhach').textContent = soCoKhach;
 
     if (dsBan.length === 0) {
@@ -51,15 +53,20 @@ function hienThiBan(dsBan) {
 
     luoi.innerHTML = dsBan.map(ban => {
         const laTrong = ban.TrangThai === 'Trống';
+        const laDaDat = ban.TrangThai === 'Đã đặt';
+        const cssClass = laTrong ? 'trong' : (laDaDat ? 'dadat' : 'cokhach');
+        const icon = laTrong ? '<img src="img/chair_3d.png" class="w-12 h-12 object-contain rounded-lg border border-primary/20 shadow-md">' : (laDaDat ? '<img src="img/clock_3d.png" class="w-12 h-12 object-contain rounded-lg border border-primary/20 shadow-md">' : '<img src="img/user_3d.png" class="w-12 h-12 object-contain rounded-lg border border-primary/20 shadow-md">');
+        const badgeClass = laTrong ? 'badge-trong' : (laDaDat ? 'badge-dadat' : 'badge-cokhach');
+        const badgeText = laTrong ? '● Trống' : (laDaDat ? '● Đã đặt' : '● Có khách');
         return `
-        <div class="ban-card ${laTrong ? 'trong' : 'cokhach'}"
+        <div class="ban-card ${cssClass}"
              onclick="clickVaoBan(${ban.Id})"
              title="${ban.TenBan} - ${ban.TrangThai}">
-            <div class="ban-icon flex justify-center mb-2">${laTrong ? '<img src="img/chair_3d.png" class="w-12 h-12 object-contain rounded-lg border border-primary/20 shadow-md">' : '<img src="img/user_3d.png" class="w-12 h-12 object-contain rounded-lg border border-primary/20 shadow-md">'}</div>
+            <div class="ban-icon flex justify-center mb-2">${icon}</div>
             <div class="ban-ten">${ban.TenBan}</div>
             <div class="ban-trangthai">
-                <span class="badge ${laTrong ? 'badge-trong' : 'badge-cokhach'}">
-                    ${laTrong ? '● Trống' : '● Có khách'}
+                <span class="badge ${badgeClass}">
+                    ${badgeText}
                 </span>
             </div>
             <div style="margin-top:0.75rem; display:flex; gap:0.35rem; justify-content:center; flex-wrap:wrap;">
@@ -88,6 +95,19 @@ async function clickVaoBan(banId) {
             </div>`;
         document.getElementById('chiTietBanFooter').innerHTML = `
             <button class="btn btn-secondary" onclick="dongModal('modalChiTietBan')">Hủy</button>
+            <button class="btn btn-primary btn-lg flex items-center justify-center gap-1" onclick="moBan(${ban.Id})">
+                <img src="img/add_3d.png" class="w-4 h-4 object-cover rounded-sm inline-block mr-1"> Mở Bàn Đón Khách
+            </button>`;
+    } else if (ban.TrangThai === 'Đã đặt') {
+        // Bàn đã đặt: hiển thị nút Mở Bàn + Hủy Đặt
+        document.getElementById('chiTietBanNoidung').innerHTML = `
+            <div class="empty-state flex flex-col items-center">
+                <img src="img/clock_3d.png" class="w-20 h-20 object-contain rounded-2xl drop-shadow-md mb-3 border border-primary/20">
+                <p style="margin-bottom:0.5rem; color:var(--mau-chu);">${ban.TenBan} hiện đang <strong style="color:#fbbf24">Đặt trước</strong></p>
+                <p class="text-nhat">Bàn đã được đặt trước. Nhấn "Mở Bàn" để đón khách hoặc "Hủy Đặt" để hủy.</p>
+            </div>`;
+        document.getElementById('chiTietBanFooter').innerHTML = `
+            <button class="btn btn-danger" onclick="huyDatBan(${ban.Id})">Hủy Đặt</button>
             <button class="btn btn-primary btn-lg flex items-center justify-center gap-1" onclick="moBan(${ban.Id})">
                 <img src="img/add_3d.png" class="w-4 h-4 object-cover rounded-sm inline-block mr-1"> Mở Bàn Đón Khách
             </button>`;
@@ -176,7 +196,11 @@ async function moBan(banId) {
 async function thanhToanNhanhTuModal(banId) {
     if (!confirm('Xác nhận thanh toán và đóng bàn này?')) return;
     try {
-        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, { method: 'POST' });
+        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ VAT: 0, GiamGia: 0, PhuongThucThanhToan: 'TienMat' })
+        });
         const data = await res.json();
         if (res.ok) {
             dongModal('modalChiTietBan');
@@ -236,6 +260,40 @@ async function luuBan() {
 
         if (res.ok) {
             dongModal('modalBan');
+            hienThiThongBao(`✅ ${data.thongBao}`, 'success');
+            taiDanhSachBan();
+        } else {
+            hienThiThongBao(`❌ ${data.thongBao}`, 'error');
+        }
+    } catch (err) {
+        hienThiThongBao('Lỗi kết nối server!', 'error');
+    }
+}
+
+// Đặt bàn (đặt trước)
+async function datBan(banId) {
+    try {
+        const res = await fetch(`${API}/ban/${banId}/dat`, { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+            hienThiThongBao(`✅ ${data.thongBao}`, 'success');
+            taiDanhSachBan();
+        } else {
+            hienThiThongBao(`❌ ${data.thongBao}`, 'error');
+        }
+    } catch (err) {
+        hienThiThongBao('Lỗi kết nối server!', 'error');
+    }
+}
+
+// Hủy đặt bàn
+async function huyDatBan(banId) {
+    if (!confirm('Xác nhận hủy đặt bàn này?')) return;
+    try {
+        const res = await fetch(`${API}/ban/${banId}/huy-dat`, { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+            dongModal('modalChiTietBan');
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');
             taiDanhSachBan();
         } else {

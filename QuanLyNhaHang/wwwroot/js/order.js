@@ -13,6 +13,12 @@ const GOI_Y_NUOC_UONG = ['Lon', 'Ly', 'Ít đá', 'Nhiều đá', 'Không đư�
 document.addEventListener('DOMContentLoaded', async () => {
     await taiDanhSachBan();
     await taiMenu();
+
+    // Add event listener for discount input to update totals in real-time
+    const txtGiamGia = document.getElementById('txtGiamGia');
+    if (txtGiamGia) {
+        txtGiamGia.addEventListener('input', capNhatHienThiThanhToan);
+    }
 });
 
 async function taiDanhSachBan() {
@@ -138,6 +144,7 @@ async function taiLaiHoaDon() {
         const data = await res.json();
         hoaDonHienTai = data.hoaDon;
         hienThiHoaDon(data.hoaDon, data.chiTiet);
+        capNhatHienThiThanhToan();
     } catch { hienThiThongBao('Lỗi tải hóa đơn!', 'error'); }
 }
 
@@ -227,13 +234,26 @@ async function xoaMon(chiTietId) {
 async function thanhToan() {
     const banId = document.getElementById('cboBan').value;
     if (!banId) return;
-    if (!confirm(`Xác nhận thanh toán ${formatTien(hoaDonHienTai?.TongTien || 0)} và đóng bàn?`)) return;
+    
+    // Calculate VAT and discount
+    const tongTienMon = hoaDonHienTai?.TongTien || 0;
+    const vat = Math.round(tongTienMon * 0.10); // 10% VAT
+    const giamGia = parseInt(document.getElementById('txtGiamGia')?.value) || 0;
+    const phuongThuc = document.getElementById('cboPhuongThuc')?.value || 'TienMat';
+    const tongCuoi = Math.max(0, tongTienMon + vat - giamGia);
+    
+    if (!confirm(`Xác nhận thanh toán?\n\nTạm tính: ${formatTien(tongTienMon)}\nVAT (10%): ${formatTien(vat)}\nGiảm giá: ${formatTien(giamGia)}\nTỔNG CỘNG: ${formatTien(tongCuoi)}\nPhương thức: ${phuongThuc === 'TienMat' ? 'Tiền mặt' : phuongThuc === 'The' ? 'Quẹt thẻ' : phuongThuc === 'QR' ? 'QR Code' : 'Chuyển khoản'}`)) return;
 
     try {
-        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, { method: 'POST' });
+        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ VAT: vat, GiamGia: giamGia, PhuongThucThanhToan: phuongThuc })
+        });
         const data = await res.json();
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao} | Đã thu: ${formatTien(data.tongTien)}`, 'success');
+            // reset state...
             document.getElementById('cboBan').value = '';
             document.getElementById('thongTinBan').style.display = 'none';
             document.getElementById('khuVucGoiMon').style.display = 'none';
@@ -241,11 +261,27 @@ async function thanhToan() {
             document.getElementById('chuaChonBan').style.display = 'block';
             document.getElementById('danhSachMon').style.display = 'none';
             hoaDonHienTai = null;
+            // Reset discount and payment method
+            if (document.getElementById('txtGiamGia')) document.getElementById('txtGiamGia').value = '';
+            if (document.getElementById('cboPhuongThuc')) document.getElementById('cboPhuongThuc').value = 'TienMat';
             await taiDanhSachBan();
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
         }
     } catch { hienThiThongBao('Lỗi kết nối server!', 'error'); }
+}
+
+function capNhatHienThiThanhToan() {
+    const tongTienMon = hoaDonHienTai?.TongTien || 0;
+    const vat = Math.round(tongTienMon * 0.10);
+    const giamGia = parseInt(document.getElementById('txtGiamGia')?.value) || 0;
+    const tongCuoi = Math.max(0, tongTienMon + vat - giamGia);
+    
+    const vatEl = document.getElementById('vatHienThi');
+    if (vatEl) vatEl.textContent = `VAT (10%): ${formatTien(vat)}`;
+    
+    const tongCuoiEl = document.getElementById('tongCuoiCung');
+    if (tongCuoiEl) tongCuoiEl.textContent = formatTien(tongCuoi);
 }
 
 // ---- Hàm tiện ích ----

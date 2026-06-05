@@ -30,7 +30,8 @@
                         "background": "#0a1628",
                         "primary-container": "#c49a42",
                         "mau-xanh": "#4ade80",
-                        "mau-do": "#f87171"
+                        "mau-do": "#f87171",
+                        "mau-vang": "#fbbf24"
                     },
                     spacing: {
                         "sidebar-width": "76px",
@@ -87,6 +88,21 @@
         <a href="lichsu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Lịch sử hóa đơn">
             <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
             <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
+        </a>
+
+        <a href="kho.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Quản lý Kho">
+            <img src="img/refresh_3d.png" alt="Kho" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Quản lý Kho</span>
+        </a>
+
+        <a href="bep.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Bếp">
+            <img src="img/logo.png" alt="Bếp" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Bếp</span>
+        </a>
+
+        <a href="baocao.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Báo cáo">
+            <img src="img/money_3d.png" alt="Báo cáo" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Báo cáo</span>
         </a>
 
         <!-- Spacer + Logout ở cuối -->
@@ -155,6 +171,11 @@
                     </div>
                     <div class="w-[1px] bg-white/5"></div>
                     <div class="flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-mau-vang shadow-[0_0_8px_#fbbf24]"></span>
+                        <span class="text-on-surface-variant">Đã đặt: <strong id="soBanDaDat" class="text-mau-vang font-bold text-sm">0</strong></span>
+                    </div>
+                    <div class="w-[1px] bg-white/5"></div>
+                    <div class="flex items-center gap-2.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-mau-do shadow-[0_0_8px_#f87171]"></span>
                         <span class="text-on-surface-variant">Có khách: <strong id="soBanCoKhach" class="text-mau-do font-bold text-sm">0</strong></span>
                     </div>
@@ -192,6 +213,7 @@
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Trạng thái</label>
                     <select id="cboTrangThaiBan" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer">
                         <option value="Trống">Trống</option>
+                        <option value="Đã đặt">Đã đặt</option>
                         <option value="Có khách">Có khách</option>
                     </select>
                 </div>

@@ -6,13 +6,13 @@ using QuanLyNhaHang.Entities;
 
 namespace QuanLyNhaHang.DAL.Interfaces
 {
-    /// <summary>
-    /// Interface định nghĩa các thao tác cho Chi Tiết Hóa Đơn.
-    /// </summary>
     public interface IChiTietHoaDonDAL
     {
         List<ChiTietHoaDon> LayTheoHoaDon(int hoaDonId);
         void Them(ChiTietHoaDon chiTiet);
         void Xoa(int id);
+        void CapNhatTrangThaiMon(int id, string trangThai);
+        List<ChiTietHoaDon> LayMonDangCho(); // Món đang chờ bếp
+        List<ChiTietHoaDon> LayMonDangChuanBi(); // Món đang chuẩn bị
     }
 }

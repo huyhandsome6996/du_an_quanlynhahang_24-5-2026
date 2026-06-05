@@ -21,6 +21,8 @@
     /* Xanh lá - trạng thái Trống */
     --mau-do: #f87171;
     /* Đỏ - trạng thái Có khách */
+    --mau-vang: #fbbf24;
+    /* Vàng - trạng thái Đã đặt */
     --mau-xanh-duong: #60a5fa;
     /* Xanh dương - thông tin */
     --mau-chu: #e8ecf4;
@@ -223,6 +225,10 @@ body {
     background: linear-gradient(90deg, #f87171, transparent);
 }
 
+.ban-card.dadat::before {
+    background: linear-gradient(90deg, #fbbf24, transparent);
+}
+
 .ban-card:hover {
     transform: translateY(-4px);
     background: rgba(16, 30, 53, 0.85);
@@ -241,6 +247,10 @@ body {
 
 .ban-card.cokhach:hover {
     border-color: rgba(248, 113, 113, 0.25);
+}
+
+.ban-card.dadat:hover {
+    border-color: rgba(251, 191, 36, 0.25);
 }
 
 .ban-card .ban-icon {
@@ -278,6 +288,12 @@ body {
     background: rgba(248, 113, 113, 0.1);
     color: #f87171;
     border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.badge-dadat {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.2);
 }
 
 .badge-thucan {
@@ -938,4 +954,4 @@ body {
     /* p-5 is 1.25rem */
     padding-bottom: 1.25rem !important;
     border-width: 1px !important;
-}
+}

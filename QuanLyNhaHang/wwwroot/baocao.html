@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Vua Sư Tử - Lịch Sử Hóa Đơn</title>
+    <title>Vua Sư Tử - Báo Cáo Thống Kê</title>
     <!-- FAVICON: Thay đổi biểu tượng chương trình -->
     <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
@@ -89,7 +89,7 @@
             <span class="sidebar-text text-sm">Gọi món</span>
         </a>
 
-        <a href="lichsu.html" class="nav-btn active relative flex items-center group" title="Lịch sử hóa đơn">
+        <a href="lichsu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Lịch sử hóa đơn">
             <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
             <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
         </a>
@@ -104,7 +104,7 @@
             <span class="sidebar-text text-sm">Bếp</span>
         </a>
 
-        <a href="baocao.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Báo cáo">
+        <a href="baocao.html" class="nav-btn active relative flex items-center group" title="Báo cáo">
             <img src="img/money_3d.png" alt="Báo cáo" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
             <span class="sidebar-text text-sm">Báo cáo</span>
         </a>
@@ -121,10 +121,10 @@
     <div class="ml-sidebar-width flex-1 flex flex-col z-10 relative">
         <header class="sticky top-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-primary/5 flex justify-between items-center px-8 z-40">
             <h1 class="font-heading text-xl font-bold tracking-tight text-on-surface flex items-center gap-2.5">
-                <img src="img/bill_3d.png" alt="History" class="w-6 h-6 object-cover rounded-md opacity-90">
+                <img src="img/money_3d.png" alt="Report" class="w-6 h-6 object-cover rounded-md opacity-90">
                 <span class="text-primary">Vua Sư Tử</span>
                 <span class="text-on-surface-variant/40 font-light">|</span>
-                <span class="text-on-surface-variant text-sm font-normal">Lịch Sử Hóa Đơn</span>
+                <span class="text-on-surface-variant text-sm font-normal">Báo Cáo Thống Kê</span>
             </h1>
             <div class="flex items-center gap-4">
                 <div class="text-right mr-3">
@@ -138,60 +138,94 @@
         </header>
 
         <main class="p-8 flex-1 max-w-7xl w-full mx-auto" style="animation: slideUp 0.5s ease forwards">
-            <section id="trang-lichsu" class="page active block">
+            <section id="trang-baocao" class="page active block">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 pb-4">
                     <div>
-                        <h2 class="font-heading text-3xl font-extrabold mb-2 tracking-tight text-on-surface">Lịch Sử Hóa Đơn</h2>
-                        <p class="text-on-surface-variant text-sm">Tra cứu toàn bộ hóa đơn đã thanh toán và doanh thu tổng của nhà hàng.</p>
+                        <h2 class="font-heading text-3xl font-extrabold mb-2 tracking-tight text-on-surface">Báo Cáo Thống Kê</h2>
+                        <p class="text-on-surface-variant text-sm">Tổng hợp doanh thu và thống kê món bán chạy của nhà hàng.</p>
                     </div>
                 </div>
 
-                <!-- Thống kê nhanh -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <!-- Widget 1 -->
+                <!-- Thống kê doanh thu - 4 widgets -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Widget 1: Tổng doanh thu -->
                     <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
-                        <div class="z-10 flex flex-col justify-center">
-                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng hóa đơn</span>
-                            <h3 class="text-4xl font-black text-on-surface drop-shadow-md" id="tongHoaDon">0</h3>
-                        </div>
-                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
-                            <img src="img/bill_3d.png" alt="Bill" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
-                        </div>
-                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/20"></div>
-                    </div>
-                    <!-- Widget 2 -->
-                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
-                        <div class="z-10 flex flex-col justify-center">
-                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Đã thanh toán</span>
-                            <h3 class="text-4xl font-black text-emerald-400 drop-shadow-md" id="daThanhToan">0</h3>
-                        </div>
-                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-emerald-500/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
-                            <img src="img/check_3d.png" alt="Check" class="w-full h-full object-contain group-hover:rotate-6 transition-transform duration-500">
-                        </div>
-                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-emerald-500/20"></div>
-                    </div>
-                    <!-- Widget 3 -->
-                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
-                        <div class="z-10 flex flex-col justify-center min-w-0 pr-4">
+                        <div class="z-10 flex flex-col justify-center min-w-0 pr-2">
                             <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng doanh thu</span>
-                            <h3 class="text-3xl font-black text-primary drop-shadow-md truncate" id="tongDoanhThu">0 ₫</h3>
+                            <h3 class="text-2xl font-black text-primary drop-shadow-md truncate" id="tongDoanhThu">0 ₫</h3>
                         </div>
-                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
-                            <img src="img/money_3d.png" alt="Money" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
+                        <div class="relative z-10 w-[56px] h-[56px] flex-shrink-0 rounded-[16px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+                            <img src="img/money_3d.png" alt="Revenue" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
                         </div>
-                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/15 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/25"></div>
+                        <div class="absolute -right-8 -bottom-8 w-28 h-28 bg-primary/15 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/25"></div>
+                    </div>
+                    <!-- Widget 2: Doanh thu hôm nay -->
+                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+                        <div class="z-10 flex flex-col justify-center min-w-0 pr-2">
+                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Doanh thu hôm nay</span>
+                            <h3 class="text-2xl font-black text-emerald-400 drop-shadow-md truncate" id="doanhThuHomNay">0 ₫</h3>
+                        </div>
+                        <div class="relative z-10 w-[56px] h-[56px] flex-shrink-0 rounded-[16px] bg-white/[0.03] border border-emerald-500/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+                            <img src="img/check_3d.png" alt="Today" class="w-full h-full object-contain group-hover:rotate-6 transition-transform duration-500">
+                        </div>
+                        <div class="absolute -right-8 -bottom-8 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-emerald-500/20"></div>
+                    </div>
+                    <!-- Widget 3: Doanh thu tháng này -->
+                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+                        <div class="z-10 flex flex-col justify-center min-w-0 pr-2">
+                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Doanh thu tháng này</span>
+                            <h3 class="text-2xl font-black text-sky-400 drop-shadow-md truncate" id="doanhThuThangNay">0 ₫</h3>
+                        </div>
+                        <div class="relative z-10 w-[56px] h-[56px] flex-shrink-0 rounded-[16px] bg-white/[0.03] border border-sky-500/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+                            <img src="img/bill_3d.png" alt="Month" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
+                        </div>
+                        <div class="absolute -right-8 -bottom-8 w-28 h-28 bg-sky-500/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-sky-500/20"></div>
+                    </div>
+                    <!-- Widget 4: Tổng hóa đơn đã thanh toán -->
+                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+                        <div class="z-10 flex flex-col justify-center">
+                            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Hóa đơn đã thanh toán</span>
+                            <h3 class="text-3xl font-black text-on-surface drop-shadow-md" id="tongHoaDon">0</h3>
+                        </div>
+                        <div class="relative z-10 w-[56px] h-[56px] flex-shrink-0 rounded-[16px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+                            <img src="img/bill_3d.png" alt="Invoices" class="w-full h-full object-contain group-hover:rotate-6 transition-transform duration-500">
+                        </div>
+                        <div class="absolute -right-8 -bottom-8 w-28 h-28 bg-primary/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/20"></div>
                     </div>
                 </div>
 
-                <!-- Bảng lịch sử -->
-                <div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-primary/6">
+                <!-- Lọc theo ngày -->
+                <div class="glass-card rounded-3xl p-6 shadow-xl mb-8 border border-primary/6">
+                    <h3 class="font-bold text-xs text-primary uppercase tracking-widest flex items-center gap-2 mb-5">
+                        <img src="img/search_3d.png" alt="Filter" class="w-5 h-5 object-cover rounded-md shadow-sm opacity-90"> Lọc hóa đơn theo khoảng ngày
+                    </h3>
+                    <div class="flex flex-col sm:flex-row items-end gap-4">
+                        <div class="flex-1 w-full">
+                            <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-1.5 block">Từ ngày</label>
+                            <input type="date" id="dtpTuNgay" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm w-full focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]">
+                        </div>
+                        <div class="flex-1 w-full">
+                            <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-1.5 block">Đến ngày</label>
+                            <input type="date" id="dtpDenNgay" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm w-full focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]">
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="btnLoc" onclick="locTheoNgay()" class="bg-gradient-to-r from-primary to-primary-soft hover:from-primary-hover hover:to-primary text-surface px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-lg shadow-primary/10 active:scale-[0.98] cursor-pointer border-none whitespace-nowrap">
+                                <img src="img/search_3d.png" alt="Filter" class="w-4 h-4 object-cover rounded-sm"> Lọc
+                            </button>
+                            <button onclick="taiBaoCaoDoanhThu(); taiLichSu();" class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2.5 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] text-on-surface cursor-pointer whitespace-nowrap">
+                                <img src="img/refresh_3d.png" alt="Refresh" class="w-4 h-4 object-cover rounded-sm"> Làm mới
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bảng doanh thu theo khoảng ngày -->
+                <div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-primary/6 mb-8">
                     <div class="flex justify-between items-center px-6 py-5 border-b border-primary/5 bg-primary/[0.02]">
                         <h3 class="font-bold text-xs text-primary uppercase tracking-widest flex items-center gap-2">
-                            <img src="img/bill_3d.png" alt="List" class="w-5 h-5 object-cover rounded-md shadow-sm opacity-90"> Danh sách hóa đơn
+                            <img src="img/bill_3d.png" alt="List" class="w-5 h-5 object-cover rounded-md shadow-sm opacity-90"> Doanh thu theo khoảng ngày
                         </h3>
-                        <button class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] text-on-surface cursor-pointer" onclick="taiLichSu()">
-                            <img src="img/refresh_3d.png" alt="Refresh" class="w-4 h-4 object-cover rounded-sm"> Làm mới
-                        </button>
+                        <div id="tongDoanhThuLoc" class="text-primary font-bold text-sm"></div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -206,9 +240,42 @@
                                     <th class="px-6 py-4 text-center">Xem</th>
                                 </tr>
                             </thead>
-                            <tbody id="bangLichSu" class="divide-y divide-white/3 text-sm">
+                            <tbody id="bangDoanhThu" class="divide-y divide-white/3 text-sm">
                                 <tr>
                                     <td colspan="7" class="px-6 py-12">
+                                        <div class="flex justify-center">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Món bán chạy -->
+                <div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-primary/6">
+                    <div class="flex justify-between items-center px-6 py-5 border-b border-primary/5 bg-primary/[0.02]">
+                        <h3 class="font-bold text-xs text-primary uppercase tracking-widest flex items-center gap-2">
+                            <img src="img/menu_book_3d.png" alt="Top" class="w-5 h-5 object-cover rounded-md shadow-sm opacity-90"> Top 10 Món Bán Chạy
+                        </h3>
+                        <button class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] text-on-surface cursor-pointer" onclick="taiMonBanChay()">
+                            <img src="img/refresh_3d.png" alt="Refresh" class="w-4 h-4 object-cover rounded-sm"> Làm mới
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-primary/[0.03] border-b border-primary/5 text-xs font-bold uppercase tracking-wider text-primary">
+                                <tr>
+                                    <th class="px-6 py-4 text-center">Hạng</th>
+                                    <th class="px-6 py-4">Tên món</th>
+                                    <th class="px-6 py-4 text-center">Số lượng bán</th>
+                                    <th class="px-6 py-4 text-right">Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bangMonBanChay" class="divide-y divide-white/3 text-sm">
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12">
                                         <div class="flex justify-center">
                                             <div class="spinner"></div>
                                         </div>
@@ -244,7 +311,7 @@
     </div>
 
     <script src="js/sidebar.js"></script>
-    <script src="js/lichsu.js?v=2.0"></script>
+    <script src="js/baocao.js?v=2.0"></script>
     <script>
         // Đồng bộ hiệu ứng modal mượt mà
         window.moModal = function(id) {

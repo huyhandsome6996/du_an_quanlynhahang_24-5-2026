@@ -1,6 +1,6 @@
 // ============================================================
 // PROGRAM.CS - Entry Point của ứng dụng
-// Đăng ký toàn bộ API Routes và khởi động web server
+// V2: Thêm API Quản lý Kho, Báo cáo thống kê, Bếp, Đặt bàn, VAT/Giảm giá/PTTT
 // ============================================================
 using System.Security.Cryptography;
 using System.Text;
@@ -11,14 +11,12 @@ using QuanLyNhaHang.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Cấu hình để phục vụ file HTML tĩnh ---
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
-// Cấu hình JSON Options cho Minimal API (giữ nguyên PascalCase của C# Properties và hỗ trợ tiếng Việt)
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = null;
@@ -31,17 +29,17 @@ builder.Services.AddSingleton<ISanPhamDAL, SanPhamDAL>();
 builder.Services.AddSingleton<IHoaDonDAL, HoaDonDAL>();
 builder.Services.AddSingleton<IChiTietHoaDonDAL, ChiTietHoaDonDAL>();
 builder.Services.AddSingleton<INguoiDungDAL, NguoiDungDAL>();
+builder.Services.AddSingleton<INguyenLieuDAL, NguyenLieuDAL>();
+builder.Services.AddSingleton<IKhoLogDAL, KhoLogDAL>();
 
 var app = builder.Build();
 
-// --- Khởi tạo CSDL SQLite khi app chạy ---
 DatabaseHelper.KhoiTaoCSDL();
 
 app.UseCors();
-app.UseDefaultFiles();   // Phục vụ index.html mặc định
-app.UseStaticFiles();    // Phục vụ CSS, JS, HTML trong wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-// Cấu hình JSON trả về tiếng Việt không bị encode
 var jsonOptions = new JsonSerializerOptions
 {
     PropertyNamingPolicy = null,
@@ -49,7 +47,7 @@ var jsonOptions = new JsonSerializerOptions
 };
 
 // ============================================================
-// ====    HÀM TIỆN ÍCH: BĂM MẬT KHẨU SHA256              ====
+// HÀM TIỆN ÍCH: BĂM MẬT KHẨU SHA256
 // ============================================================
 static string BamSHA256(string matKhau)
 {
@@ -57,113 +55,65 @@ static string BamSHA256(string matKhau)
     byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(matKhau));
     var sb = new StringBuilder();
     foreach (byte b in bytes)
-        sb.Append(b.ToString("x2")); // Chuyển sang chuỗi hex
+        sb.Append(b.ToString("x2"));
     return sb.ToString();
 }
 
 // ============================================================
-// ====          API - ĐĂNG KÝ / ĐĂNG NHẬP                 ====
+// API - ĐĂNG KÝ / ĐĂNG NHẬP
 // ============================================================
 
-// GET /api/auth/check - Kiểm tra hệ thống đã có tài khoản chưa
 app.MapGet("/api/auth/check", (INguoiDungDAL ndDAL) =>
 {
-    try
-    {
-        bool coNguoiDung = ndDAL.KiemTraCoNguoiDung();
-        return Results.Ok(new { coNguoiDung });
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    try { return Results.Ok(new { coNguoiDung = ndDAL.KiemTraCoNguoiDung() }); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// POST /api/auth/dangky - Đăng ký tài khoản mới (mật khẩu băm SHA256)
 app.MapPost("/api/auth/dangky", (JsonElement body, INguoiDungDAL ndDAL) =>
 {
     try
     {
         string tenDangNhap = body.GetProperty("TenDangNhap").GetString() ?? "";
         string matKhau = body.GetProperty("MatKhau").GetString() ?? "";
-
-        // Validation
         if (string.IsNullOrWhiteSpace(tenDangNhap) || tenDangNhap.Length < 3)
             return Results.BadRequest(new { thongBao = "Tên đăng nhập phải có ít nhất 3 ký tự!" });
         if (string.IsNullOrWhiteSpace(matKhau) || matKhau.Length < 4)
             return Results.BadRequest(new { thongBao = "Mật khẩu phải có ít nhất 4 ký tự!" });
-
-        // Băm mật khẩu bằng SHA256 trước khi lưu vào CSDL
         string matKhauHash = BamSHA256(matKhau);
-
-        var nguoiDung = new NguoiDung
-        {
-            TenDangNhap = tenDangNhap.Trim(),
-            MatKhauHash = matKhauHash,
-            VaiTro = "QuanTri",
-            NgayTao = DateTime.Now
-        };
-
+        var nguoiDung = new NguoiDung { TenDangNhap = tenDangNhap.Trim(), MatKhauHash = matKhauHash, VaiTro = "QuanTri", NgayTao = DateTime.Now };
         ndDAL.Them(nguoiDung);
         return Results.Ok(new { thongBao = "Đăng ký thành công! Vui lòng đăng nhập." });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// POST /api/auth/dangnhap - Đăng nhập (so sánh hash SHA256)
 app.MapPost("/api/auth/dangnhap", (JsonElement body, INguoiDungDAL ndDAL) =>
 {
     try
     {
         string tenDangNhap = body.GetProperty("TenDangNhap").GetString() ?? "";
         string matKhau = body.GetProperty("MatKhau").GetString() ?? "";
-
         if (string.IsNullOrWhiteSpace(tenDangNhap) || string.IsNullOrWhiteSpace(matKhau))
             return Results.BadRequest(new { thongBao = "Vui lòng nhập đầy đủ thông tin!" });
-
         var nguoiDung = ndDAL.LayTheoTenDangNhap(tenDangNhap.Trim());
-        if (nguoiDung == null)
-            return Results.Unauthorized();
-
-        // So sánh hash SHA256 của mật khẩu nhập vào với hash trong CSDL
+        if (nguoiDung == null) return Results.Unauthorized();
         string matKhauHash = BamSHA256(matKhau);
-        if (nguoiDung.MatKhauHash != matKhauHash)
-            return Results.Unauthorized();
-
-        return Results.Ok(new { 
-            thongBao = "Đăng nhập thành công!", 
-            tenDangNhap = nguoiDung.TenDangNhap,
-            vaiTro = nguoiDung.VaiTro 
-        });
+        if (nguoiDung.MatKhauHash != matKhauHash) return Results.Unauthorized();
+        return Results.Ok(new { thongBao = "Đăng nhập thành công!", tenDangNhap = nguoiDung.TenDangNhap, vaiTro = nguoiDung.VaiTro });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
 // ============================================================
-// ====               API - QUẢN LÝ BÀN                   ====
+// API - QUẢN LÝ BÀN (Bổ sung Đặt bàn)
 // ============================================================
 
-// GET /api/ban - Lấy tất cả bàn
 app.MapGet("/api/ban", (IBanDAL banDAL) =>
 {
-    try
-    {
-        var dsBan = banDAL.LayTatCa();
-        return Results.Ok(dsBan);
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    try { return Results.Ok(banDAL.LayTatCa()); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// GET /api/ban/{id} - Lấy 1 bàn theo Id
 app.MapGet("/api/ban/{id:int}", (int id, IBanDAL banDAL) =>
 {
     var ban = banDAL.LayTheoId(id);
@@ -171,39 +121,24 @@ app.MapGet("/api/ban/{id:int}", (int id, IBanDAL banDAL) =>
     return Results.Ok(ban);
 });
 
-// POST /api/ban - Thêm bàn mới
 app.MapPost("/api/ban", (Ban ban, IBanDAL banDAL) =>
 {
     try
     {
         if (string.IsNullOrWhiteSpace(ban.TenBan))
             return Results.BadRequest(new { thongBao = "Tên bàn không được để trống!" });
-
         banDAL.Them(ban);
         return Results.Ok(new { thongBao = "Thêm bàn thành công!" });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// PUT /api/ban/{id} - Sửa bàn
 app.MapPut("/api/ban/{id:int}", (int id, Ban ban, IBanDAL banDAL) =>
 {
-    try
-    {
-        ban.Id = id;
-        banDAL.Sua(ban);
-        return Results.Ok(new { thongBao = "Cập nhật bàn thành công!" });
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    try { ban.Id = id; banDAL.Sua(ban); return Results.Ok(new { thongBao = "Cập nhật bàn thành công!" }); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// DELETE /api/ban/{id} - Xóa bàn
 app.MapDelete("/api/ban/{id:int}", (int id, IBanDAL banDAL) =>
 {
     try
@@ -212,51 +147,64 @@ app.MapDelete("/api/ban/{id:int}", (int id, IBanDAL banDAL) =>
         if (ban == null) return Results.NotFound(new { thongBao = "Không tìm thấy bàn!" });
         if (ban.TrangThai == "Có khách")
             return Results.BadRequest(new { thongBao = "Không thể xóa bàn đang có khách!" });
-
         banDAL.Xoa(id);
         return Results.Ok(new { thongBao = "Xóa bàn thành công!" });
     }
-    catch (Exception ex)
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// POST /api/ban/{id}/dat - Đặt bàn (Trống → Đã đặt)
+app.MapPost("/api/ban/{id:int}/dat", (int id, IBanDAL banDAL) =>
+{
+    try
     {
-        return Results.BadRequest(new { thongBao = ex.Message });
+        var ban = banDAL.LayTheoId(id);
+        if (ban == null) return Results.NotFound(new { thongBao = "Không tìm thấy bàn!" });
+        if (ban.TrangThai != "Trống")
+            return Results.BadRequest(new { thongBao = "Chỉ có thể đặt bàn đang trống!" });
+        banDAL.CapNhatTrangThai(id, "Đã đặt");
+        return Results.Ok(new { thongBao = "Đặt bàn thành công!" });
     }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// POST /api/ban/{id}/huy-dat - Hủy đặt bàn (Đã đặt → Trống)
+app.MapPost("/api/ban/{id:int}/huy-dat", (int id, IBanDAL banDAL) =>
+{
+    try
+    {
+        var ban = banDAL.LayTheoId(id);
+        if (ban == null) return Results.NotFound(new { thongBao = "Không tìm thấy bàn!" });
+        if (ban.TrangThai != "Đã đặt")
+            return Results.BadRequest(new { thongBao = "Bàn này chưa được đặt!" });
+        banDAL.CapNhatTrangThai(id, "Trống");
+        return Results.Ok(new { thongBao = "Hủy đặt bàn thành công!" });
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
 // ============================================================
-// ====            API - QUẢN LÝ SẢN PHẨM (MENU)          ====
+// API - QUẢN LÝ SẢN PHẨM (MENU)
 // ============================================================
 
-// GET /api/sanpham - Lấy tất cả sản phẩm
 app.MapGet("/api/sanpham", (ISanPhamDAL spDAL) =>
 {
     try
     {
         var ds = spDAL.LayTatCa();
-        // Chuyển sang anonymous object để JSON dễ đọc hơn
-        var ketQua = ds.Select(sp => new
-        {
-            sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan, sp.HinhAnh
-        });
+        var ketQua = ds.Select(sp => new { sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan, sp.HinhAnh });
         return Results.Ok(ketQua);
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// GET /api/sanpham/dangban - Lấy món đang phục vụ (cho màn hình Order)
 app.MapGet("/api/sanpham/dangban", (ISanPhamDAL spDAL) =>
 {
     var ds = spDAL.LayDangBan();
-    var ketQua = ds.Select(sp => new
-    {
-        sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan, sp.HinhAnh
-    });
+    var ketQua = ds.Select(sp => new { sp.Id, sp.TenSanPham, sp.GiaCoBan, sp.Loai, sp.DangBan, sp.HinhAnh });
     return Results.Ok(ketQua);
 });
 
-// POST /api/sanpham - Thêm sản phẩm mới
 app.MapPost("/api/sanpham", (JsonElement body, ISanPhamDAL spDAL) =>
 {
     try
@@ -266,24 +214,17 @@ app.MapPost("/api/sanpham", (JsonElement body, ISanPhamDAL spDAL) =>
         string loai = body.GetProperty("Loai").GetString() ?? "";
         bool dangBan = body.TryGetProperty("DangBan", out var db) ? db.GetBoolean() : true;
         string? hinhAnh = body.TryGetProperty("HinhAnh", out var img) ? img.GetString() : null;
-
-        // ĐA HÌNH: Tạo đúng loại object dựa trên trường 'Loai'
         SanPham sp = loai == "ThucAn" ? new ThucAn() : new NuocUong();
-        sp.TenSanPham = tenSanPham;  // Có validate trong setter (Encapsulation)
-        sp.GiaCoBan = giaCoBan;      // Có validate >= 0 trong setter
+        sp.TenSanPham = tenSanPham;
+        sp.GiaCoBan = giaCoBan;
         sp.DangBan = dangBan;
         sp.HinhAnh = hinhAnh;
-
         spDAL.Them(sp);
         return Results.Ok(new { thongBao = "Thêm sản phẩm thành công!" });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// PUT /api/sanpham/{id} - Sửa sản phẩm
 app.MapPut("/api/sanpham/{id:int}", (int id, JsonElement body, ISanPhamDAL spDAL) =>
 {
     try
@@ -293,45 +234,30 @@ app.MapPut("/api/sanpham/{id:int}", (int id, JsonElement body, ISanPhamDAL spDAL
         string loai = body.GetProperty("Loai").GetString() ?? "";
         bool dangBan = body.TryGetProperty("DangBan", out var db) ? db.GetBoolean() : true;
         string? hinhAnh = body.TryGetProperty("HinhAnh", out var img) ? img.GetString() : null;
-
         SanPham sp = loai == "ThucAn" ? new ThucAn() : new NuocUong();
-        sp.Id = id;
-        sp.TenSanPham = tenSanPham;
-        sp.GiaCoBan = giaCoBan;
-        sp.DangBan = dangBan;
-        sp.HinhAnh = hinhAnh;
-
+        sp.Id = id; sp.TenSanPham = tenSanPham; sp.GiaCoBan = giaCoBan; sp.DangBan = dangBan; sp.HinhAnh = hinhAnh;
         spDAL.Sua(sp);
         return Results.Ok(new { thongBao = "Cập nhật sản phẩm thành công!" });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// DELETE /api/sanpham/{id} - Xóa sản phẩm
 app.MapDelete("/api/sanpham/{id:int}", (int id, ISanPhamDAL spDAL) =>
 {
     try
     {
         var sp = spDAL.LayTheoId(id);
         if (sp == null) return Results.NotFound(new { thongBao = "Không tìm thấy sản phẩm!" });
-
         spDAL.Xoa(id);
         return Results.Ok(new { thongBao = "Xóa sản phẩm thành công!" });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
 // ============================================================
-// ====         API - QUẢN LÝ HÓA ĐƠN & GỌI MÓN          ====
+// API - QUẢN LÝ HÓA ĐƠN & GỌI MÓN (Bổ sung VAT, Giảm giá, PTTT)
 // ============================================================
 
-// POST /api/ban/{id}/mo - Mở bàn (tạo hóa đơn mới)
 app.MapPost("/api/ban/{id:int}/mo", (int id, IBanDAL banDAL, IHoaDonDAL hdDAL) =>
 {
     try
@@ -340,154 +266,77 @@ app.MapPost("/api/ban/{id:int}/mo", (int id, IBanDAL banDAL, IHoaDonDAL hdDAL) =
         if (ban == null) return Results.NotFound(new { thongBao = "Không tìm thấy bàn!" });
         if (ban.TrangThai == "Có khách")
             return Results.BadRequest(new { thongBao = "Bàn đang có khách, không thể mở lại!" });
-
-        // Tạo hóa đơn mới
-        var hoaDon = new HoaDon
-        {
-            BanId = id,
-            ThoiGianTao = DateTime.Now,
-            TrangThai = "Chưa thanh toán",
-            TongTien = 0
-        };
+        var hoaDon = new HoaDon { BanId = id, ThoiGianTao = DateTime.Now, TrangThai = "Chưa thanh toán", TongTien = 0, VAT = 0, GiamGia = 0, PhuongThucThanhToan = "TienMat" };
         int hoaDonId = hdDAL.Them(hoaDon);
-
-        // Cập nhật trạng thái bàn thành "Có khách"
         banDAL.CapNhatTrangThai(id, "Có khách");
-
         return Results.Ok(new { thongBao = "Mở bàn thành công!", hoaDonId });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// GET /api/ban/{id}/hoadon - Lấy hóa đơn đang mở của bàn
 app.MapGet("/api/ban/{id:int}/hoadon", (int id, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
 {
     try
     {
         var hoaDon = hdDAL.LayHoaDonChuaThanhToanTheoBan(id);
-        if (hoaDon == null)
-            return Results.NotFound(new { thongBao = "Bàn này hiện chưa có hóa đơn!" });
-
+        if (hoaDon == null) return Results.NotFound(new { thongBao = "Bàn này hiện chưa có hóa đơn!" });
         var chiTiet = ctDAL.LayTheoHoaDon(hoaDon.Id);
-
         return Results.Ok(new { hoaDon, chiTiet });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// POST /api/hoadon/{id}/them-mon - Thêm món vào hóa đơn
-app.MapPost("/api/hoadon/{id:int}/them-mon", (int id, JsonElement body,
-    ISanPhamDAL spDAL, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
+app.MapPost("/api/hoadon/{id:int}/them-mon", (int id, JsonElement body, ISanPhamDAL spDAL, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
 {
     try
     {
         int sanPhamId = body.GetProperty("SanPhamId").GetInt32();
         int soLuong = body.GetProperty("SoLuong").GetInt32();
-        string thuocTinhThem = body.TryGetProperty("ThuocTinhThem", out var tt)
-            ? tt.GetString() ?? "" : "";
-
-        // Validation
-        if (soLuong <= 0)
-            return Results.BadRequest(new { thongBao = "Số lượng phải lớn hơn 0!" });
-
-        // Lấy hóa đơn
+        string thuocTinhThem = body.TryGetProperty("ThuocTinhThem", out var tt) ? tt.GetString() ?? "" : "";
+        if (soLuong <= 0) return Results.BadRequest(new { thongBao = "Số lượng phải lớn hơn 0!" });
         var hoaDon = hdDAL.LayTheoId(id);
         if (hoaDon == null || hoaDon.TrangThai != "Chưa thanh toán")
             return Results.NotFound(new { thongBao = "Hóa đơn không tồn tại hoặc đã thanh toán!" });
-
-        // Lấy sản phẩm - ĐA HÌNH được thể hiện ở đây
         var sp = spDAL.LayTheoId(sanPhamId);
         if (sp == null) return Results.NotFound(new { thongBao = "Sản phẩm không tồn tại!" });
-
-        // Gọi TinhTien() - Đa hình: ThucAn và NuocUong tính khác nhau!
         decimal thanhTien = sp.TinhTien(soLuong, thuocTinhThem);
-        decimal donGiaBan = thanhTien / soLuong; // Đơn giá đã tính phụ phí
-
-        // Thêm chi tiết hóa đơn
-        var chiTiet = new ChiTietHoaDon
-        {
-            HoaDonId = id,
-            SanPhamId = sanPhamId,
-            SoLuong = soLuong,
-            DonGiaBan = donGiaBan,
-            ThuocTinhThem = thuocTinhThem,
-            ThanhTien = thanhTien
-        };
+        decimal donGiaBan = thanhTien / soLuong;
+        var chiTiet = new ChiTietHoaDon { HoaDonId = id, SanPhamId = sanPhamId, SoLuong = soLuong, DonGiaBan = donGiaBan, ThuocTinhThem = thuocTinhThem, ThanhTien = thanhTien, TrangThaiMon = "DangCho" };
         ctDAL.Them(chiTiet);
-
-        // Cập nhật tổng tiền hóa đơn
         decimal tongTienMoi = hoaDon.TongTien + thanhTien;
         hdDAL.CapNhatTongTien(id, tongTienMoi);
-
-        return Results.Ok(new
-        {
-            thongBao = "Thêm món thành công!",
-            thanhTien,
-            tongTienMoi,
-            moTaPhuPhi = sp.MoTaPhuPhi(thuocTinhThem)
-        });
+        return Results.Ok(new { thongBao = "Thêm món thành công!", thanhTien, tongTienMoi, moTaPhuPhi = sp.MoTaPhuPhi(thuocTinhThem) });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// DELETE /api/chitiethoadon/{id} - Xóa 1 món khỏi hóa đơn
 app.MapDelete("/api/chitiethoadon/{id:int}", (int id, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
 {
     try
     {
-        // Tìm chi tiết hóa đơn
-        // Lấy danh sách tất cả chi tiết để tìm theo id
-        // (Đơn giản hóa: dùng cách này để tránh thêm method mới)
-        var ds = new List<ChiTietHoaDon>();
-
-        // Xóa và tính lại tổng tiền
-        // Ta cần lấy thông tin trước khi xóa
         using var conn = new Microsoft.Data.Sqlite.SqliteConnection(DatabaseHelper.ConnectionString);
         conn.Open();
-
-        // Lấy thông tin chi tiết trước khi xóa
-        var getCmd = new Microsoft.Data.Sqlite.SqliteCommand(
-            "SELECT HoaDonId, ThanhTien FROM ChiTietHoaDon WHERE Id = @id", conn);
+        var getCmd = new Microsoft.Data.Sqlite.SqliteCommand("SELECT HoaDonId, ThanhTien FROM ChiTietHoaDon WHERE Id = @id", conn);
         getCmd.Parameters.AddWithValue("@id", id);
         using var reader = getCmd.ExecuteReader();
-
-        if (!reader.Read())
-            return Results.NotFound(new { thongBao = "Không tìm thấy món này!" });
-
+        if (!reader.Read()) return Results.NotFound(new { thongBao = "Không tìm thấy món này!" });
         int hoaDonId = reader.GetInt32(0);
         decimal thanhTien = reader.GetDecimal(1);
         reader.Close();
-
-        // Xóa chi tiết
         ctDAL.Xoa(id);
-
-        // Cập nhật lại tổng tiền hóa đơn
         var hoaDon = hdDAL.LayTheoId(hoaDonId);
         if (hoaDon != null)
         {
             decimal tongTienMoi = hoaDon.TongTien - thanhTien;
             hdDAL.CapNhatTongTien(hoaDonId, Math.Max(0, tongTienMoi));
         }
-
         return Results.Ok(new { thongBao = "Xóa món thành công!" });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// POST /api/ban/{id}/thanhtoan - Thanh toán và đóng bàn
-app.MapPost("/api/ban/{id:int}/thanhtoan", (int id, IBanDAL banDAL, IHoaDonDAL hdDAL) =>
+// POST /api/ban/{id}/thanhtoan - Thanh toán (Bổ sung VAT, Giảm giá, PTTT)
+app.MapPost("/api/ban/{id:int}/thanhtoan", (int id, JsonElement body, IBanDAL banDAL, IHoaDonDAL hdDAL) =>
 {
     try
     {
@@ -495,66 +344,275 @@ app.MapPost("/api/ban/{id:int}/thanhtoan", (int id, IBanDAL banDAL, IHoaDonDAL h
         if (hoaDon == null)
             return Results.NotFound(new { thongBao = "Bàn này chưa có hóa đơn hoặc đã thanh toán!" });
 
+        // Lấy VAT, Giảm giá, PTTT từ request body
+        decimal vat = body.TryGetProperty("VAT", out var v) ? v.GetDecimal() : 0;
+        decimal giamGia = body.TryGetProperty("GiamGia", out var g) ? g.GetDecimal() : 0;
+        string pttt = body.TryGetProperty("PhuongThucThanhToan", out var p) ? p.GetString() ?? "TienMat" : "TienMat";
+
+        // Cập nhật thông tin thanh toán
+        hdDAL.CapNhatThanhToan(hoaDon.Id, vat, giamGia, pttt);
+
+        // Cập nhật tổng tiền cuối cùng: TongTien + VAT - GiamGia
+        decimal tongCuoi = hoaDon.TongTien + vat - giamGia;
+        hdDAL.CapNhatTongTien(hoaDon.Id, Math.Max(0, tongCuoi));
+
         // Thanh toán hóa đơn
         hdDAL.ThanhToan(hoaDon.Id);
 
-        // Giải phóng bàn về trạng thái "Trống"
+        // Giải phóng bàn
         banDAL.CapNhatTrangThai(id, "Trống");
 
-        return Results.Ok(new
-        {
-            thongBao = "Thanh toán thành công! Bàn đã được giải phóng.",
-            tongTien = hoaDon.TongTien
-        });
+        return Results.Ok(new { thongBao = "Thanh toán thành công!", tongTien = Math.Max(0, tongCuoi), vat, giamGia, phuongThuc = pttt });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
 // ============================================================
-// ====           API - LỊCH SỬ HÓA ĐƠN                  ====
+// API - LỊCH SỬ HÓA ĐƠN
 // ============================================================
 
-// GET /api/hoadon - Lấy toàn bộ lịch sử hóa đơn
 app.MapGet("/api/hoadon", (IHoaDonDAL hdDAL) =>
 {
-    try
-    {
-        var ds = hdDAL.LayTatCa();
-        return Results.Ok(ds);
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    try { return Results.Ok(hdDAL.LayTatCa()); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-// GET /api/hoadon/{id} - Chi tiết 1 hóa đơn (kèm danh sách món)
 app.MapGet("/api/hoadon/{id:int}", (int id, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
 {
     try
     {
         var hoaDon = hdDAL.LayTheoId(id);
         if (hoaDon == null) return Results.NotFound(new { thongBao = "Không tìm thấy hóa đơn!" });
-
         var chiTiet = ctDAL.LayTheoHoaDon(id);
         return Results.Ok(new { hoaDon, chiTiet });
     }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { thongBao = ex.Message });
-    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
 });
 
-Console.WriteLine("🍽️  ỨNG DỤNG QUẢN LÝ NHÀ HÀNG (DESKTOP MODE)");
+// GET /api/hoadon/theongay - Lọc hóa đơn theo khoảng ngày
+app.MapGet("/api/hoadon/theongay", (DateTime tuNgay, DateTime denNgay, IHoaDonDAL hdDAL) =>
+{
+    try
+    {
+        var ds = hdDAL.LayTheoKhoangNgay(tuNgay, denNgay);
+        return Results.Ok(ds);
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// ============================================================
+// API - QUẢN LÝ KHO (Nguyên Liệu + Nhập/Xuất)
+// ============================================================
+
+app.MapGet("/api/nguyenlieu", (INguyenLieuDAL nlDAL) =>
+{
+    try { return Results.Ok(nlDAL.LayTatCa()); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+app.MapGet("/api/nguyenlieu/canhbao", (INguyenLieuDAL nlDAL) =>
+{
+    try { return Results.Ok(nlDAL.LayCanhBao()); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+app.MapPost("/api/nguyenlieu", (JsonElement body, INguyenLieuDAL nlDAL) =>
+{
+    try
+    {
+        string ten = body.GetProperty("TenNguyenLieu").GetString() ?? "";
+        string donVi = body.GetProperty("DonVi").GetString() ?? "";
+        decimal soLuongTon = body.TryGetProperty("SoLuongTon", out var sl) ? sl.GetDecimal() : 0;
+        decimal mucToiThieu = body.TryGetProperty("MucToiThieu", out var mt) ? mt.GetDecimal() : 0;
+        string? ghiChu = body.TryGetProperty("GhiChu", out var gc) ? gc.GetString() : null;
+        var nl = new NguyenLieu { TenNguyenLieu = ten, DonVi = donVi, SoLuongTon = soLuongTon, MucToiThieu = mucToiThieu, GhiChu = ghiChu };
+        nlDAL.Them(nl);
+        return Results.Ok(new { thongBao = "Thêm nguyên liệu thành công!" });
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+app.MapPut("/api/nguyenlieu/{id:int}", (int id, JsonElement body, INguyenLieuDAL nlDAL) =>
+{
+    try
+    {
+        string ten = body.GetProperty("TenNguyenLieu").GetString() ?? "";
+        string donVi = body.GetProperty("DonVi").GetString() ?? "";
+        decimal soLuongTon = body.TryGetProperty("SoLuongTon", out var sl) ? sl.GetDecimal() : 0;
+        decimal mucToiThieu = body.TryGetProperty("MucToiThieu", out var mt) ? mt.GetDecimal() : 0;
+        string? ghiChu = body.TryGetProperty("GhiChu", out var gc) ? gc.GetString() : null;
+        var nl = new NguyenLieu { Id = id, TenNguyenLieu = ten, DonVi = donVi, SoLuongTon = soLuongTon, MucToiThieu = mucToiThieu, GhiChu = ghiChu };
+        nlDAL.Sua(nl);
+        return Results.Ok(new { thongBao = "Cập nhật nguyên liệu thành công!" });
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+app.MapDelete("/api/nguyenlieu/{id:int}", (int id, INguyenLieuDAL nlDAL) =>
+{
+    try { nlDAL.Xoa(id); return Results.Ok(new { thongBao = "Xóa nguyên liệu thành công!" }); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// POST /api/kho/nhap - Nhập kho
+app.MapPost("/api/kho/nhap", (JsonElement body, INguyenLieuDAL nlDAL, IKhoLogDAL klDAL) =>
+{
+    try
+    {
+        int nlId = body.GetProperty("NguyenLieuId").GetInt32();
+        decimal soLuong = body.GetProperty("SoLuong").GetDecimal();
+        decimal donGia = body.TryGetProperty("DonGia", out var dg) ? dg.GetDecimal() : 0;
+        string? lyDo = body.TryGetProperty("LyDo", out var ld) ? ld.GetString() : "Nhập kho";
+
+        if (soLuong <= 0) return Results.BadRequest(new { thongBao = "Số lượng phải lớn hơn 0!" });
+
+        var nl = nlDAL.LayTheoId(nlId);
+        if (nl == null) return Results.NotFound(new { thongBao = "Không tìm thấy nguyên liệu!" });
+
+        // Cập nhật tồn kho
+        nlDAL.CapNhatSoLuongTon(nlId, nl.SoLuongTon + soLuong);
+
+        // Ghi log nhập kho
+        var log = new KhoLog { Loai = "Nhap", NguyenLieuId = nlId, TenNguyenLieu = nl.TenNguyenLieu, SoLuong = soLuong, DonGia = donGia, ThoiGian = DateTime.Now, LyDo = lyDo };
+        klDAL.Them(log);
+
+        return Results.Ok(new { thongBao = $"Nhập kho thành công! Đã thêm {soLuong} {nl.DonVi} {nl.TenNguyenLieu}" });
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// POST /api/kho/xuat - Xuất kho
+app.MapPost("/api/kho/xuat", (JsonElement body, INguyenLieuDAL nlDAL, IKhoLogDAL klDAL) =>
+{
+    try
+    {
+        int nlId = body.GetProperty("NguyenLieuId").GetInt32();
+        decimal soLuong = body.GetProperty("SoLuong").GetDecimal();
+        string? lyDo = body.TryGetProperty("LyDo", out var ld) ? ld.GetString() : "Xuất kho";
+
+        if (soLuong <= 0) return Results.BadRequest(new { thongBao = "Số lượng phải lớn hơn 0!" });
+
+        var nl = nlDAL.LayTheoId(nlId);
+        if (nl == null) return Results.NotFound(new { thongBao = "Không tìm thấy nguyên liệu!" });
+        if (nl.SoLuongTon < soLuong) return Results.BadRequest(new { thongBao = $"Tồn kho không đủ! Hiện có: {nl.SoLuongTon} {nl.DonVi}" });
+
+        // Cập nhật tồn kho
+        nlDAL.CapNhatSoLuongTon(nlId, nl.SoLuongTon - soLuong);
+
+        // Ghi log xuất kho
+        var log = new KhoLog { Loai = "Xuat", NguyenLieuId = nlId, TenNguyenLieu = nl.TenNguyenLieu, SoLuong = soLuong, DonGia = 0, ThoiGian = DateTime.Now, LyDo = lyDo };
+        klDAL.Them(log);
+
+        return Results.Ok(new { thongBao = $"Xuất kho thành công! Đã xuất {soLuong} {nl.DonVi} {nl.TenNguyenLieu}" });
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+app.MapGet("/api/kholog", (IKhoLogDAL klDAL) =>
+{
+    try { return Results.Ok(klDAL.LayTatCa()); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// ============================================================
+// API - BẾP (Kitchen Display + Cập nhật trạng thái món)
+// ============================================================
+
+app.MapGet("/api/bep/dangcho", (IChiTietHoaDonDAL ctDAL) =>
+{
+    try { return Results.Ok(ctDAL.LayMonDangCho()); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+app.MapGet("/api/bep/dangchuanbi", (IChiTietHoaDonDAL ctDAL) =>
+{
+    try { return Results.Ok(ctDAL.LayMonDangChuanBi()); }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// PUT /api/chitiethoadon/{id}/trangthai - Cập nhật trạng thái món
+app.MapPut("/api/chitiethoadon/{id:int}/trangthai", (int id, JsonElement body, IChiTietHoaDonDAL ctDAL) =>
+{
+    try
+    {
+        string trangThai = body.GetProperty("TrangThaiMon").GetString() ?? "";
+        if (trangThai != "DangCho" && trangThai != "DangChuanBi" && trangThai != "DaPhucVu")
+            return Results.BadRequest(new { thongBao = "Trạng thái không hợp lệ! (DangCho/DangChuanBi/DaPhucVu)" });
+        ctDAL.CapNhatTrangThaiMon(id, trangThai);
+        return Results.Ok(new { thongBao = "Cập nhật trạng thái món thành công!" });
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// ============================================================
+// API - BÁO CÁO THỐNG KÊ
+// ============================================================
+
+// GET /api/baocao/monbanchay - Thống kê món bán chạy nhất
+app.MapGet("/api/baocao/monbanchay", (int? top, ISanPhamDAL spDAL, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
+{
+    try
+    {
+        int soLuongTop = top ?? 10;
+        // Lấy tất cả chi tiết hóa đơn đã thanh toán
+        var dsHoaDon = hdDAL.LayTatCa().Where(h => h.TrangThai == "Đã thanh toán");
+        var thongKe = new Dictionary<int, ThongKeMon>();
+        foreach (var hd in dsHoaDon)
+        {
+            var chiTiet = ctDAL.LayTheoHoaDon(hd.Id);
+            foreach (var ct in chiTiet)
+            {
+                if (!thongKe.ContainsKey(ct.SanPhamId))
+                    thongKe[ct.SanPhamId] = new ThongKeMon { SanPhamId = ct.SanPhamId, TenSanPham = ct.TenSanPham, TongSoLuong = 0, TongDoanhThu = 0 };
+                thongKe[ct.SanPhamId].TongSoLuong += ct.SoLuong;
+                thongKe[ct.SanPhamId].TongDoanhThu += ct.ThanhTien;
+            }
+        }
+        var ketQua = thongKe.Values.OrderByDescending(t => t.TongSoLuong).Take(soLuongTop).ToList();
+        return Results.Ok(ketQua);
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// GET /api/baocao/doanhthu - Thống kê doanh thu tổng
+app.MapGet("/api/baocao/doanhthu", (IHoaDonDAL hdDAL) =>
+{
+    try
+    {
+        var ds = hdDAL.LayTatCa().Where(h => h.TrangThai == "Đã thanh toán").ToList();
+        var homNay = DateTime.Now.Date;
+        var dauThang = new DateTime(homNay.Year, homNay.Month, 1);
+        return Results.Ok(new
+        {
+            tongDoanhThu = ds.Sum(h => h.TongTien),
+            tongHoaDon = ds.Count,
+            doanhThuHomNay = ds.Where(h => h.ThoiGianThanhToan.HasValue && h.ThoiGianThanhToan.Value.Date == homNay).Sum(h => h.TongTien),
+            hoaDonHomNay = ds.Count(h => h.ThoiGianThanhToan.HasValue && h.ThoiGianThanhToan.Value.Date == homNay),
+            doanhThuThangNay = ds.Where(h => h.ThoiGianThanhToan.HasValue && h.ThoiGianThanhToan.Value >= dauThang).Sum(h => h.TongTien),
+            hoaDonThangNay = ds.Count(h => h.ThoiGianThanhToan.HasValue && h.ThoiGianThanhToan.Value >= dauThang)
+        });
+    }
+    catch (Exception ex) { return Results.BadRequest(new { thongBao = ex.Message }); }
+});
+
+// Helper class cho thống kê món bán chạy
+public class ThongKeMon
+{
+    public int SanPhamId { get; set; }
+    public string TenSanPham { get; set; } = "";
+    public int TongSoLuong { get; set; }
+    public decimal TongDoanhThu { get; set; }
+}
+
+// ============================================================
+// KHỞI CHẠY ỨNG DỤNG (DESKTOP MODE)
+// ============================================================
+
+Console.WriteLine("🍽️  ỨNG DỤNG QUẢN LÝ NHÀ HÀNG V2 (DESKTOP MODE)");
 Console.WriteLine("=================================");
 
-// Khởi chạy Web API dưới luồng nền (Background thread)
 _ = Task.Run(() => app.Run("http://localhost:5000"));
 
-// Khởi chạy Windows Forms trên luồng STA (Single-Threaded Apartment) để tránh lỗi COM thread mode
 var uiThread = new Thread(() =>
 {
     System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.SystemAware);
@@ -578,7 +636,7 @@ var uiThread = new Thread(() =>
             formMain.Icon = System.Drawing.Icon.FromHandle(bitmap.GetHicon());
         }
     }
-    catch { /* Ignore if icon fails to load */ }
+    catch { }
 
     var webView = new Microsoft.Web.WebView2.WinForms.WebView2
     {
@@ -591,7 +649,6 @@ var uiThread = new Thread(() =>
     {
         try
         {
-            // Chờ 1.2 giây để server Web API khởi động hoàn tất
             await Task.Delay(1200);
             await webView.EnsureCoreWebView2Async();
             webView.Source = new Uri("http://localhost:5000");
@@ -610,7 +667,6 @@ var uiThread = new Thread(() =>
     System.Windows.Forms.Application.Run(formMain);
 });
 
-// Thiết lập luồng STA bắt buộc cho WebView2
 uiThread.SetApartmentState(ApartmentState.STA);
 uiThread.Start();
-uiThread.Join(); // Đợi luồng giao diện kết thúc thì tắt ứng dụng
+uiThread.Join();

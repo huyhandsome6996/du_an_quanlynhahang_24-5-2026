@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vua Sư Tử - Quản Lý Kho</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Outfit"', 'sans-serif'],
+                        heading: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        "primary": "#d4a853",
+                        "primary-soft": "#f0d68a",
+                        "surface": "#0a1628",
+                        "surface-container": "#101e35",
+                        "surface-container-highest": "#1e3050",
+                        "on-surface": "#e8ecf4",
+                        "on-surface-variant": "#8b9ab8",
+                        "background": "#0a1628",
+                        "primary-container": "#c49a42",
+                        "mau-xanh": "#4ade80",
+                        "mau-do": "#f87171"
+                    },
+                    spacing: {
+                        "sidebar-width": "76px",
+                        "container-padding": "32px",
+                        "grid-gutter": "24px",
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-background text-on-surface min-h-screen flex font-sans relative">
+
+    <!-- Toast notification container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Ambient background glows -->
+    <div class="ambient-glow w-[400px] h-[400px] bg-primary/5 top-0 right-0"></div>
+    <div class="ambient-glow w-[300px] h-[300px] bg-primary/3 bottom-0 left-1/4"></div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" id="mainSidebar">
+        <script>
+            if (sessionStorage.getItem('sidebarExpanded') === 'true') {
+                document.getElementById('mainSidebar').classList.add('expanded');
+            }
+        </script>
+        <!-- Logo with gold ring -->
+        <div class="relative group mb-6 px-3 w-full flex justify-center">
+            <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
+            <img src="img/logo.png" alt="Logo" class="relative w-12 h-12 rounded-full border-2 border-primary/30 object-cover shadow-[0_0_15px_rgba(212,168,83,0.2)] transition-all group-hover:scale-105 shrink-0">
+            <span class="sidebar-text text-primary font-heading text-xl mt-2">Vua Sư Tử</span>
+        </div>
+        
+        <!-- Decorative line -->
+        <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent mb-4"></div>
+        
+        <a href="index.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Sơ đồ bàn">
+            <img src="img/table_3d.png" alt="Bàn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Sơ đồ bàn</span>
+        </a>
+
+        <a href="menu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Thực đơn">
+            <img src="img/menu_book_3d.png" alt="Thực đơn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Thực đơn</span>
+        </a>
+
+        <a href="order.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Gọi món">
+            <img src="img/pos_3d.png" alt="POS" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Gọi món</span>
+        </a>
+
+        <a href="lichsu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Lịch sử hóa đơn">
+            <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
+        </a>
+
+        <a href="kho.html" class="nav-btn active relative flex items-center group" title="Quản lý Kho">
+            <img src="img/refresh_3d.png" alt="Kho" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Quản lý Kho</span>
+        </a>
+
+        <a href="bep.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Bếp">
+            <img src="img/logo.png" alt="Bếp" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Bếp</span>
+        </a>
+
+        <a href="baocao.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Báo cáo">
+            <img src="img/money_3d.png" alt="Báo cáo" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Báo cáo</span>
+        </a>
+
+        <!-- Spacer + Logout ở cuối -->
+        <div class="flex-1"></div>
+        <button onclick="event.stopPropagation(); sessionStorage.clear(); window.location.href='login.html';" class="nav-btn relative flex items-center group text-on-surface-variant/40 hover:text-mau-do transition-all" title="Đăng xuất">
+            <img src="img/logout_3d.png" alt="Đăng xuất" class="w-9 h-9 object-cover rounded-[14px] bg-red-500/10 border border-red-500/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm text-red-500">Đăng xuất</span>
+        </button>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="ml-sidebar-width flex-1 flex flex-col relative z-10">
+        <!-- HEADER -->
+        <header class="sticky top-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-primary/5 shadow-sm flex justify-between items-center px-8 z-40">
+            <h1 class="font-heading text-xl font-bold tracking-tight text-on-surface flex items-center gap-2.5">
+                <img src="img/refresh_3d.png" alt="Icon" class="w-6 h-6 object-cover rounded-md">
+                <span class="text-primary">Vua Sư Tử</span>
+                <span class="text-on-surface-variant/40 font-light">|</span>
+                <span class="text-on-surface-variant text-sm font-normal">Quản Lý Kho</span>
+            </h1>
+            <div class="flex items-center gap-4">
+                <div class="text-right mr-3">
+                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Hệ thống quản lý</p>
+                    <p class="text-xs font-semibold text-on-surface-variant">Vua Sư Tử v2.0</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl overflow-hidden border border-primary/15 bg-surface-container-highest flex items-center justify-center shadow-inner">
+                    <img src="img/user_3d.png" class="w-full h-full object-cover" alt="User">
+                </div>
+            </div>
+        </header>
+
+        <main class="p-8 flex-1" style="animation: slideUp 0.5s ease forwards">
+            <section id="trang-kho" class="page active block">
+                <!-- Tiêu đề trang + Nút thao tác -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                    <div>
+                        <h2 class="font-heading text-3xl font-bold mb-2 tracking-tight text-on-surface">Quản Lý Kho</h2>
+                        <p class="text-on-surface-variant text-sm">Theo dõi nguyên liệu, nhập xuất kho và cảnh báo tồn thấp.</p>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <button id="btnThemNL" onclick="moModalThemNguyenLieu()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 active:scale-95 transition-all font-bold text-sm">
+                            <img src="img/add_3d.png" alt="Add" class="w-5 h-5 object-cover rounded-md shadow-sm"> Thêm Nguyên Liệu
+                        </button>
+                        <button id="btnNhapKho" onclick="moModalNhapKho()" class="btn btn-info px-5 py-2.5 flex items-center gap-2 active:scale-95 transition-all font-bold text-sm">
+                            <img src="img/upload_3d.png" alt="Import" class="w-5 h-5 object-cover rounded-md shadow-sm"> Nhập Kho
+                        </button>
+                        <button id="btnXuatKho" onclick="moModalXuatKho()" class="btn btn-secondary px-5 py-2.5 flex items-center gap-2 active:scale-95 transition-all font-bold text-sm">
+                            <img src="img/upload_3d.png" alt="Export" class="w-5 h-5 object-cover rounded-md shadow-sm" style="transform:rotate(180deg)"> Xuất Kho
+                        </button>
+                        <button id="btnKhoLog" onclick="moModalKhoLog()" class="btn btn-secondary px-5 py-2.5 flex items-center gap-2 active:scale-95 transition-all font-bold text-sm">
+                            <img src="img/bill_3d.png" alt="Log" class="w-5 h-5 object-cover rounded-md shadow-sm"> Lịch Sử
+                        </button>
+                        <button id="btnLamMoiKho" onclick="taiTatCa()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all text-sm border-none cursor-pointer">
+                            <img src="img/refresh_3d.png" alt="Refresh" class="w-5 h-5 object-cover rounded-md shadow-sm"> Làm Mới
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cảnh báo tồn kho thấp -->
+                <div id="khoCanhBao" class="mb-6"></div>
+
+                <!-- Khu vực thông báo -->
+                <div id="thongBaoKhuVuc" class="mb-6"></div>
+
+                <!-- Thống kê nhanh -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                    <!-- Tổng nguyên liệu -->
+                    <div class="glass-card stat-widget rounded-2xl p-5 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                            <img src="img/menu_book_3d.png" alt="NL" class="w-7 h-7 object-contain">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tổng nguyên liệu</p>
+                            <p id="statTongNL" class="text-2xl font-bold text-primary">0</p>
+                        </div>
+                    </div>
+                    <!-- Đang cảnh báo -->
+                    <div class="glass-card stat-widget rounded-2xl p-5 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-mau-do/10 border border-mau-do/20 flex items-center justify-center shrink-0">
+                            <img src="img/close_3d.png" alt="CB" class="w-7 h-7 object-contain">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Đang cảnh báo</p>
+                            <p id="statCanhBao" class="text-2xl font-bold text-mau-do">0</p>
+                        </div>
+                    </div>
+                    <!-- Tổng giá trị kho -->
+                    <div class="glass-card stat-widget rounded-2xl p-5 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-mau-xanh/10 border border-mau-xanh/20 flex items-center justify-center shrink-0">
+                            <img src="img/money_3d.png" alt="GT" class="w-7 h-7 object-contain">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tổng giá trị kho</p>
+                            <p id="statGiaTri" class="text-2xl font-bold text-mau-xanh">0₫</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tìm kiếm -->
+                <div class="mb-6">
+                    <div class="search-bar flex items-center gap-3 bg-surface-container border border-primary/5 px-5 py-3 rounded-2xl w-full max-w-md transition-all focus-within:border-primary/25">
+                        <img src="img/search_3d.png" alt="Search" class="w-5 h-5 object-cover rounded-md opacity-70">
+                        <input type="text" id="txtTimKiemNL" class="bg-transparent border-none outline-none text-on-surface text-base flex-1 placeholder:text-on-surface-variant/35" placeholder="Tìm kiếm nguyên liệu..." oninput="timKiemNguyenLieu()">
+                    </div>
+                </div>
+
+                <!-- Bảng nguyên liệu -->
+                <div class="table-wrapper" id="bangNguyenLieu">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên nguyên liệu</th>
+                                <th>Đơn vị</th>
+                                <th>Tồn kho</th>
+                                <th>Mức tối thiểu</th>
+                                <th>Trạng thái</th>
+                                <th>Ghi chú</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyNguyenLieu">
+                            <tr>
+                                <td colspan="8" class="text-center py-12">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal: Thêm/Sửa Nguyên Liệu -->
+    <div class="modal-overlay" id="modalNguyenLieu">
+        <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-md relative scale-95 transition-transform duration-300 border border-primary/10">
+            <button onclick="dongModal('modalNguyenLieu')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+                <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg hover:scale-110 transition-transform">
+            </button>
+            <h3 class="font-heading text-2xl font-bold mb-6 text-primary tracking-tight" id="modalNLTieuDe">Thêm Nguyên Liệu</h3>
+            
+            <div class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tên nguyên liệu <span class="text-mau-do">*</span></label>
+                    <input type="text" id="txtTenNL" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="VD: Thịt bò, Rau cải, Dầu ăn...">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Đơn vị <span class="text-mau-do">*</span></label>
+                    <select id="cboDonVi" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer">
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                        <option value="lít">lít</option>
+                        <option value="ml">ml</option>
+                        <option value="cái">cái</option>
+                        <option value="hộp">hộp</option>
+                        <option value="chai">chai</option>
+                        <option value="túi">túi</option>
+                        <option value="bó">bó</option>
+                        <option value="khác">khác</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng tồn <span class="text-mau-do">*</span></label>
+                    <input type="number" id="txtSoLuongTon" min="0" step="0.01" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="0">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Mức tối thiểu</label>
+                    <input type="number" id="txtMucToiThieu" min="0" step="0.01" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="0">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ghi chú</label>
+                    <input type="text" id="txtGhiChuNL" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="Ghi chú thêm (nếu có)">
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button id="btnHuyNL" onclick="dongModal('modalNguyenLieu')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all border-none cursor-pointer">Hủy</button>
+                    <button id="btnLuuNL" onclick="luuNguyenLieu()" class="flex-1 btn btn-primary py-3 rounded-xl font-bold transition-all">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Nhập Kho -->
+    <div class="modal-overlay" id="modalNhapKho">
+        <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-md relative scale-95 transition-transform duration-300 border border-primary/10">
+            <button onclick="dongModal('modalNhapKho')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+                <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg hover:scale-110 transition-transform">
+            </button>
+            <h3 class="font-heading text-2xl font-bold mb-6 text-primary tracking-tight">
+                <span class="flex items-center gap-2">
+                    <img src="img/upload_3d.png" class="w-6 h-6 object-cover rounded-md"> Nhập Kho
+                </span>
+            </h3>
+            
+            <div class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nguyên liệu <span class="text-mau-do">*</span></label>
+                    <select id="cboNLNhap" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer">
+                        <option value="">-- Chọn nguyên liệu --</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng nhập <span class="text-mau-do">*</span></label>
+                    <input type="number" id="txtSoLuongNhap" min="0.01" step="0.01" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="Nhập số lượng">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Đơn giá (₫)</label>
+                    <input type="number" id="txtDonGiaNhap" min="0" step="1000" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="Đơn giá nhập">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lý do nhập</label>
+                    <input type="text" id="txtLyDoNhap" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="VD: Mua bổ sung, Trả hàng...">
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button onclick="dongModal('modalNhapKho')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all border-none cursor-pointer">Hủy</button>
+                    <button onclick="nhapKho()" class="flex-1 btn btn-primary py-3 rounded-xl font-bold transition-all">Nhập Kho</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Xuất Kho -->
+    <div class="modal-overlay" id="modalXuatKho">
+        <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-md relative scale-95 transition-transform duration-300 border border-primary/10">
+            <button onclick="dongModal('modalXuatKho')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+                <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg hover:scale-110 transition-transform">
+            </button>
+            <h3 class="font-heading text-2xl font-bold mb-6 text-primary tracking-tight">
+                <span class="flex items-center gap-2">
+                    <img src="img/upload_3d.png" class="w-6 h-6 object-cover rounded-md" style="transform:rotate(180deg)"> Xuất Kho
+                </span>
+            </h3>
+            
+            <div class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nguyên liệu <span class="text-mau-do">*</span></label>
+                    <select id="cboNLXuat" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer">
+                        <option value="">-- Chọn nguyên liệu --</option>
+                    </select>
+                    <p id="txtTonKhoHienTai" class="text-xs text-on-surface-variant/60 mt-1"></p>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng xuất <span class="text-mau-do">*</span></label>
+                    <input type="number" id="txtSoLuongXuat" min="0.01" step="0.01" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="Nhập số lượng xuất">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lý do xuất <span class="text-mau-do">*</span></label>
+                    <input type="text" id="txtLyDoXuat" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                           placeholder="VD: Sử dụng cho bàn 5, Hư hỏng...">
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button onclick="dongModal('modalXuatKho')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all border-none cursor-pointer">Hủy</button>
+                    <button onclick="xuatKho()" class="flex-1 btn btn-primary py-3 rounded-xl font-bold transition-all">Xuất Kho</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Lịch Sử Nhập Xuất Kho (KhoLog) -->
+    <div class="modal-overlay" id="modalKhoLog">
+        <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col relative scale-95 transition-transform duration-300 border border-primary/10">
+            <button onclick="dongModal('modalKhoLog')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+                <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg hover:scale-110 transition-transform">
+            </button>
+            <h3 class="font-heading text-2xl font-bold mb-6 text-primary tracking-tight">
+                <span class="flex items-center gap-2">
+                    <img src="img/bill_3d.png" class="w-6 h-6 object-cover rounded-md"> Lịch Sử Nhập Xuất Kho
+                </span>
+            </h3>
+            
+            <div class="flex-1 overflow-y-auto pr-2" id="khoLogNoiDung">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/kho.js?v=2.0"></script>
+    <script>
+        // Đồng bộ hiệu ứng mở/đóng modal mượt mà
+        window.moModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('show');
+                setTimeout(() => {
+                    const child = modal.firstElementChild;
+                    if (child) {
+                        child.classList.remove('scale-95');
+                        child.classList.add('scale-100');
+                    }
+                }, 50);
+            }
+        };
+
+        window.dongModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                const child = modal.firstElementChild;
+                if (child) {
+                    child.classList.remove('scale-100');
+                    child.classList.add('scale-95');
+                }
+                setTimeout(() => {
+                    modal.classList.remove('show');
+                }, 150);
+            }
+        };
+
+        // Hiển thị tồn kho hiện tại khi chọn NL xuất
+        document.addEventListener('DOMContentLoaded', function() {
+            const cboNLXuat = document.getElementById('cboNLXuat');
+            if (cboNLXuat) {
+                cboNLXuat.addEventListener('change', function() {
+                    const nlId = parseInt(this.value);
+                    const nl = danhSachNguyenLieu.find(n => n.Id === nlId);
+                    const txtTonKho = document.getElementById('txtTonKhoHienTai');
+                    if (nl && txtTonKho) {
+                        txtTonKho.textContent = `Tồn kho hiện tại: ${nl.SoLuongTon} ${nl.DonVi}`;
+                    } else if (txtTonKho) {
+                        txtTonKho.textContent = '';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -101,6 +101,21 @@
             <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
         </a>
 
+        <a href="kho.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Quản lý Kho">
+            <img src="img/refresh_3d.png" alt="Kho" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Quản lý Kho</span>
+        </a>
+
+        <a href="bep.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Bếp">
+            <img src="img/logo.png" alt="Bếp" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Bếp</span>
+        </a>
+
+        <a href="baocao.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Báo cáo">
+            <img src="img/money_3d.png" alt="Báo cáo" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+            <span class="sidebar-text text-sm">Báo cáo</span>
+        </a>
+
         <!-- Spacer + Logout ở cuối -->
         <div class="flex-1"></div>
         <button onclick="event.stopPropagation(); sessionStorage.clear(); window.location.href='login.html';" class="nav-btn relative flex items-center group text-on-surface-variant/40 hover:text-mau-do transition-all" title="Đăng xuất">
@@ -207,10 +222,44 @@
                                     <span id="tongTienHienThi" class="text-xl font-bold text-primary">0 ₫</span>
                                 </div>
 
-                                <div class="checkout-container pt-2">
-                                    <button class="btn-success flex items-center justify-center gap-2 active:scale-[0.98] shadow-md py-3 font-bold border-none cursor-pointer" onclick="thanhToan()" id="btnThanhToan">
-                                        <img src="img/check_3d.png" alt="Check" class="w-5 h-5 object-cover rounded-sm"> THANH TOÁN & ĐÓNG BÀN
-                                    </button>
+                                <div class="space-y-3 pt-2">
+                                    <!-- Payment Method -->
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Phương thức thanh toán</label>
+                                        <select id="cboPhuongThuc" class="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer [&>option]:bg-surface [&>option]:text-on-surface">
+                                            <option value="TienMat">Tiền mặt</option>
+                                            <option value="The">Quẹt thẻ</option>
+                                            <option value="QR">QR Code</option>
+                                            <option value="ChuyenKhoan">Chuyển khoản</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Discount -->
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Giảm giá</label>
+                                        <input type="number" id="txtGiamGia" class="w-full bg-surface-container-highest border border-white/5 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30 focus:shadow-[0_0_15px_rgba(212,168,83,0.08)] transition-all" placeholder="Giảm giá (VNĐ)" min="0">
+                                    </div>
+
+                                    <!-- VAT Display -->
+                                    <div class="bg-primary/[0.04] border border-primary/10 rounded-xl p-3 flex justify-between items-center">
+                                        <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">VAT (10%):</span>
+                                        <span id="vatHienThi" class="text-sm font-bold text-on-surface-variant">0 ₫</span>
+                                    </div>
+
+                                    <!-- Total After VAT & Discount -->
+                                    <div class="bg-primary/[0.08] border border-primary/20 rounded-xl p-4 flex justify-between items-center shadow-inner">
+                                        <span class="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1">
+                                            <img src="img/money_3d.png" alt="Money" class="w-5 h-5 object-cover rounded-sm"> Tổng cộng (sau VAT & giảm giá):
+                                        </span>
+                                        <span id="tongCuoiCung" class="text-xl font-bold text-primary">0 ₫</span>
+                                    </div>
+
+                                    <!-- Checkout Button -->
+                                    <div class="checkout-container">
+                                        <button class="btn-success flex items-center justify-center gap-2 active:scale-[0.98] shadow-md py-3 font-bold border-none cursor-pointer" onclick="thanhToan()" id="btnThanhToan">
+                                            <img src="img/check_3d.png" alt="Check" class="w-5 h-5 object-cover rounded-sm"> THANH TOÁN & ĐÓNG BÀN
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
