@@ -1,0 +1,61 @@
+<!--
+================================================================
+THÀNH PHẦN: Khu Vực Gọi Món (Bước 2)
+================================================================
+File gốc thuộc: order.html (cột trái, dưới chọn bàn)
+Mô tả: Hiển thị menu món ăn để gọi thêm.
+       Có 3 nút lọc: Tất cả / Thức ăn / Nước uống.
+
+Cấu trúc HTML:
+  <div id="khuVucGoiMon"> Container (ẩn mặc định)
+    ├─ <h3> Tiêu đề "2. Chọn Món & Thêm Vào Bill"
+    ├─ 3 nút lọc: btnTatCa, btnThucAn, btnNuocUong
+    └─ <div id="menuDanhSach"> Grid món ăn (JS render)
+
+JavaScript liên quan:
+  - locMenuTheoLoai(loai) → lọc món theo loại [order.js]
+  - hienThiMenu(ds) → render grid món ăn [order.js]
+================================================================
+-->
+<div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg" id="khuVucGoiMon" style="display:none;">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-primary/5">
+        <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+            <img src="img/menu_book_3d.png" alt="Menu" class="w-5 h-5 object-cover rounded-sm"> 2️⃣ Chọn Món & Thêm Vào Bill
+        </h3>
+        <div class="flex gap-2">
+            <button class="btn btn-sm btn-primary" onclick="locMenuTheoLoai('')" id="btnTatCa">Tất cả</button>
+            <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('ThucAn')" id="btnThucAn">Thức ăn</button>
+            <button class="btn btn-sm btn-secondary" onclick="locMenuTheoLoai('NuocUong')" id="btnNuocUong">Nước uống</button>
+        </div>
+    </div>
+
+    <div id="menuDanhSach" class="menu-danh-sach"></div>
+
+    <!-- Form thêm món (nằm trong khu vực gọi món) -->
+    <div id="formThemMon" class="mt-6 pt-5 border-t border-primary/5" style="display:none;">
+        <div class="bg-primary/[0.04] border border-primary/10 rounded-xl p-4 mb-4">
+            <p class="text-xs text-on-surface-variant">Đang chọn thêm:</p>
+            <strong id="tenMonDangThem" class="text-base text-primary block mt-0.5"></strong>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Số lượng *</label>
+                <input type="number" id="txtSoLuong" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                       value="1" min="1" placeholder="Nhập số lượng">
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ghi chú / Tùy chọn</label>
+                <input type="text" id="txtThuocTinhThem" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none text-sm placeholder:text-on-surface-variant/30 focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                       placeholder="Phần lớn / Lon / Ít cay...">
+            </div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap gap-1.5" id="goiYTuyChon"></div>
+
+        <div class="flex gap-3 mt-5">
+            <button id="btnThemMon" class="btn btn-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider shadow-md transition-all" onclick="themMon()">➕ Thêm vào hóa đơn</button>
+            <button id="btnHuyChonMon" class="glass-card text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border-none cursor-pointer" onclick="huyChonMon()">✕ Hủy</button>
+        </div>
+    </div>
+</div>

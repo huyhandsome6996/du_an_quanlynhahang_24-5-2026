@@ -1,0 +1,36 @@
+<!--
+================================================================
+THÀNH PHẦN: Khu Vực Chọn Bàn (Bước 1)
+================================================================
+File gốc thuộc: order.html (cột trái)
+Mô tả: Dropdown chọn bàn cần phục vụ.
+       Khi chọn bàn → hiển thị trạng thái (badge).
+
+Cấu trúc HTML:
+  <div> glass-card container
+    ├─ <h3> Tiêu đề "1. Chọn Bàn Cần Phục Vụ"
+    ├─ <select id="cboBan"> Dropdown bàn
+    └─ <div id="thongTinBan"> Hiển thị trạng thái (ẩn mặc định)
+
+JavaScript liên quan:
+  - onchange="chonBan()" [order.js]
+  - chonBan() populate dropdown + xử lý trạng thái bàn
+  - Hỗ trợ pre-select từ URL: order.html?banId=xxx
+================================================================
+-->
+<div class="glass-card bg-surface-container/60 rounded-2xl p-5 shadow-lg">
+    <div class="flex justify-between items-center mb-3">
+        <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+            <img src="img/click_3d.png" alt="Click" class="w-5 h-5 object-cover rounded-sm"> 1️⃣ Chọn Bàn Cần Phục Vụ
+        </h3>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <select id="cboBan" class="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer [&>option]:bg-surface [&>option]:text-on-surface" onchange="chonBan()">
+            <option value="">-- Chọn bàn cần phục vụ --</option>
+        </select>
+    </div>
+    <div id="thongTinBan" class="mt-3 flex items-center gap-2" style="display:none;">
+        <span class="badge" id="badgeTrangThaiBan"></span>
+        <span id="thongBaoMoBan" class="text-xs text-on-surface-variant italic"></span>
+    </div>
+</div>

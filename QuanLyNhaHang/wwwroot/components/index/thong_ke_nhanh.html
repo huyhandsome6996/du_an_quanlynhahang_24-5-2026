@@ -1,0 +1,29 @@
+<!--
+================================================================
+THÀNH PHẦN: Thống Kê Nhanh Trạng Thái Bàn
+================================================================
+File gốc thuộc: index.html
+Mô tả: Thanh hiển thị 2 chỉ số nhanh:
+       - Bàn trống (xanh) → soBanTrong
+       - Có khách (đỏ) → soBanCoKhach
+
+Cấu trúc HTML:
+  <div> Container thống kê
+    ├─ Bàn trống (xanh) → soBanTrong
+    └─ Có khách (đỏ) → soBanCoKhach
+
+JavaScript liên quan:
+  - Giá trị được cập nhật bởi hienThiBan() [ban.js]
+================================================================
+-->
+<div class="flex gap-6 text-sm bg-surface-container border border-primary/5 w-fit px-6 py-3.5 rounded-2xl mb-8">
+    <div class="flex items-center gap-2.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-mau-xanh shadow-[0_0_8px_#4ade80]"></span>
+        <span class="text-on-surface-variant">Bàn trống: <strong id="soBanTrong" class="text-mau-xanh font-bold text-sm">0</strong></span>
+    </div>
+    <div class="w-[1px] bg-white/5"></div>
+    <div class="flex items-center gap-2.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-mau-do shadow-[0_0_8px_#f87171]"></span>
+        <span class="text-on-surface-variant">Có khách: <strong id="soBanCoKhach" class="text-mau-do font-bold text-sm">0</strong></span>
+    </div>
+</div>

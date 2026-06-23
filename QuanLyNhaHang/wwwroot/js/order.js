@@ -13,6 +13,23 @@ const GOI_Y_NUOC_UONG = ['Lon', 'Ly', 'Ít đá', 'Nhiều đá', 'Không đư�
 document.addEventListener('DOMContentLoaded', async () => {
     await taiDanhSachBan();
     await taiMenu();
+
+    // Add event listener for discount input to update totals in real-time
+    const txtGiamGia = document.getElementById('txtGiamGia');
+    if (txtGiamGia) {
+        txtGiamGia.addEventListener('input', capNhatHienThiThanhToan);
+    }
+
+    // FIX: Nếu đến từ trang bàn (gọi thêm món), tự động chọn bàn
+    const urlParams = new URLSearchParams(window.location.search);
+    const preselectBanId = urlParams.get('banId');
+    if (preselectBanId) {
+        const cboBan = document.getElementById('cboBan');
+        if (cboBan) {
+            cboBan.value = preselectBanId;
+            await chonBan(); // Tự động gọi hàm chọn bàn
+        }
+    }
 });
 
 async function taiDanhSachBan() {
@@ -46,19 +63,15 @@ function hienThiMenu(ds) {
     kv.innerHTML = ds.map(sp => {
         const imgUrl = sp.HinhAnh ? sp.HinhAnh : 'img/logo.png';
         return `
-        <div class="mon-item cursor-pointer" onclick="chonMon(${sp.Id})" style="padding: 0.5rem; gap: 0.75rem; justify-content: flex-start; align-items: center; display: flex;">
-            <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest border border-white/5">
+        <div class="mon-item cursor-pointer" onclick="chonMon(${sp.Id})">
+            <div class="w-20 h-20 rounded-full overflow-hidden shadow-inner border-2 border-primary/20 mb-1">
                 <img src="${imgUrl}" alt="${sp.TenSanPham}" class="w-full h-full object-cover" onerror="this.src='img/logo.png'">
             </div>
-            <div class="flex-1 min-w-0">
-                <div class="mon-ten text-sm font-semibold truncate text-on-surface" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
-                <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                    <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'}" style="font-size:0.6rem; padding: 0.1rem 0.4rem;">
-                        ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
-                    </span>
-                    <span class="mon-gia text-primary font-bold text-xs">${formatTien(sp.GiaCoBan)}</span>
-                </div>
-            </div>
+            <div class="mon-ten" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
+            <span class="badge ${sp.Loai === 'ThucAn' ? 'badge-thucan' : 'badge-nuocuong'} text-[10px] uppercase tracking-widest px-2 py-0.5">
+                ${sp.Loai === 'ThucAn' ? '🍖 Thức ăn' : '🥤 Nước uống'}
+            </span>
+            <span class="mon-gia">${formatTien(sp.GiaCoBan)}</span>
         </div>`;
     }).join('');
 }
@@ -142,6 +155,7 @@ async function taiLaiHoaDon() {
         const data = await res.json();
         hoaDonHienTai = data.hoaDon;
         hienThiHoaDon(data.hoaDon, data.chiTiet);
+        capNhatHienThiThanhToan();
     } catch { hienThiThongBao('Lỗi tải hóa đơn!', 'error'); }
 }
 
@@ -179,7 +193,7 @@ function chonMon(sanPhamId) {
     document.getElementById('tenMonDangThem').textContent = `${sp.TenSanPham} - ${formatTien(sp.GiaCoBan)}`;
     document.getElementById('txtSoLuong').value = 1;
     document.getElementById('txtThuocTinhThem').value = '';
-    document.getElementById('formThemMon').style.display = 'block';
+    document.getElementById('formThemMon').classList.add('show');
 
     const goiY = sp.Loai === 'ThucAn' ? GOI_Y_THUC_AN : GOI_Y_NUOC_UONG;
     document.getElementById('goiYTuyChon').innerHTML = goiY.map(opt =>
@@ -187,7 +201,7 @@ function chonMon(sanPhamId) {
 }
 
 function chonGoiY(text) { document.getElementById('txtThuocTinhThem').value = text; }
-function huyChonMon()   { monDangChon = null; document.getElementById('formThemMon').style.display = 'none'; }
+function huyChonMon()   { monDangChon = null; document.getElementById('formThemMon').classList.remove('show'); }
 
 async function themMon() {
     if (!monDangChon || !hoaDonHienTai) {
@@ -231,13 +245,26 @@ async function xoaMon(chiTietId) {
 async function thanhToan() {
     const banId = document.getElementById('cboBan').value;
     if (!banId) return;
-    if (!confirm(`Xác nhận thanh toán ${formatTien(hoaDonHienTai?.TongTien || 0)} và đóng bàn?`)) return;
+    
+    // Calculate VAT and discount
+    const tongTienMon = hoaDonHienTai?.TongTien || 0;
+    const vat = Math.round(tongTienMon * 0.10); // 10% VAT
+    const giamGia = parseInt(document.getElementById('txtGiamGia')?.value) || 0;
+    const phuongThuc = document.getElementById('cboPhuongThuc')?.value || 'TienMat';
+    const tongCuoi = Math.max(0, tongTienMon + vat - giamGia);
+    
+    if (!confirm(`Xác nhận thanh toán?\n\nTạm tính: ${formatTien(tongTienMon)}\nVAT (10%): ${formatTien(vat)}\nGiảm giá: ${formatTien(giamGia)}\nTỔNG CỘNG: ${formatTien(tongCuoi)}\nPhương thức: ${phuongThuc === 'TienMat' ? 'Tiền mặt' : phuongThuc === 'The' ? 'Quẹt thẻ' : phuongThuc === 'QR' ? 'QR Code' : 'Chuyển khoản'}`)) return;
 
     try {
-        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, { method: 'POST' });
+        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ VAT: vat, GiamGia: giamGia, PhuongThucThanhToan: phuongThuc })
+        });
         const data = await res.json();
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao} | Đã thu: ${formatTien(data.tongTien)}`, 'success');
+            // reset state...
             document.getElementById('cboBan').value = '';
             document.getElementById('thongTinBan').style.display = 'none';
             document.getElementById('khuVucGoiMon').style.display = 'none';
@@ -245,6 +272,9 @@ async function thanhToan() {
             document.getElementById('chuaChonBan').style.display = 'block';
             document.getElementById('danhSachMon').style.display = 'none';
             hoaDonHienTai = null;
+            // Reset discount and payment method
+            if (document.getElementById('txtGiamGia')) document.getElementById('txtGiamGia').value = '';
+            if (document.getElementById('cboPhuongThuc')) document.getElementById('cboPhuongThuc').value = 'TienMat';
             await taiDanhSachBan();
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
@@ -252,10 +282,53 @@ async function thanhToan() {
     } catch { hienThiThongBao('Lỗi kết nối server!', 'error'); }
 }
 
+function capNhatHienThiThanhToan() {
+    const tongTienMon = hoaDonHienTai?.TongTien || 0;
+    const vat = Math.round(tongTienMon * 0.10);
+    const giamGia = parseInt(document.getElementById('txtGiamGia')?.value) || 0;
+    const tongCuoi = Math.max(0, tongTienMon + vat - giamGia);
+    
+    const vatEl = document.getElementById('vatHienThi');
+    if (vatEl) vatEl.textContent = `VAT (10%): ${formatTien(vat)}`;
+    
+    const tongCuoiEl = document.getElementById('tongCuoiCung');
+    if (tongCuoiEl) tongCuoiEl.textContent = formatTien(tongCuoi);
+}
+
+// ---- Hàm tiện ích ----
+
+// Hiển thị thông báo nội tuyến + Toast notification
 function hienThiThongBao(noiDung, loai = 'success') {
+    // Inline notification (bảo toàn cho học thuật)
     const kv = document.getElementById('thongBaoKhuVuc');
-    kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
-    setTimeout(() => kv.innerHTML = '', 5000);
+    if (kv) {
+        kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
+        setTimeout(() => kv.innerHTML = '', 5000);
+    }
+    // Toast notification (UX cao cấp)
+    hienToast(noiDung, loai);
+}
+
+// Toast notification — Hiển thị thông báo nổi góc phải trên cùng
+function hienToast(noiDung, loai = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${loai}`;
+    const icon = loai === 'success' ? '✅' : '❌';
+    toast.innerHTML = `<span style="font-size:1.1rem;">${icon}</span><span>${noiDung}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
 }
 
 function formatTien(so) {

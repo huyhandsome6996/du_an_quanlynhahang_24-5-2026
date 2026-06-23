@@ -32,6 +32,11 @@
             }
         };
     </script>
+    <!-- ============================================================
+         CSS CHỈ DÙNG CHO LOGIN - Không dùng sidebar
+         Các class: .login-card, .glow-orb, .animate-card, 
+                    .premium-input, .btn-gold, .logo-glow
+         ============================================================ -->
     <style>
         .login-card {
             background: linear-gradient(145deg, rgba(16, 30, 53, 0.75), rgba(10, 22, 40, 0.9));
@@ -129,17 +134,29 @@
 </head>
 <body class="bg-background text-on-surface min-h-screen flex items-center justify-center font-sans relative overflow-hidden pattern-overlay">
 
-    <!-- Quả cầu phát sáng chạy nền thẩm mỹ -->
+    <!-- ============================================================
+         HIỆU ỨNG NỀN: 3 quả cầu phát sáng (glow orbs)
+         Mỗi quả cầu có animation riêng: float-slow, float-reverse, float-diagonal
+         ============================================================ -->
     <div class="absolute -top-40 -left-40 w-[400px] h-[400px] rounded-full bg-primary/15 glow-orb-1 pointer-events-none"></div>
     <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-primary/8 glow-orb-2 pointer-events-none"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-amber-600/5 glow-orb-3 pointer-events-none"></div>
 
+    <!-- ============================================================
+         LOGIN CARD: Thẻ đăng ký/đăng nhập chính
+         Bao gồm: viền trang trí, logo, subtitle, 
+                   form đăng ký (ẩn mặc định), form đăng nhập (ẩn mặc định)
+         ============================================================ -->
     <div class="login-card w-full max-w-md p-8 rounded-3xl mx-4 relative overflow-hidden animate-card z-10">
         <!-- Viền neon vàng kim trên cùng card -->
         <div class="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
         <!-- Viền trang trí dưới cùng -->
         <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/10 to-transparent"></div>
         
+        <!-- ============================================================
+             PHẦN LOGO: Logo Vua Sư Tử + Tên nhà hàng + Subtitle
+             Component: components/login/logo_section.html (đã inline)
+             ============================================================ -->
         <div class="text-center mb-8 relative">
             <div class="relative w-28 h-28 mx-auto mb-5 group">
                 <!-- Vòng tròn phát sáng bên dưới logo -->
@@ -156,7 +173,11 @@
             </div>
         </div>
 
-        <!-- Form Đăng Ký (Ban đầu) -->
+        <!-- ============================================================
+             FORM ĐĂNG KÝ: Hiện khi chưa có tài khoản trong DB
+             Component: components/login/register_form.html (đã inline)
+             JavaScript: xuLyDangKy(e), hienLoiDangKy(msg)
+             ============================================================ -->
         <form id="registerForm" class="space-y-5 hidden" onsubmit="xuLyDangKy(event)">
             <div class="p-3.5 rounded-xl bg-primary/5 border border-primary/15 text-primary text-sm text-center font-medium leading-relaxed">
                 👋 Chào mừng bạn! Vui lòng thiết lập tài khoản quản trị hệ thống để tiếp tục.
@@ -196,7 +217,11 @@
             </div>
         </form>
 
-        <!-- Form Đăng Nhập -->
+        <!-- ============================================================
+             FORM ĐĂNG NHẬP: Hiện khi đã có tài khoản trong DB
+             Component: components/login/login_form.html (đã inline)
+             JavaScript: xuLyDangNhap(e), hienLoiDangNhap(msg)
+             ============================================================ -->
         <form id="loginForm" class="space-y-5 hidden" onsubmit="xuLyDangNhap(event)">
             <div class="space-y-1.5">
                 <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">Tên tài khoản</label>
@@ -233,6 +258,11 @@
 
     </div>
 
+    <!-- ============================================================
+         JAVASCRIPT: Logic xử lý đăng ký/đăng nhập
+         - API endpoint: /api/auth/check, /api/auth/dangky, /api/auth/dangnhap
+         - sessionStorage: vst_logged_in, vst_user
+         ============================================================ -->
     <script>
         const API = 'http://localhost:5000/api';
 

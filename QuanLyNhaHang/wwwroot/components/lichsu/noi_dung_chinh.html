@@ -1,0 +1,96 @@
+<!--
+================================================================
+THÀNH PHẦN: Nội Dung Chính - Lịch Sử Hóa Đơn
+================================================================
+File gốc thuộc: lichsu.html
+Mô tả: Toàn bộ nội dung trang: tiêu đề, 3 widget thống kê, bảng lịch sử.
+
+Cấu trúc HTML:
+  <h2> Tiêu đề trang
+  3x stat-widget: Tổng HĐ, Đã thanh toán, Tổng doanh thu
+  Bảng lịch sử hóa đơn (JS render vào #bangLichSu)
+
+JavaScript liên quan:
+  - taiLichSu() → tải danh sách hóa đơn [lichsu.js]
+  - Cập nhật #tongHoaDon, #daThanhToan, #tongDoanhThu [lichsu.js]
+================================================================
+-->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 pb-4">
+    <div>
+        <h2 class="font-heading text-3xl font-extrabold mb-2 tracking-tight text-on-surface">Lịch Sử Hóa Đơn</h2>
+        <p class="text-on-surface-variant text-sm">Tra cứu toàn bộ hóa đơn đã thanh toán và doanh thu tổng của nhà hàng.</p>
+    </div>
+</div>
+
+<!-- Thống kê nhanh -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Widget 1 -->
+    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+        <div class="z-10 flex flex-col justify-center">
+            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng hóa đơn</span>
+            <h3 class="text-4xl font-black text-on-surface drop-shadow-md" id="tongHoaDon">0</h3>
+        </div>
+        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+            <img src="img/bill_3d.png" alt="Bill" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
+        </div>
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/20"></div>
+    </div>
+    <!-- Widget 2 -->
+    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+        <div class="z-10 flex flex-col justify-center">
+            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Đã thanh toán</span>
+            <h3 class="text-4xl font-black text-emerald-400 drop-shadow-md" id="daThanhToan">0</h3>
+        </div>
+        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-emerald-500/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+            <img src="img/check_3d.png" alt="Check" class="w-full h-full object-contain group-hover:rotate-6 transition-transform duration-500">
+        </div>
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-emerald-500/20"></div>
+    </div>
+    <!-- Widget 3 -->
+    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+        <div class="z-10 flex flex-col justify-center min-w-0 pr-4">
+            <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng doanh thu</span>
+            <h3 class="text-3xl font-black text-primary drop-shadow-md truncate" id="tongDoanhThu">0 ₫</h3>
+        </div>
+        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
+            <img src="img/money_3d.png" alt="Money" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
+        </div>
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/15 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/25"></div>
+    </div>
+</div>
+
+<!-- Bảng lịch sử -->
+<div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-primary/6">
+    <div class="flex justify-between items-center px-6 py-5 border-b border-primary/5 bg-primary/[0.02]">
+        <h3 class="font-bold text-xs text-primary uppercase tracking-widest flex items-center gap-2">
+            <img src="img/bill_3d.png" alt="List" class="w-5 h-5 object-cover rounded-md shadow-sm opacity-90"> Danh sách hóa đơn
+        </h3>
+        <button class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] text-on-surface cursor-pointer" onclick="taiLichSu()">
+            <img src="img/refresh_3d.png" alt="Refresh" class="w-4 h-4 object-cover rounded-sm"> Làm mới
+        </button>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-primary/[0.03] border-b border-primary/5 text-xs font-bold uppercase tracking-wider text-primary">
+                <tr>
+                    <th class="px-6 py-4">Mã HĐ</th>
+                    <th class="px-6 py-4">Bàn</th>
+                    <th class="px-6 py-4">Thời Gian Mở</th>
+                    <th class="px-6 py-4">Thời Gian Đóng</th>
+                    <th class="px-6 py-4 text-right">Tổng Tiền</th>
+                    <th class="px-6 py-4 text-center">Trạng Thái</th>
+                    <th class="px-6 py-4 text-center">Xem</th>
+                </tr>
+            </thead>
+            <tbody id="bangLichSu" class="divide-y divide-white/3 text-sm">
+                <tr>
+                    <td colspan="7" class="px-6 py-12">
+                        <div class="flex justify-center">
+                            <div class="spinner"></div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

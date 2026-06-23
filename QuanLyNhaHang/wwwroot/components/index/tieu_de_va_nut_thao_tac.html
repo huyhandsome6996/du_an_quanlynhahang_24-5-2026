@@ -1,0 +1,33 @@
+<!--
+================================================================
+THÀNH PHẦN: Tiêu đề trang & Nút thao tác (Quản Lý Bàn)
+================================================================
+File gốc thuộc: index.html (trong <section id="trang-ban">
+Mô tả: Phần đầu trang gồm:
+       - Tiêu đề H2 "Sơ đồ bàn" + mô tả
+       - 2 nút bấm: "Thêm Bàn Mới" + "Làm Mới"
+
+Cấu trúc HTML:
+  <div class="flex ...">
+    ├─ <h2> Tiêu đề + mô tả
+    └─ <div> 2 nút bấm (Thêm Bàn Mới, Làm Mới)
+
+JavaScript liên quan:
+  - btnThemBan → moModalThemBan() (mở modal thêm bàn) [ban.js]
+  - btnLamMoiBan → taiDanhSachBan() (tải lại danh sách) [ban.js]
+================================================================
+-->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+    <div>
+        <h2 class="font-heading text-3xl font-bold mb-2 tracking-tight text-on-surface">Sơ đồ bàn</h2>
+        <p class="text-on-surface-variant text-sm">Quản lý trạng thái và thông tin bàn ăn trong thời gian thực.</p>
+    </div>
+    <div class="flex gap-3">
+        <button id="btnThemBan" onclick="moModalThemBan()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 active:scale-95 transition-all font-bold text-sm">
+            <img src="img/add_3d.png" alt="Add" class="w-5 h-5 object-cover rounded-md shadow-sm"> Thêm Bàn Mới
+        </button>
+        <button id="btnLamMoiBan" onclick="taiDanhSachBan()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all text-sm border-none cursor-pointer">
+            <img src="img/refresh_3d.png" alt="Refresh" class="w-5 h-5 object-cover rounded-md shadow-sm"> Làm Mới
+        </button>
+    </div>
+</div>

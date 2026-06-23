@@ -1,0 +1,21 @@
+<!--
+================================================================
+THÀNH PHẦN: Lưới Hiển Thị Bàn (Table Grid)
+================================================================
+File gốc thuộc: index.html
+Mô tả: Grid lưới 4 cột chứa các thẻ bàn (ban-card).
+       Nội dung được JS render động bởi hienThiBan() trong ban.js.
+
+Cấu trúc HTML:
+  <div id="luoiBan"> Grid container
+    └─ Spinner (hiển thị khi đang tải)
+
+JavaScript liên quan:
+  - hienThiBan(dsBan) render các thẻ bàn vào #luoiBan [ban.js]
+================================================================
+-->
+<div id="luoiBan" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="col-span-full flex justify-center py-12">
+        <div class="spinner"></div>
+    </div>
+</div>

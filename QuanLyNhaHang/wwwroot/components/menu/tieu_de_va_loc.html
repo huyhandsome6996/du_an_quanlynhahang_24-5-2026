@@ -1,0 +1,60 @@
+<!--
+================================================================
+THÀNH PHẦN: Tiêu đề, Nút thao tác & Bộ lọc (Thực Đơn)
+================================================================
+File gốc thuộc: menu.html
+Mô tả: Tiêu đề + nút Thêm/Làm mới + bộ lọc + ô tìm kiếm + thống kê.
+
+Cấu trúc HTML:
+  <div> Tiêu đề + nút bấm
+  <div id="thongBaoKhuVuc"> Thông báo
+  <div> Bộ lọc + thống kê + tìm kiếm
+  <div id="bangSanPham"> Grid sản phẩm (JS render)
+
+JavaScript liên quan:
+  - moModalThem() → mở modal thêm món [menu.js]
+  - taiDanhSach() → tải lại danh sách [menu.js]
+  - locTheoLoai() → lọc theo loại [menu.js]
+  - timKiemMon() → tìm kiếm [menu.js]
+================================================================
+-->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+    <div>
+        <h2 class="font-heading text-3xl font-bold mb-2 tracking-tight text-on-surface">Thực Đơn</h2>
+        <p class="text-on-surface-variant text-sm">Quản lý danh sách món ăn cao cấp của nhà hàng.</p>
+    </div>
+    <div class="flex gap-3">
+        <button onclick="moModalThem()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 active:scale-95 transition-all font-bold text-sm">
+            <img src="img/add_3d.png" alt="Add" class="w-5 h-5 object-cover rounded-md shadow-sm"> Thêm Món Mới
+        </button>
+        <button onclick="taiDanhSach()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 active:scale-95 transition-all text-sm border-none cursor-pointer">
+            <img src="img/refresh_3d.png" alt="Refresh" class="w-5 h-5 object-cover rounded-md shadow-sm"> Làm Mới
+        </button>
+    </div>
+</div>
+
+<div id="thongBaoKhuVuc" class="mb-6"></div>
+
+<!-- Lọc & thống kê -->
+<div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-surface-container border border-primary/5 p-4 rounded-2xl mb-8">
+    <select id="cboLocLoai" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-xs font-semibold uppercase tracking-wider cursor-pointer" onchange="locTheoLoai()">
+        <option value="">Tất cả loại</option>
+        <option value="ThucAn">🍖 Thức ăn</option>
+        <option value="NuocUong">🥤 Nước uống</option>
+    </select>
+    
+    <div class="text-sm bg-white/[0.04] px-4 py-2 rounded-xl border border-primary/5">
+        <span class="text-on-surface-variant">Tổng số: <strong id="tongSoMon" class="text-primary font-bold text-sm">0</strong> món</span>
+    </div>
+    <div class="flex items-center gap-3 bg-white/[0.04] px-4 py-2 rounded-xl border border-primary/5 flex-1 max-w-xs transition-all focus-within:border-primary/20">
+        <img src="img/search_3d.png" alt="Search" class="w-4 h-4 object-cover rounded-sm opacity-70">
+        <input type="text" id="txtTimKiemMon" class="bg-transparent border-none outline-none text-on-surface text-xs flex-1 placeholder:text-on-surface-variant/35" placeholder="Tìm kiếm món..." oninput="timKiemMon()">
+    </div>
+</div>
+
+<!-- Lưới món ăn -->
+<div id="bangSanPham" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="col-span-full flex justify-center py-12">
+        <div class="spinner"></div>
+    </div>
+</div>

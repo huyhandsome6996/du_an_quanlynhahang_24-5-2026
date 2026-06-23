@@ -1,0 +1,95 @@
+<!--
+================================================================
+THÀNH PHẦN: Modal Thêm/Sửa Sản Phẩm
+================================================================
+File gốc thuộc: menu.html
+Mô tả: Popup form thêm hoặc sửa món trong thực đơn.
+       Có phần upload ảnh, chọn loại, giá, trạng thái.
+
+Cấu trúc HTML:
+  <div id="modalSanPham"> Modal overlay
+    └─ Form các trường: tên, loại, giá, ảnh, trạng thái
+    └─ Ghi chú phụ phí OOP (JS cập nhật mô tả)
+
+JavaScript liên quan:
+  - moModalThem() → mở modal rỗng [menu.js]
+  - moModalSua(id) → mở modal với dữ liệu [menu.js]
+  - luuSanPham() → lưu [menu.js]
+  - capNhatGiaoDienLoai() → cập nhật mô tả phụ phí [menu.js]
+  - xuLyChonAnh(event) → preview ảnh [menu.js]
+  - xoaAnhDaChon() → xóa ảnh đã chọn [menu.js]
+================================================================
+-->
+<div class="modal-overlay" id="modalSanPham">
+    <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-lg relative scale-95 transition-transform duration-300 border border-primary/10">
+        <button onclick="dongModal('modalSanPham')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+            <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg hover:scale-110 transition-transform">
+        </button>
+        <h3 class="font-heading text-2xl font-bold mb-6 text-primary tracking-tight" id="modalSanPhamTieuDe">Thêm Món Mới</h3>
+
+        <input type="hidden" id="txtIdSanPham">
+
+        <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tên món <span class="text-mau-do">*</span></label>
+                <input type="text" id="txtTenSanPham" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                       placeholder="VD: Lẩu Thái hải sản, Nước ép cam...">
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Loại sản phẩm <span class="text-mau-do">*</span></label>
+                <select id="cboLoai" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer" onchange="capNhatGiaoDienLoai()">
+                    <option value="ThucAn">🍖 Thức ăn</option>
+                    <option value="NuocUong">🥤 Nước uống</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Giá cơ bản (VNĐ) <span class="text-mau-do">*</span></label>
+                <input type="number" id="txtGiaCoBan" class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-on-surface-variant/30 text-sm focus:shadow-[0_0_15px_rgba(212,168,83,0.08)]"
+                       placeholder="VD: 150000" min="0" step="1000">
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ảnh minh họa</label>
+                <div class="flex items-center gap-3">
+                    <label class="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] text-on-surface border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-all active:scale-[0.98]">
+                        <img src="img/upload_3d.png" alt="Upload" class="w-5 h-5 object-cover rounded-md">
+                        <span>Chọn từ máy tính...</span>
+                        <input type="file" id="txtFileHinhAnh" accept="image/*" class="hidden" onchange="xuLyChonAnh(event)">
+                    </label>
+                    <button type="button" onclick="xoaAnhDaChon()" class="bg-white/[0.04] hover:bg-mau-do/20 text-on-surface hover:text-mau-do border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98]">
+                        Xóa ảnh
+                    </button>
+                </div>
+                <div class="relative w-full h-32 rounded-xl bg-white/[0.03] border border-primary/8 overflow-hidden flex items-center justify-center mt-1">
+                    <img id="imgPreviewHinhAnh" src="img/logo.png" alt="Xem trước" class="w-full h-full object-cover" onerror="this.src='img/logo.png'">
+                </div>
+                <input type="hidden" id="txtHinhAnh">
+            </div>
+
+            <!-- Ghi chú phụ phí theo loại (Đa hình OOP) -->
+            <div id="ghiChuPhuPhi" class="bg-primary/[0.04] border border-primary/10 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                    <strong class="text-primary flex items-center gap-1 mb-1">
+                        <img src="img/check_3d.png" alt="Info" class="w-4 h-4 object-cover rounded-sm"> Đa hình OOP (Phụ phí tự động):
+                    </strong>
+                    <span id="moTaPhuPhi" class="text-on-surface font-medium italic"></span>
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Trạng thái bán</label>
+                <select id="cboDangBan" class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary focus:ring-0 outline-none transition-all text-sm cursor-pointer">
+                    <option value="true">✅ Đang phục vụ</option>
+                    <option value="false">❌ Tạm ngừng</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex gap-3 pt-6 border-t border-primary/5 mt-6">
+            <button id="btnHuySanPham" onclick="dongModal('modalSanPham')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all border-none cursor-pointer">Hủy</button>
+            <button id="btnLuuSanPham" onclick="luuSanPham()" class="flex-1 btn btn-primary py-3 rounded-xl font-bold transition-all">Lưu</button>
+        </div>
+    </div>
+</div>

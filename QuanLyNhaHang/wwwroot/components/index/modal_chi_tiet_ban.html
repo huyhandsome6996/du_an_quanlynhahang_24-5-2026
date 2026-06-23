@@ -1,0 +1,33 @@
+<!--
+================================================================
+THÀNH PHẦN: Modal Chi Tiết Bàn
+================================================================
+File gốc thuộc: index.html
+Mô tả: Popup hiển thị chi tiết bàn (khi click vào bàn).
+       Nội dung thay đổi theo trạng thái bàn.
+
+Cấu trúc HTML:
+  <div id="modalChiTietBan"> Modal overlay
+    └─ <div> Nội dung modal
+        ├─ Nút đóng (X)
+        ├─ chiTietBanTieuDe: Tiêu đề (JS set)
+        ├─ chiTietBanNoidung: Nội dung động (JS render)
+        └─ chiTietBanFooter: Footer nút bấm (JS render)
+
+JavaScript liên quan:
+  - clickVaoBan(id) → mở modal + hienThiHoaDonCuaBan(id) [ban.js]
+  - dongModal('modalChiTietBan') → đóng modal [component_loader.js]
+================================================================
+-->
+<div class="modal-overlay" id="modalChiTietBan">
+    <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col relative scale-95 transition-transform duration-300 border border-primary/10">
+        <button onclick="dongModal('modalChiTietBan')" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+            <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg hover:scale-110 transition-transform">
+        </button>
+        <h3 class="font-heading text-2xl font-bold mb-6 text-primary tracking-tight" id="chiTietBanTieuDe">Chi tiết bàn</h3>
+        
+        <div class="flex-1 overflow-y-auto pr-2" id="chiTietBanNoidung"></div>
+        
+        <div class="flex justify-end gap-3 pt-6 border-t border-primary/5" id="chiTietBanFooter"></div>
+    </div>
+</div>

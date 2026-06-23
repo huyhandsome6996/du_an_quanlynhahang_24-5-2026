@@ -1,0 +1,62 @@
+<!--
+================================================================
+THÀNH PHẦN: Sidebar Navigation (Thanh điều hướng bên trái)
+================================================================
+Mô tả: Thanh menu dọc cố định bên trái, chứa:
+       - Logo nhà hàng "Vua Sư Tử"
+       - 4 liên kết điều hướng: Sơ đồ bàn, Thực đơn, Gọi món, Lịch sử HĐ
+       - Nút đăng xuất ở cuối
+
+Lưu ý: Menu item active được set bởi setActiveSidebarItem() trong component_loader.js
+       onclick toggle được gán bởi JS sau khi load sidebar.
+
+Cấu trúc HTML:
+  <nav class="sidebar" id="mainSidebar">
+    ├─ Logo section (hình + tên)
+    ├─ Decorative line (đường kẻ trang trí)
+    ├─ 4x <a> nav-btn (liên kết trang, active set bởi JS)
+    └─ Logout button
+
+JavaScript liên quan:
+  - js/component_loader.js → initSidebarState(), setActiveSidebarItem()
+  - onclick toggle được gán sau khi load (trong assembly HTML)
+================================================================
+-->
+<nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" id="mainSidebar">
+    <!-- Logo with gold ring -->
+    <div class="relative group mb-6 px-3 w-full flex justify-center">
+        <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
+        <img src="img/logo.png" alt="Logo" class="relative w-12 h-12 rounded-full border-2 border-primary/30 object-cover shadow-[0_0_15px_rgba(212,168,83,0.2)] transition-all group-hover:scale-105 shrink-0">
+        <span class="sidebar-text text-primary font-heading text-xl mt-2">Vua Sư Tử</span>
+    </div>
+    
+    <!-- Decorative line -->
+    <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent mb-4"></div>
+    
+    <a href="index.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Sơ đồ bàn">
+        <img src="img/table_3d.png" alt="Bàn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+        <span class="sidebar-text text-sm">Sơ đồ bàn</span>
+    </a>
+
+    <a href="menu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Thực đơn">
+        <img src="img/menu_book_3d.png" alt="Thực đơn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+        <span class="sidebar-text text-sm">Thực đơn</span>
+    </a>
+
+    <a href="order.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Gọi món">
+        <img src="img/pos_3d.png" alt="POS" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+        <span class="sidebar-text text-sm">Gọi món</span>
+    </a>
+
+    <a href="lichsu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Lịch sử hóa đơn">
+        <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+        <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
+    </a>
+
+    <!-- Spacer + Nút Đăng xuất ở cuối sidebar -->
+    <div class="flex-1"></div>
+    <button onclick="event.stopPropagation(); sessionStorage.clear(); window.location.href='login.html';" class="nav-btn relative flex items-center group text-on-surface-variant/40 hover:text-mau-do transition-all" title="Đăng xuất">
+        <img src="img/logout_3d.png" alt="Đăng xuất" class="w-9 h-9 object-cover rounded-[14px] bg-red-500/10 border border-red-500/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+        <span class="sidebar-text text-sm text-red-500">Đăng xuất</span>
+    </button>
+</nav>

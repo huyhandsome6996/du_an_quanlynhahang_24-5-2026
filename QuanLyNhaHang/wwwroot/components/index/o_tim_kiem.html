@@ -1,0 +1,22 @@
+<!--
+================================================================
+THÀNH PHẦN: Ô Tìm Kiếm Bàn
+================================================================
+File gốc thuộc: index.html
+Mô tả: Ô nhập liệu tìm kiếm bàn theo tên.
+       Gọi hàm timKiemBan() mỗi khi nhập (oninput).
+
+Cấu trúc HTML:
+  <div> Container
+    └─ <input id="txtTimKiemBan"> Ô tìm kiếm
+
+JavaScript liên quan:
+  - oninput="timKiemBan()" [ban.js]
+================================================================
+-->
+<div class="mb-6">
+    <div class="flex items-center gap-3 bg-surface-container border border-primary/5 px-4 py-2.5 rounded-2xl w-full max-w-md transition-all focus-within:border-primary/20 focus-within:shadow-[0_0_20px_rgba(212,168,83,0.05)]">
+        <img src="img/search_3d.png" alt="Search" class="w-5 h-5 object-cover rounded-md opacity-70">
+        <input type="text" id="txtTimKiemBan" class="bg-transparent border-none outline-none text-on-surface text-sm flex-1 placeholder:text-on-surface-variant/35" placeholder="Tìm kiếm bàn theo tên..." oninput="timKiemBan()">
+    </div>
+</div>
