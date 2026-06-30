@@ -14,6 +14,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     await taiDanhSachBan();
     await taiMenu();
 
+    // Tự động chọn bàn nếu có ?banId=... trên URL (vd: từ màn Sơ đồ bàn nhấn "Gọi thêm món")
+    const params = new URLSearchParams(window.location.search);
+    const banIdTuUrl = params.get('banId');
+    if (banIdTuUrl) {
+        const cboBan = document.getElementById('cboBan');
+        // Đợi dropdown đã có option tương ứng
+        if (cboBan && [...cboBan.options].some(o => o.value === banIdTuUrl)) {
+            cboBan.value = banIdTuUrl;
+            await chonBan();   // Kích hoạt luôn phần "Gọi món"
+        }
+    }
+
     // Add event listener for discount input to update totals in real-time
     const txtGiamGia = document.getElementById('txtGiamGia');
     if (txtGiamGia) {

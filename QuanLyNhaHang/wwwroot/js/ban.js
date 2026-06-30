@@ -165,7 +165,7 @@ async function hienThiHoaDonCuaBan(banId) {
             </div>`;
 
         document.getElementById('chiTietBanFooter').innerHTML = `
-            <a href="order.html" class="btn btn-info flex items-center gap-1 justify-center"><img src="img/pos_3d.png" class="w-4 h-4 object-cover inline-block"> Gọi thêm món</a>
+            <a href="order.html?banId=${banId}" class="btn btn-info flex items-center gap-1 justify-center"><img src="img/pos_3d.png" class="w-4 h-4 object-cover inline-block"> Gọi thêm món</a>
             <button class="btn btn-success flex items-center gap-1 justify-center" onclick="thanhToanNhanhTuModal(${banId})">
                 <img src="img/check_3d.png" class="w-4 h-4 object-cover inline-block"> Thanh Toán Ngay
             </button>`;
