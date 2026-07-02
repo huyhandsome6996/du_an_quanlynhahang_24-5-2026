@@ -125,7 +125,7 @@ function xuLyChonAnh(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Giới hạn 1MB để tránh nặng CSDL SQLite
+    // Giới hạn 1MB để tránh nặng CSDL Access
     if (file.size > 1 * 1024 * 1024) {
         hienThiThongBao('Vui lòng chọn ảnh nhỏ hơn 1MB!', 'error');
         event.target.value = '';

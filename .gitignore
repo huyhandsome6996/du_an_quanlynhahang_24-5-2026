@@ -2,11 +2,6 @@
 bin/
 obj/
 
-## Bỏ qua file database SQLite cũ (không còn dùng, nhưng giữ để an toàn)
-*.db
-*.db-shm
-*.db-wal
-
 ## LƯU Ý: file QuanLyNhaHang.accdb KHÔNG bị ignore — phải commit lên repo
 ## vì đây là file CSDL Access chính của dự án.
 

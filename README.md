@@ -43,8 +43,9 @@ du_an_quanlynhahang_24-5-2026/
 │                                    (File chạy đầu tiên. Khởi động CSDL, mở server và kết nối Giao diện với Kho)
 │
 ├── README.md                        <-- CUỐN SÁCH HƯỚNG DẪN SỬ DỤNG (Chính là file bạn đang đọc)
-├── nhat_ki_hoat_dong.md             <-- SỔ GHI CHÉP QUÁ TRÌNH LÀM DỰ ÁN
-└── yeu_cau_can_dat_tu_thay.md       <-- BÁO CÁO ĐỐI CHIẾU YÊU CẦU GIẢNG VIÊN
+├── BaoCaoDoAnCuoiKi_QuanLyNhaHang_HoQuangHuy.docx   <-- Báo cáo đồ án cuối kì (nộp cho thầy)
+├── KeHoachSlidePowerPoint_QuanLyNhaHang_HoQuangHuy.docx   <-- Kế hoạch slide PowerPoint để bảo vệ
+└── access_db/                      <-- Folder chứa file .accdb gốc + script SQL/Java tham khảo
 ```
 
 ---
@@ -82,9 +83,10 @@ Là nơi chứa toàn bộ giao diện chạy trên trình duyệt web và WebVi
 *   **`ChayUngDung.bat`**: File script 1-click giúp người dùng chạy nhanh dự án mà không cần gõ lệnh Terminal bằng tay.
 
 ### 📝 5. Các tài liệu hướng dẫn và báo cáo
-*   **`cac_loi_hay_gap.md`**: Ghi chú các lỗi kỹ thuật thường gặp khi chạy và phát triển dự án (như lỗi cache WebView2, lỗi kết nối OLE DB Access) và cách xử lý.
-*   **`trello.md`**: Bảng quản lý tiến độ công việc được phân rã theo Epic / User Story / Task để nộp cho thầy cô đánh giá quy trình làm việc nhóm.
-*   **`yeu_cau_can_dat_tu_thay.md`**: Bản đối chiếu các tiêu chí kỹ thuật yêu cầu trong đề bài của giảng viên với các chức năng đã hoàn thành trong mã nguồn.
+*   **`BaoCaoDoAnCuoiKi_QuanLyNhaHang_HoQuangHuy.docx`**: Báo cáo đồ án cuối kì môn Lập trình hướng đối tượng (29 trang, đầy đủ lời cảm ơn, mục lục, 5 chương, ER diagram, UI screenshots).
+*   **`KeHoachSlidePowerPoint_QuanLyNhaHang_HoQuangHuy.docx`**: Kế hoạch 17 slide PowerPoint + 10 câu hỏi Q&A gợi ý + checklist trước buổi bảo vệ.
+*   **`access_db/QuanLyNhaHang_Access.sql`**: Script SQL tham khảo để tạo lại database trong Access Query Designer.
+*   **`access_db/tao_access.java`**: Mã nguồn Java (dùng Jackcess) đã tạo ra file `.accdb` - tham khảo cách sinh file Access bằng code.
 
 ---
 

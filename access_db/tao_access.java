@@ -103,11 +103,11 @@ public class tao_access {
         // ---- 3 NguoiDung ----
         Date now = new Date();
         tblNguoiDung.addRow(1, "admin",
-            "240be518fabd2724ddb8f6ee857a5cf2e9e6c4c5e9e6c4c5e9e6c4c5e9e6c4c5", "QuanTri", now);
+            "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", "QuanTri", now);  // admin123
         tblNguoiDung.addRow(2, "nhanvien1",
-            "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "NhanVien", now);
+            "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "NhanVien", now);  // 123456
         tblNguoiDung.addRow(3, "huy",
-            "240be518fabd2724ddb8f6ee857a5cf2e9e6c4c5e9e6c4c5e9e6c4c5e9e6c4c5", "QuanTri", now);
+            "5e7d4266a4dee478a3cf414194988c717921900cfb9eb922515789047babdf4f", "QuanTri", now);  // huy123456
 
         // ---- 10 Bàn ----
         String[] tenBan = {"Bàn 1","Bàn 2","Bàn 3","Bàn 4","Bàn 5","Bàn 6","Bàn 7","Bàn 8","Bàn 9","Bàn 10"};
