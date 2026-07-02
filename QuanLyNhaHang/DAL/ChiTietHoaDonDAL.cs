@@ -1,6 +1,15 @@
 // ============================================================
 // TẦNG DAL - ChiTietHoaDonDAL (Access + OLE DB)
-// Hỗ trợ: TrangThaiMon (DangCho / DangChuanBi / DaPhucVu)
+// ------------------------------------------------------------
+// Implement interface IChiTietHoaDonDAL. Thao tác với bảng ChiTietHoaDon.
+//
+// Bảng này là bảng TRUNG GIAN giữa HoaDon và SanPham (quan hệ N—N).
+// Mỗi dòng = 1 món được gọi trong 1 hóa đơn cụ thể.
+//
+// Hỗ trợ nghiệp vụ bếp/bar:
+//   - LayMonDangCho(): lấy các món vừa order, đang chờ bếp nhận
+//   - LayMonDangChuanBi(): lấy các món bếp đang nấu
+//   - CapNhatTrangThaiMon(): chuyển DangCho → DangChuanBi → DaPhucVu
 // ============================================================
 using System.Data.OleDb;
 using QuanLyNhaHang.DAL.Interfaces;
@@ -8,30 +17,41 @@ using QuanLyNhaHang.Entities;
 
 namespace QuanLyNhaHang.DAL
 {
+    /// <summary>
+    /// Lớp ChiTietHoaDonDAL — thao tác với bảng ChiTietHoaDon.
+    /// </summary>
     public class ChiTietHoaDonDAL : IChiTietHoaDonDAL
     {
         private readonly string _conn = DatabaseHelper.ConnectionString;
 
-        // Câu truy vấn chung: JOIN SanPham để lấy tên món
+        // Câu SELECT chung: JOIN với SanPham để lấy TenSanPham (hiển thị UI)
         private const string SelectSql =
             "SELECT ct.Id, ct.HoaDonId, ct.SanPhamId, sp.TenSanPham, ct.SoLuong, " +
             "ct.DonGiaBan, ct.ThuocTinhThem, ct.ThanhTien, ct.TrangThaiMon " +
             "FROM ChiTietHoaDon ct INNER JOIN SanPham sp ON ct.SanPhamId = sp.Id";
 
-        // Helper: đọc 1 dòng từ reader sang ChiTietHoaDon
+        /// <summary>
+        /// Helper: Đọc 1 dòng từ DataReader → object ChiTietHoaDon.
+        /// </summary>
         private static ChiTietHoaDon Doc(OleDbDataReader r) => new()
         {
-            Id = r.GetInt32(0),
-            HoaDonId = r.GetInt32(1),
-            SanPhamId = r.GetInt32(2),
-            TenSanPham = r.GetString(3),
-            SoLuong = r.GetInt32(4),
-            DonGiaBan = r.GetDecimal(5),
+            Id = r.GetInt32(0),                                  // ct.Id
+            HoaDonId = r.GetInt32(1),                            // ct.HoaDonId
+            SanPhamId = r.GetInt32(2),                           // ct.SanPhamId
+            TenSanPham = r.GetString(3),                         // sp.TenSanPham (từ JOIN)
+            SoLuong = r.GetInt32(4),                             // ct.SoLuong
+            DonGiaBan = r.GetDecimal(5),                         // ct.DonGiaBan
+            // ThuocTinhThem có thể NULL → mặc định ""
             ThuocTinhThem = r.IsDBNull(6) ? "" : r.GetString(6),
-            ThanhTien = r.GetDecimal(7),
+            ThanhTien = r.GetDecimal(7),                         // ct.ThanhTien
+            // TrangThaiMon có thể NULL → mặc định "DangCho"
             TrangThaiMon = r.IsDBNull(8) ? "DangCho" : r.GetString(8)
         };
 
+        /// <summary>
+        /// Lấy danh sách món của 1 hóa đơn cụ thể.
+        /// Dùng cho: hiển thị bảng món khi click vào bàn có khách.
+        /// </summary>
         public List<ChiTietHoaDon> LayTheoHoaDon(int hoaDonId)
         {
             var ds = new List<ChiTietHoaDon>();
@@ -44,6 +64,11 @@ namespace QuanLyNhaHang.DAL
             return ds;
         }
 
+        /// <summary>
+        /// Thêm 1 món vào hóa đơn.
+        /// DonGiaBan và ThanhTien đã được tính từ TinhTien() của SanPham
+        /// (đa hình) ở tầng API — DAL chỉ lưu xuống DB.
+        /// </summary>
         public void Them(ChiTietHoaDon ct)
         {
             using var c = new OleDbConnection(_conn);
@@ -55,12 +80,18 @@ namespace QuanLyNhaHang.DAL
             cmd.Parameters.Add("@spId", OleDbType.Integer).Value = ct.SanPhamId;
             cmd.Parameters.Add("@sl", OleDbType.Integer).Value = ct.SoLuong;
             cmd.Parameters.Add("@donGia", OleDbType.Currency).Value = ct.DonGiaBan;
+            // ThuocTinhThem có thể null
             cmd.Parameters.Add("@thuocTinh", OleDbType.VarWChar).Value = (object?)ct.ThuocTinhThem ?? DBNull.Value;
             cmd.Parameters.Add("@thanhTien", OleDbType.Currency).Value = ct.ThanhTien;
+            // TrangThaiMon mặc định "DangCho" khi mới thêm
             cmd.Parameters.Add("@trangThai", OleDbType.VarWChar).Value = ct.TrangThaiMon ?? "DangCho";
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Xoá 1 món khỏi hóa đơn (khi khách đổi ý).
+        /// Tổng tiền sẽ được tính lại ở tầng API (ApiHoaDon.cs).
+        /// </summary>
         public void Xoa(int id)
         {
             using var c = new OleDbConnection(_conn);
@@ -70,6 +101,10 @@ namespace QuanLyNhaHang.DAL
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Cập nhật trạng thái món (DangCho → DangChuanBi → DaPhucVu).
+        /// Dùng cho: bếp/bar nhận món và cập nhật tiến độ.
+        /// </summary>
         public void CapNhatTrangThaiMon(int id, string trangThai)
         {
             using var c = new OleDbConnection(_conn);
@@ -80,12 +115,16 @@ namespace QuanLyNhaHang.DAL
             cmd.ExecuteNonQuery();
         }
 
-        // Lấy món đang chờ bếp xử lý (của hóa đơn chưa thanh toán)
+        /// <summary>
+        /// Lấy các món đang chờ bếp xử lý (của hóa đơn chưa TT).
+        /// JOIN thêm HoaDon để lọc theo TrangThai của hóa đơn.
+        /// </summary>
         public List<ChiTietHoaDon> LayMonDangCho()
         {
             var ds = new List<ChiTietHoaDon>();
             using var c = new OleDbConnection(_conn);
             c.Open();
+            // 2 JOIN: ChiTietHoaDon ↔ SanPham, ChiTietHoaDon ↔ HoaDon
             using var cmd = new OleDbCommand(
                 "SELECT ct.Id, ct.HoaDonId, ct.SanPhamId, sp.TenSanPham, ct.SoLuong, " +
                 "ct.DonGiaBan, ct.ThuocTinhThem, ct.ThanhTien, ct.TrangThaiMon " +
@@ -98,6 +137,9 @@ namespace QuanLyNhaHang.DAL
             return ds;
         }
 
+        /// <summary>
+        /// Lấy các món đang được bếp chuẩn bị (TrangThaiMon = 'DangChuanBi').
+        /// </summary>
         public List<ChiTietHoaDon> LayMonDangChuanBi()
         {
             var ds = new List<ChiTietHoaDon>();

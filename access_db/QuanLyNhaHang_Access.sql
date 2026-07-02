@@ -25,10 +25,11 @@
 -- ============================================================
 
 -- Bảng 1: NguoiDung (Tài khoản đăng nhập)
+-- Mật khẩu lưu PLAIN-TEXT (không băm SHA-256) — đồ án đơn giản hoá
 CREATE TABLE NguoiDung (
     Id              AUTOINCREMENT PRIMARY KEY,
     TenDangNhap     VARCHAR(50)  NOT NULL UNIQUE,
-    MatKhauHash     VARCHAR(128) NOT NULL,
+    MatKhau         VARCHAR(100) NOT NULL,    -- plain-text, không băm
     VaiTro          VARCHAR(20)  NOT NULL DEFAULT 'QuanTri',
     NgayTao         DATETIME     NOT NULL
 );
@@ -85,20 +86,15 @@ CREATE TABLE ChiTietHoaDon (
 -- PHẦN 2: DỮ LIỆU MẪU (DML)
 -- ============================================================
 
--- 2.1. 3 Tài khoản (mật khẩu đã băm SHA-256 thật, khớp với code C# MatKhauBaoMat.BamSHA256)
--- admin   / admin123  → 240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9
--- huy     / admin123  → 240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9
--- nhanvien1 / 123456 → 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92
-INSERT INTO NguoiDung (Id, TenDangNhap, MatKhauHash, VaiTro, NgayTao) VALUES
-    (1, 'admin',
-     '240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
-     'QuanTri', #2026-07-01 08:00:00#),
-    (2, 'nhanvien1',
-     '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
-     'NhanVien', #2026-07-01 08:00:00#),
-    (3, 'huy',
-     '240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
-     'QuanTri', #2026-07-01 08:00:00#);
+-- 2.1. 3 Tài khoản (mật khẩu PLAIN-TEXT — đơn giản hoá cho đồ án nhỏ)
+-- admin     / admin123   → QuanTri
+-- nhanvien1 / 123456     → NhanVien
+-- huy       / huy123456  → QuanTri
+-- Bạn có thể tự thêm/sửa trực tiếp trong Access mà không cần tính hash.
+INSERT INTO NguoiDung (Id, TenDangNhap, MatKhau, VaiTro, NgayTao) VALUES
+    (1, 'admin',     'admin123',  'QuanTri',  #2026-07-01 08:00:00#),
+    (2, 'nhanvien1', '123456',    'NhanVien', #2026-07-01 08:00:00#),
+    (3, 'huy',       'huy123456', 'QuanTri',  #2026-07-01 08:00:00#);
 
 -- 2.2. 10 Bàn
 INSERT INTO Ban (Id, TenBan, TrangThai) VALUES

@@ -1,36 +1,39 @@
 // ============================================================
 // BAOCAO.JS — Logic trang Báo Cáo Thống Kê (baocao.html)
-//
+// ------------------------------------------------------------
 // Chức năng:
 //   1. Tải 4 ô thống kê doanh thu (tổng / hôm nay / tháng / số HĐ)
 //   2. Lọc hóa đơn theo khoảng ngày
 //   3. Hiển thị bảng doanh thu theo khoảng ngày
-//   4. Top 10 món bán chạy
+//   4. Top 10 món bán chạy (kèm thanh tiến độ + huy chương)
 //   5. Xem chi tiết + in hóa đơn
 // ============================================================
 
-let hoaDonDangXem = null;
+let hoaDonDangXem = null;   // Lưu hóa đơn đang xem để in
 
 // ---------- KHỞI ĐỘNG ----------
 document.addEventListener('DOMContentLoaded', () => {
     // Mặc định lọc từ đầu tháng đến nay
     const homNay = new Date();
     const dauThang = new Date(homNay.getFullYear(), homNay.getMonth(), 1);
+    // toISOString().split('T')[0] → format YYYY-MM-DD cho input[type=date]
     document.getElementById('dtpTuNgay').value = dauThang.toISOString().split('T')[0];
     document.getElementById('dtpDenNgay').value = homNay.toISOString().split('T')[0];
 
-    taiBaoCaoDoanhThu();
-    taiLichSu();
-    taiMonBanChay();
+    taiBaoCaoDoanhThu();   // Tải 4 ô thống kê
+    taiLichSu();            // Tải bảng hóa đơn
+    taiMonBanChay();        // Tải top 10 món bán chạy
 });
 
 // ---------- 1. TẢI 4 Ô THỐNG KÊ DOANH THU ----------
 async function taiBaoCaoDoanhThu() {
     try {
+        // GET /api/baocao/doanhthu — trả về object { tongDoanhThu, tongHoaDon, ... }
         const res = await fetch(`${API}/baocao/doanhthu`);
         if (!res.ok) throw new Error('Lỗi phản hồi server');
         const data = await res.json();
 
+        // Cập nhật 4 ô hiển thị
         document.getElementById('tongDoanhThu').textContent     = formatTien(data.tongDoanhThu || 0);
         document.getElementById('doanhThuHomNay').textContent   = formatTien(data.doanhThuHomNay || 0);
         document.getElementById('doanhThuThangNay').textContent = formatTien(data.doanhThuThangNay || 0);
@@ -40,7 +43,7 @@ async function taiBaoCaoDoanhThu() {
     }
 }
 
-// ---------- 2. TẢI DANH SÁCH HÓA ĐƠN ----------
+// ---------- 2. TẢI DANH SÁCH HÓA ĐƠN (tất cả) ----------
 async function taiLichSu() {
     document.getElementById('bangDoanhThu').innerHTML =
         '<tr><td colspan="7" class="text-center" style="padding:2rem;"><div class="spinner"></div></td></tr>';
@@ -59,19 +62,24 @@ async function locTheoNgay() {
     const tuNgay  = document.getElementById('dtpTuNgay').value;
     const denNgay = document.getElementById('dtpDenNgay').value;
 
+    // Validate: phải chọn cả 2 ngày
     if (!tuNgay || !denNgay) {
         hienToast('Vui lòng chọn đầy đủ Từ ngày và Đến ngày!', 'error');
         return;
     }
+    // Validate: Từ ngày không được lớn hơn Đến ngày
     if (new Date(tuNgay) > new Date(denNgay)) {
         hienToast('Từ ngày không được lớn hơn Đến ngày!', 'error');
         return;
     }
 
+    // Hiện spinner
     document.getElementById('bangDoanhThu').innerHTML =
         '<tr><td colspan="7" class="text-center" style="padding:2rem;"><div class="spinner"></div></td></tr>';
 
     try {
+        // GET /api/hoadon/theongay?tuNgay=...&denNgay=...
+        // Server lọc các HĐ ĐÃ thanh toán trong khoảng [tuNgay, denNgay]
         const res = await fetch(`${API}/hoadon/theongay?tuNgay=${tuNgay}&denNgay=${denNgay}`);
         if (!res.ok) throw new Error('Lỗi phản hồi server');
         const ds = await res.json();
@@ -92,10 +100,11 @@ function hienThiBangDoanhThu(ds) {
         return;
     }
 
-    // Tính tổng doanh thu trong khoảng đã lọc
+    // Tính tổng doanh thu trong khoảng đã lọc (chỉ tính HĐ đã TT)
     const tongTien = ds.filter(h => h.TrangThai === 'Đã thanh toán').reduce((t, h) => t + h.TongTien, 0);
     document.getElementById('tongDoanhThuLoc').textContent = `Tổng: ${formatTien(tongTien)}`;
 
+    // Tạo HTML cho từng dòng
     tbody.innerHTML = ds.map(hd => `
         <tr>
             <td class="px-6 py-4 font-bold text-primary">#${hd.Id}</td>
@@ -128,6 +137,7 @@ async function taiMonBanChay() {
     document.getElementById('bangMonBanChay').innerHTML =
         '<tr><td colspan="4" class="text-center" style="padding:2rem;"><div class="spinner"></div></td></tr>';
     try {
+        // GET /api/baocao/monbanchay?top=10
         const res = await fetch(`${API}/baocao/monbanchay?top=10`);
         if (!res.ok) throw new Error('Lỗi phản hồi server');
         const ds = await res.json();
@@ -146,17 +156,19 @@ function hienThiMonBanChay(ds) {
         return;
     }
 
+    // Mảng icon huy chương cho top 1-3
     const medalIcons = ['🥇', '🥈', '🥉'];
+    // Số lượng của món top 1 — để tính % thanh tiến độ
     const maxSoLuong = ds[0].TongSoLuong;
 
     tbody.innerHTML = ds.map((mon, i) => {
-        const hang = i + 1;
+        const hang = i + 1;   // Hạng (1, 2, 3, ...)
         // Hạng 1-3: hiện huy chương; còn lại: hiện số
         const hangDisplay = hang <= 3
             ? `<span class="text-2xl">${medalIcons[i]}</span>`
             : `<span class="text-on-surface-variant font-bold">${hang}</span>`;
 
-        // Thanh tiến độ tương đối
+        // Tính % thanh tiến độ (so với top 1)
         const percent = Math.round((mon.TongSoLuong / maxSoLuong) * 100);
 
         return `
@@ -165,6 +177,7 @@ function hienThiMonBanChay(ds) {
             <td class="px-6 py-4">
                 <div class="flex flex-col gap-1.5">
                     <span class="font-semibold text-on-surface">${mon.TenSanPham}</span>
+                    <!-- Thanh tiến độ tương đối -->
                     <div class="w-full max-w-[200px] h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
                         <div class="h-full rounded-full transition-all duration-700
                             ${hang === 1 ? 'bg-gradient-to-r from-primary to-primary-soft'
@@ -193,6 +206,7 @@ async function xemChiTiet(id) {
 
         document.getElementById('chiTietHDTieuDe').textContent = `Hóa Đơn #${hd.Id} - ${hd.TenBan}`;
 
+        // Bảng chi tiết món
         const bangMon = chiTiet.length === 0
             ? '<p class="text-nhat text-center" style="padding:1rem;">Không có món nào.</p>'
             : `<div class="table-wrapper">

@@ -1,31 +1,35 @@
 // ============================================================
 // BAN.JS — Logic trang Sơ Đồ Bàn (index.html)
-//
+// ------------------------------------------------------------
 // Chức năng chính:
 //   1. Tải danh sách bàn từ API
 //   2. Tìm kiếm bàn theo tên
 //   3. Hiển thị bàn dưới dạng lưới (3 trạng thái: Trống / Đã đặt / Có khách)
 //   4. Click vào bàn → mở modal chi tiết
-//   5. Thêm / Sửa / Xóa bàn
+//   5. Thêm / Sửa / Xoá bàn
 //   6. Mở bàn (tạo hóa đơn mới)
 //   7. Thanh toán nhanh từ modal
 // ============================================================
 
 // Biến toàn cục của trang
-let danhSachBan = [];      // Cache toàn bộ danh sách bàn
+let danhSachBan = [];      // Cache toàn bộ danh sách bàn (để lọc/tìm kiếm không cần gọi API lại)
 let idBanDangSua = null;   // Id bàn đang sửa (null = đang ở chế độ "Thêm mới")
 
 // ---------- KHỞI ĐỘNG ----------
+// Khi trang tải xong → gọi taiDanhSachBan để load dữ liệu
 document.addEventListener('DOMContentLoaded', taiDanhSachBan);
 
 // ---------- 1. TẢI DANH SÁCH BÀN TỪ API ----------
 async function taiDanhSachBan() {
+    // Hiện spinner trong lúc chờ API
     document.getElementById('luoiBan').innerHTML = '<div class="col-span-full flex justify-center py-12"><div class="spinner"></div></div>';
     try {
+        // Gọi GET /api/ban — server trả về mảng JSON
         const res = await fetch(`${API}/ban`);
-        danhSachBan = await res.json();
-        hienThiBan(danhSachBan);
+        danhSachBan = await res.json();   // Parse JSON → gán vào biến toàn cục
+        hienThiBan(danhSachBan);          // Hiển thị lên UI
     } catch {
+        // Lỗi kết nối → hiện thông báo
         hienThiThongBao('Không kết nối được server! Hãy chạy dotnet run.', 'error');
         document.getElementById('luoiBan').innerHTML = '';
     }
@@ -33,8 +37,10 @@ async function taiDanhSachBan() {
 
 // ---------- 2. TÌM KIẾM BÀN THEO TÊN ----------
 function timKiemBan() {
+    // Lấy từ khoá + chuyển thường để search không phân biệt hoa thường
     const tuKhoa = document.getElementById('txtTimKiemBan').value.trim().toLowerCase();
-    if (!tuKhoa) return hienThiBan(danhSachBan);
+    if (!tuKhoa) return hienThiBan(danhSachBan);   // Không có từ khoá → hiện tất cả
+    // Lọc những bàn có TenBan chứa từ khoá
     const dsLoc = danhSachBan.filter(b => b.TenBan.toLowerCase().includes(tuKhoa));
     hienThiBan(dsLoc);
 }
@@ -43,7 +49,7 @@ function timKiemBan() {
 function hienThiBan(dsBan) {
     const luoi = document.getElementById('luoiBan');
 
-    // Cập nhật 3 ô thống kê nhanh
+    // Cập nhật 3 ô thống kê nhanh (số bàn Trống / Đã đặt / Có khách)
     document.getElementById('soBanTrong').textContent   = dsBan.filter(b => b.TrangThai === 'Trống').length;
     document.getElementById('soBanDaDat').textContent   = dsBan.filter(b => b.TrangThai === 'Đã đặt').length;
     document.getElementById('soBanCoKhach').textContent = dsBan.filter(b => b.TrangThai === 'Có khách').length;
@@ -58,12 +64,13 @@ function hienThiBan(dsBan) {
         return;
     }
 
-    // Tạo HTML cho từng bàn
+    // Tạo HTML cho từng bàn — dùng map + template literal
     luoi.innerHTML = dsBan.map(ban => {
+        // Phân loại trạng thái để chọn CSS class
         const laTrong = ban.TrangThai === 'Trống';
         const laDaDat = ban.TrangThai === 'Đã đặt';
 
-        // Chọn class CSS theo trạng thái
+        // Chọn class CSS theo trạng thái (mỗi trạng thái 1 màu)
         const cssClass = laTrong ? 'trong' : (laDaDat ? 'dadat' : 'cokhach');
         const badgeClass = laTrong ? 'badge-trong' : (laDaDat ? 'badge-dadat' : 'badge-cokhach');
         const badgeText  = laTrong ? '● Trống'   : (laDaDat ? '● Đã đặt'   : '● Có khách');
@@ -71,6 +78,9 @@ function hienThiBan(dsBan) {
         // Chọn icon theo trạng thái
         const icon = laTrong ? 'chair_3d.png' : (laDaDat ? 'click_3d.png' : 'user_3d.png');
 
+        // Trả về HTML của 1 card bàn
+        // onclick="clickVaoBan(${ban.Id})" → click vào card sẽ mở modal chi tiết
+        // event.stopPropagation() ở 2 nút Sửa/Xoá để không trigger click của card
         return `
         <div class="ban-card ${cssClass}" onclick="clickVaoBan(${ban.Id})" title="${ban.TenBan} - ${ban.TrangThai}">
             <div class="flex justify-center mb-2">
@@ -83,16 +93,19 @@ function hienThiBan(dsBan) {
                 <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); xoaBan(${ban.Id}, '${ban.TenBan}')">🗑️</button>
             </div>
         </div>`;
-    }).join('');
+    }).join('');   // Nối mảng thành chuỗi
 }
 
 // ---------- 4. CLICK VÀO BÀN → MỞ MODAL CHI TIẾT ----------
 async function clickVaoBan(banId) {
+    // Tìm bàn trong cache
     const ban = danhSachBan.find(b => b.Id === banId);
     if (!ban) return;
 
+    // Set tiêu đề modal = tên bàn
     document.getElementById('chiTietBanTieuDe').textContent = ban.TenBan;
 
+    // 3 nhánh xử lý theo trạng thái bàn
     if (ban.TrangThai === 'Trống') {
         // Bàn trống → hiện nút "Mở Bàn"
         document.getElementById('chiTietBanNoidung').innerHTML = `
@@ -129,8 +142,8 @@ async function clickVaoBan(banId) {
         // Bàn có khách → tải hóa đơn và hiển thị chi tiết
         document.getElementById('chiTietBanNoidung').innerHTML = '<div class="spinner"></div>';
         document.getElementById('chiTietBanFooter').innerHTML = '';
-        moModal('modalChiTietBan');
-        await hienThiHoaDonCuaBan(ban.Id);
+        moModal('modalChiTietBan');   // Mở modal trước để user thấy spinner
+        await hienThiHoaDonCuaBan(ban.Id);   // Gọi API lấy hóa đơn
         return;
     }
 
@@ -140,8 +153,10 @@ async function clickVaoBan(banId) {
 // ---------- 5. HIỂN THỊ HÓA ĐƠN CỦA BÀN ĐANG CÓ KHÁCH ----------
 async function hienThiHoaDonCuaBan(banId) {
     try {
+        // Gọi GET /api/ban/{id}/hoadon — trả về { hoaDon, chiTiet }
         const res = await fetch(`${API}/ban/${banId}/hoadon`);
         if (!res.ok) {
+            // Bàn chưa có hóa đơn (lẻ) → hiện thông báo
             document.getElementById('chiTietBanNoidung').innerHTML =
                 '<p class="text-nhat text-center" style="padding:2rem;">Không tìm thấy hóa đơn.</p>';
             return;
@@ -166,6 +181,7 @@ async function hienThiHoaDonCuaBan(banId) {
                 </table>
                </div>`;
 
+        // Set nội dung modal: thời gian mở + bảng món + tổng tiền
         document.getElementById('chiTietBanNoidung').innerHTML = `
             <p class="text-nhat mb-1">Mở lúc: ${formatThoiGian(hoaDon.ThoiGianTao)}</p>
             ${danhSachMon}
@@ -176,6 +192,7 @@ async function hienThiHoaDonCuaBan(banId) {
                 </div>
             </div>`;
 
+        // Footer: 2 nút — "Gọi thêm món" (sang trang order) + "Thanh Toán Ngay"
         document.getElementById('chiTietBanFooter').innerHTML = `
             <a href="order.html?banId=${banId}" class="btn btn-info flex items-center gap-1 justify-center">
                 <img src="img/pos_3d.png" class="w-4 h-4 object-cover"> Gọi thêm món
@@ -184,6 +201,7 @@ async function hienThiHoaDonCuaBan(banId) {
                 <img src="img/check_3d.png" class="w-4 h-4 object-cover"> Thanh Toán Ngay
             </button>`;
     } catch (err) {
+        // Lỗi tải → hiện thông báo lỗi trong modal
         document.getElementById('chiTietBanNoidung').innerHTML =
             `<div class="alert alert-error">⚠️ Lỗi tải hóa đơn: ${err.message}</div>`;
     }
@@ -192,12 +210,13 @@ async function hienThiHoaDonCuaBan(banId) {
 // ---------- 6. MỞ BÀN (tạo hóa đơn mới) ----------
 async function moBan(banId) {
     try {
+        // POST /api/ban/{id}/mo — server tạo HóaDon mới + set Bàn = "Có khách"
         const res = await fetch(`${API}/ban/${banId}/mo`, { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
-            dongModal('modalChiTietBan');
+            dongModal('modalChiTietBan');              // Đóng modal
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');
-            taiDanhSachBan();
+            taiDanhSachBan();                           // Tải lại sơ đồ bàn
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
         }
@@ -208,8 +227,11 @@ async function moBan(banId) {
 
 // ---------- 7. THANH TOÁN NHANH TỪ MODAL CHI TIẾT BÀN ----------
 async function thanhToanNhanhTuModal(banId) {
+    // Hỏi xác nhận trước khi thanh toán
     if (!confirm('Xác nhận thanh toán và đóng bàn này?')) return;
     try {
+        // POST /api/ban/{id}/thanhtoan — body chứa VAT=0, GiamGia=0, PTTT=TienMat
+        // (Thanh toán nhanh không áp dụng VAT/GiamGia)
         const res = await fetch(`${API}/ban/${banId}/thanhtoan`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -219,7 +241,7 @@ async function thanhToanNhanhTuModal(banId) {
         if (res.ok) {
             dongModal('modalChiTietBan');
             hienThiThongBao(`✅ ${data.thongBao} | Tổng: ${formatTien(data.tongTien)}`, 'success');
-            taiDanhSachBan();
+            taiDanhSachBan();   // Refresh sơ đồ
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
         }
@@ -230,18 +252,19 @@ async function thanhToanNhanhTuModal(banId) {
 
 // ---------- 8. MODAL THÊM BÀN ----------
 function moModalThemBan() {
-    idBanDangSua = null;
+    idBanDangSua = null;   // null = chế độ Thêm mới (không phải Sửa)
     document.getElementById('modalBanTieuDe').textContent = 'Thêm Bàn Mới';
     document.getElementById('txtTenBan').value = '';
-    document.getElementById('cboTrangThaiBan').value = 'Trống';
+    document.getElementById('cboTrangThaiBan').value = 'Trống';   // Mặc định = Trống
     moModal('modalBan');
 }
 
 // ---------- 9. MODAL SỬA BÀN ----------
 function moModalSuaBan(banId) {
+    // Tìm bàn trong cache
     const ban = danhSachBan.find(b => b.Id === banId);
     if (!ban) return;
-    idBanDangSua = banId;
+    idBanDangSua = banId;   // Lưu Id để biết đang sửa bàn nào
     document.getElementById('modalBanTieuDe').textContent = `Sửa ${ban.TenBan}`;
     document.getElementById('txtTenBan').value = ban.TenBan;
     document.getElementById('cboTrangThaiBan').value = ban.TrangThai;
@@ -250,20 +273,24 @@ function moModalSuaBan(banId) {
 
 // ---------- 10. LƯU BÀN (Thêm hoặc Sửa) ----------
 async function luuBan() {
+    // Lấy dữ liệu từ form
     const tenBan = document.getElementById('txtTenBan').value.trim();
     const trangThai = document.getElementById('cboTrangThaiBan').value;
 
-    // Validate
+    // Validate tên bàn không rỗng
     if (!tenBan) {
         hienThiThongBao('Vui lòng nhập tên bàn!', 'error');
         document.getElementById('txtTenBan').focus();
         return;
     }
 
+    // Tạo payload JSON
     const payload = { TenBan: tenBan, TrangThai: trangThai };
+    // Nếu có idBanDangSua → Sửa (PUT), ngược lại → Thêm (POST)
     const isEdit = idBanDangSua !== null;
 
     try {
+        // Chọn URL và method tùy chế độ
         const url    = isEdit ? `${API}/ban/${idBanDangSua}` : `${API}/ban`;
         const method = isEdit ? 'PUT' : 'POST';
         const res = await fetch(url, {
@@ -273,9 +300,9 @@ async function luuBan() {
         });
         const data = await res.json();
         if (res.ok) {
-            dongModal('modalBan');
+            dongModal('modalBan');   // Đóng modal
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');
-            taiDanhSachBan();
+            taiDanhSachBan();        // Refresh danh sách
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
         }
@@ -284,10 +311,11 @@ async function luuBan() {
     }
 }
 
-// ---------- 11. ĐẶT BÀN / HỦY ĐẶT ----------
+// ---------- 11. HỦY ĐẶT BÀN ----------
 async function huyDatBan(banId) {
     if (!confirm('Xác nhận hủy đặt bàn này?')) return;
     try {
+        // POST /api/ban/{id}/huy-dat — đổi trạng thái "Đã đặt" → "Trống"
         const res = await fetch(`${API}/ban/${banId}/huy-dat`, { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
@@ -306,6 +334,7 @@ async function huyDatBan(banId) {
 async function xoaBan(banId, tenBan) {
     if (!confirm(`Xác nhận xóa "${tenBan}"? Không thể hoàn tác!`)) return;
     try {
+        // DELETE /api/ban/{id} — server không cho xoá bàn đang có khách
         const res = await fetch(`${API}/ban/${banId}`, { method: 'DELETE' });
         const data = await res.json();
         if (res.ok) {

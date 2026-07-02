@@ -13,6 +13,9 @@ obj/
 ## Bỏ qua file log
 *.log
 
+## Bỏ qua file lock của Access (chỉ tạo khi Access đang mở file)
+*.laccdb
+
 ## Bỏ qua thư mục của các IDE
 .idea/
 .vscode/
