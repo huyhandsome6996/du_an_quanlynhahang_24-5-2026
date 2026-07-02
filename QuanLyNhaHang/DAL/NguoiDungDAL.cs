@@ -17,7 +17,7 @@ namespace QuanLyNhaHang.DAL
             using var c = new OleDbConnection(_conn);
             c.Open();
             using var cmd = new OleDbCommand("SELECT COUNT(*) FROM NguoiDung", c);
-            return (int)cmd.ExecuteScalar() > 0;
+            return (int)cmd.ExecuteScalar()! > 0;
         }
 
         public NguoiDung? LayTheoTenDangNhap(string tenDangNhap)
@@ -25,8 +25,8 @@ namespace QuanLyNhaHang.DAL
             using var c = new OleDbConnection(_conn);
             c.Open();
             using var cmd = new OleDbCommand(
-                "SELECT Id, TenDangNhap, MatKhauHash, VaiTro, NgayTao FROM NguoiDung WHERE TenDangNhap = @ten", c);
-            cmd.Parameters.AddWithValue("@ten", tenDangNhap);
+                "SELECT Id, TenDangNhap, MatKhauHash, VaiTro, NgayTao FROM NguoiDung WHERE TenDangNhap = ?", c);
+            cmd.Parameters.Add("@ten", OleDbType.VarWChar).Value = tenDangNhap;
             using var r = cmd.ExecuteReader();
             if (r.Read())
                 return new NguoiDung
@@ -45,18 +45,20 @@ namespace QuanLyNhaHang.DAL
             using var c = new OleDbConnection(_conn);
             c.Open();
 
-            using var chk = new OleDbCommand("SELECT COUNT(*) FROM NguoiDung WHERE TenDangNhap = @ten", c);
-            chk.Parameters.AddWithValue("@ten", nd.TenDangNhap);
-            if ((int)chk.ExecuteScalar() > 0)
+            // Kiểm tra trùng tên đăng nhập
+            using var chk = new OleDbCommand("SELECT COUNT(*) FROM NguoiDung WHERE TenDangNhap = ?", c);
+            chk.Parameters.Add("@ten", OleDbType.VarWChar).Value = nd.TenDangNhap;
+            if ((int)chk.ExecuteScalar()! > 0)
                 throw new Exception("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.");
 
+            // INSERT với OleDbType tường minh để tránh "Data type mismatch"
             using var cmd = new OleDbCommand(
                 "INSERT INTO NguoiDung (TenDangNhap, MatKhauHash, VaiTro, NgayTao) " +
-                "VALUES (@ten, @hash, @vaiTro, @ngay)", c);
-            cmd.Parameters.AddWithValue("@ten", nd.TenDangNhap);
-            cmd.Parameters.AddWithValue("@hash", nd.MatKhauHash);
-            cmd.Parameters.AddWithValue("@vaiTro", nd.VaiTro);
-            cmd.Parameters.AddWithValue("@ngay", nd.NgayTao);
+                "VALUES (?, ?, ?, ?)", c);
+            cmd.Parameters.Add("@ten", OleDbType.VarWChar).Value = nd.TenDangNhap;
+            cmd.Parameters.Add("@hash", OleDbType.VarWChar).Value = nd.MatKhauHash;
+            cmd.Parameters.Add("@vaiTro", OleDbType.VarWChar).Value = nd.VaiTro;
+            cmd.Parameters.Add("@ngay", OleDbType.Date).Value = nd.NgayTao;
             cmd.ExecuteNonQuery();
         }
     }

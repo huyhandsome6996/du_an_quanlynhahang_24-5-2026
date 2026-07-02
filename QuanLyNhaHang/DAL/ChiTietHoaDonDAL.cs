@@ -37,8 +37,8 @@ namespace QuanLyNhaHang.DAL
             var ds = new List<ChiTietHoaDon>();
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand(SelectSql + " WHERE ct.HoaDonId = @hdId ORDER BY ct.Id", c);
-            cmd.Parameters.AddWithValue("@hdId", hoaDonId);
+            using var cmd = new OleDbCommand(SelectSql + " WHERE ct.HoaDonId = ? ORDER BY ct.Id", c);
+            cmd.Parameters.Add("@hdId", OleDbType.Integer).Value = hoaDonId;
             using var r = cmd.ExecuteReader();
             while (r.Read()) ds.Add(Doc(r));
             return ds;
@@ -50,14 +50,14 @@ namespace QuanLyNhaHang.DAL
             c.Open();
             using var cmd = new OleDbCommand(
                 "INSERT INTO ChiTietHoaDon (HoaDonId, SanPhamId, SoLuong, DonGiaBan, ThuocTinhThem, ThanhTien, TrangThaiMon) " +
-                "VALUES (@hdId, @spId, @sl, @donGia, @thuocTinh, @thanhTien, @trangThai)", c);
-            cmd.Parameters.AddWithValue("@hdId", ct.HoaDonId);
-            cmd.Parameters.AddWithValue("@spId", ct.SanPhamId);
-            cmd.Parameters.AddWithValue("@sl", ct.SoLuong);
-            cmd.Parameters.AddWithValue("@donGia", ct.DonGiaBan);
-            cmd.Parameters.AddWithValue("@thuocTinh", (object?)ct.ThuocTinhThem ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@thanhTien", ct.ThanhTien);
-            cmd.Parameters.AddWithValue("@trangThai", ct.TrangThaiMon ?? "DangCho");
+                "VALUES (?, ?, ?, ?, ?, ?, ?)", c);
+            cmd.Parameters.Add("@hdId", OleDbType.Integer).Value = ct.HoaDonId;
+            cmd.Parameters.Add("@spId", OleDbType.Integer).Value = ct.SanPhamId;
+            cmd.Parameters.Add("@sl", OleDbType.Integer).Value = ct.SoLuong;
+            cmd.Parameters.Add("@donGia", OleDbType.Currency).Value = ct.DonGiaBan;
+            cmd.Parameters.Add("@thuocTinh", OleDbType.VarWChar).Value = (object?)ct.ThuocTinhThem ?? DBNull.Value;
+            cmd.Parameters.Add("@thanhTien", OleDbType.Currency).Value = ct.ThanhTien;
+            cmd.Parameters.Add("@trangThai", OleDbType.VarWChar).Value = ct.TrangThaiMon ?? "DangCho";
             cmd.ExecuteNonQuery();
         }
 
@@ -65,8 +65,8 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand("DELETE FROM ChiTietHoaDon WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@id", id);
+            using var cmd = new OleDbCommand("DELETE FROM ChiTietHoaDon WHERE Id = ?", c);
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
             cmd.ExecuteNonQuery();
         }
 
@@ -74,9 +74,9 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand("UPDATE ChiTietHoaDon SET TrangThaiMon = @tt WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@tt", trangThai);
-            cmd.Parameters.AddWithValue("@id", id);
+            using var cmd = new OleDbCommand("UPDATE ChiTietHoaDon SET TrangThaiMon = ? WHERE Id = ?", c);
+            cmd.Parameters.Add("@tt", OleDbType.VarWChar).Value = trangThai;
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
             cmd.ExecuteNonQuery();
         }
 

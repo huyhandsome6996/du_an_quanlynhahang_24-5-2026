@@ -48,8 +48,8 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand(SelectSql + " WHERE hd.Id = @id", c);
-            cmd.Parameters.AddWithValue("@id", id);
+            using var cmd = new OleDbCommand(SelectSql + " WHERE hd.Id = ?", c);
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
             using var r = cmd.ExecuteReader();
             return r.Read() ? Doc(r) : null;
         }
@@ -58,10 +58,9 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            // Access dùng TOP 1 thay cho LIMIT 1
             using var cmd = new OleDbCommand(
-                SelectSql + " WHERE hd.BanId = @banId AND hd.TrangThai = 'Chưa thanh toán'", c);
-            cmd.Parameters.AddWithValue("@banId", banId);
+                SelectSql + " WHERE hd.BanId = ? AND hd.TrangThai = 'Chưa thanh toán'", c);
+            cmd.Parameters.Add("@banId", OleDbType.Integer).Value = banId;
             using var r = cmd.ExecuteReader();
             return r.Read() ? Doc(r) : null;
         }
@@ -72,14 +71,14 @@ namespace QuanLyNhaHang.DAL
             c.Open();
             using var cmd = new OleDbCommand(
                 "INSERT INTO HoaDon (BanId, ThoiGianTao, TongTien, TrangThai, VAT, GiamGia, PhuongThucThanhToan) " +
-                "VALUES (@banId, @tgt, @tongTien, @tt, @vat, @giamGia, @pttt)", c);
-            cmd.Parameters.AddWithValue("@banId", hd.BanId);
-            cmd.Parameters.AddWithValue("@tgt", hd.ThoiGianTao);
-            cmd.Parameters.AddWithValue("@tongTien", hd.TongTien);
-            cmd.Parameters.AddWithValue("@tt", hd.TrangThai);
-            cmd.Parameters.AddWithValue("@vat", hd.VAT);
-            cmd.Parameters.AddWithValue("@giamGia", hd.GiamGia);
-            cmd.Parameters.AddWithValue("@pttt", hd.PhuongThucThanhToan);
+                "VALUES (?, ?, ?, ?, ?, ?, ?)", c);
+            cmd.Parameters.Add("@banId", OleDbType.Integer).Value = hd.BanId;
+            cmd.Parameters.Add("@tgt", OleDbType.Date).Value = hd.ThoiGianTao;
+            cmd.Parameters.Add("@tongTien", OleDbType.Currency).Value = hd.TongTien;
+            cmd.Parameters.Add("@tt", OleDbType.VarWChar).Value = hd.TrangThai;
+            cmd.Parameters.Add("@vat", OleDbType.Currency).Value = hd.VAT;
+            cmd.Parameters.Add("@giamGia", OleDbType.Currency).Value = hd.GiamGia;
+            cmd.Parameters.Add("@pttt", OleDbType.VarWChar).Value = hd.PhuongThucThanhToan;
             cmd.ExecuteNonQuery();
 
             // Lấy Id tự tăng: dùng @@IDENTITY trên cùng connection
@@ -91,9 +90,9 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand("UPDATE HoaDon SET TongTien = @tongTien WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@tongTien", tongTien);
-            cmd.Parameters.AddWithValue("@id", hoaDonId);
+            using var cmd = new OleDbCommand("UPDATE HoaDon SET TongTien = ? WHERE Id = ?", c);
+            cmd.Parameters.Add("@tongTien", OleDbType.Currency).Value = tongTien;
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = hoaDonId;
             cmd.ExecuteNonQuery();
         }
 
@@ -102,9 +101,9 @@ namespace QuanLyNhaHang.DAL
             using var c = new OleDbConnection(_conn);
             c.Open();
             using var cmd = new OleDbCommand(
-                "UPDATE HoaDon SET ThoiGianThanhToan = @tgtt, TrangThai = 'Đã thanh toán' WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@tgtt", DateTime.Now);
-            cmd.Parameters.AddWithValue("@id", hoaDonId);
+                "UPDATE HoaDon SET ThoiGianThanhToan = ?, TrangThai = 'Đã thanh toán' WHERE Id = ?", c);
+            cmd.Parameters.Add("@tgtt", OleDbType.Date).Value = DateTime.Now;
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = hoaDonId;
             cmd.ExecuteNonQuery();
         }
 
@@ -113,11 +112,11 @@ namespace QuanLyNhaHang.DAL
             using var c = new OleDbConnection(_conn);
             c.Open();
             using var cmd = new OleDbCommand(
-                "UPDATE HoaDon SET VAT = @vat, GiamGia = @giamGia, PhuongThucThanhToan = @pttt WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@vat", vat);
-            cmd.Parameters.AddWithValue("@giamGia", giamGia);
-            cmd.Parameters.AddWithValue("@pttt", phuongThuc);
-            cmd.Parameters.AddWithValue("@id", hoaDonId);
+                "UPDATE HoaDon SET VAT = ?, GiamGia = ?, PhuongThucThanhToan = ? WHERE Id = ?", c);
+            cmd.Parameters.Add("@vat", OleDbType.Currency).Value = vat;
+            cmd.Parameters.Add("@giamGia", OleDbType.Currency).Value = giamGia;
+            cmd.Parameters.Add("@pttt", OleDbType.VarWChar).Value = phuongThuc;
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = hoaDonId;
             cmd.ExecuteNonQuery();
         }
 
@@ -128,10 +127,10 @@ namespace QuanLyNhaHang.DAL
             c.Open();
             using var cmd = new OleDbCommand(
                 SelectSql + " WHERE hd.TrangThai = 'Đã thanh toán' " +
-                "AND hd.ThoiGianThanhToan >= @tuNgay AND hd.ThoiGianThanhToan <= @denNgay " +
+                "AND hd.ThoiGianThanhToan >= ? AND hd.ThoiGianThanhToan <= ? " +
                 "ORDER BY hd.ThoiGianThanhToan DESC", c);
-            cmd.Parameters.AddWithValue("@tuNgay", tuNgay);
-            cmd.Parameters.AddWithValue("@denNgay", denNgay);
+            cmd.Parameters.Add("@tuNgay", OleDbType.Date).Value = tuNgay;
+            cmd.Parameters.Add("@denNgay", OleDbType.Date).Value = denNgay;
             using var r = cmd.ExecuteReader();
             while (r.Read()) ds.Add(Doc(r));
             return ds;

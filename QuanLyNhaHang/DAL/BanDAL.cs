@@ -27,8 +27,8 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand("SELECT Id, TenBan, TrangThai FROM Ban WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@id", id);
+            using var cmd = new OleDbCommand("SELECT Id, TenBan, TrangThai FROM Ban WHERE Id = ?", c);
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
             using var r = cmd.ExecuteReader();
             if (r.Read())
                 return new Ban { Id = r.GetInt32(0), TenBan = r.GetString(1), TrangThai = r.GetString(2) };
@@ -40,15 +40,14 @@ namespace QuanLyNhaHang.DAL
             using var c = new OleDbConnection(_conn);
             c.Open();
 
-            // Kiểm tra trùng tên bàn
-            using var chk = new OleDbCommand("SELECT COUNT(*) FROM Ban WHERE TenBan = @ten", c);
-            chk.Parameters.AddWithValue("@ten", ban.TenBan);
-            if ((int)chk.ExecuteScalar() > 0)
+            using var chk = new OleDbCommand("SELECT COUNT(*) FROM Ban WHERE TenBan = ?", c);
+            chk.Parameters.Add("@ten", OleDbType.VarWChar).Value = ban.TenBan;
+            if ((int)chk.ExecuteScalar()! > 0)
                 throw new Exception("Tên bàn đã tồn tại! Vui lòng đặt tên khác.");
 
-            using var cmd = new OleDbCommand("INSERT INTO Ban (TenBan, TrangThai) VALUES (@ten, @tt)", c);
-            cmd.Parameters.AddWithValue("@ten", ban.TenBan);
-            cmd.Parameters.AddWithValue("@tt", ban.TrangThai);
+            using var cmd = new OleDbCommand("INSERT INTO Ban (TenBan, TrangThai) VALUES (?, ?)", c);
+            cmd.Parameters.Add("@ten", OleDbType.VarWChar).Value = ban.TenBan;
+            cmd.Parameters.Add("@tt", OleDbType.VarWChar).Value = ban.TrangThai;
             cmd.ExecuteNonQuery();
         }
 
@@ -57,16 +56,16 @@ namespace QuanLyNhaHang.DAL
             using var c = new OleDbConnection(_conn);
             c.Open();
 
-            using var chk = new OleDbCommand("SELECT COUNT(*) FROM Ban WHERE TenBan = @ten AND Id <> @id", c);
-            chk.Parameters.AddWithValue("@ten", ban.TenBan);
-            chk.Parameters.AddWithValue("@id", ban.Id);
-            if ((int)chk.ExecuteScalar() > 0)
+            using var chk = new OleDbCommand("SELECT COUNT(*) FROM Ban WHERE TenBan = ? AND Id <> ?", c);
+            chk.Parameters.Add("@ten", OleDbType.VarWChar).Value = ban.TenBan;
+            chk.Parameters.Add("@id", OleDbType.Integer).Value = ban.Id;
+            if ((int)chk.ExecuteScalar()! > 0)
                 throw new Exception("Tên bàn đã tồn tại! Vui lòng đặt tên khác.");
 
-            using var cmd = new OleDbCommand("UPDATE Ban SET TenBan = @ten, TrangThai = @tt WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@ten", ban.TenBan);
-            cmd.Parameters.AddWithValue("@tt", ban.TrangThai);
-            cmd.Parameters.AddWithValue("@id", ban.Id);
+            using var cmd = new OleDbCommand("UPDATE Ban SET TenBan = ?, TrangThai = ? WHERE Id = ?", c);
+            cmd.Parameters.Add("@ten", OleDbType.VarWChar).Value = ban.TenBan;
+            cmd.Parameters.Add("@tt", OleDbType.VarWChar).Value = ban.TrangThai;
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = ban.Id;
             cmd.ExecuteNonQuery();
         }
 
@@ -74,8 +73,8 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand("DELETE FROM Ban WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@id", id);
+            using var cmd = new OleDbCommand("DELETE FROM Ban WHERE Id = ?", c);
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
             cmd.ExecuteNonQuery();
         }
 
@@ -83,9 +82,9 @@ namespace QuanLyNhaHang.DAL
         {
             using var c = new OleDbConnection(_conn);
             c.Open();
-            using var cmd = new OleDbCommand("UPDATE Ban SET TrangThai = @tt WHERE Id = @id", c);
-            cmd.Parameters.AddWithValue("@tt", trangThai);
-            cmd.Parameters.AddWithValue("@id", id);
+            using var cmd = new OleDbCommand("UPDATE Ban SET TrangThai = ? WHERE Id = ?", c);
+            cmd.Parameters.Add("@tt", OleDbType.VarWChar).Value = trangThai;
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
             cmd.ExecuteNonQuery();
         }
     }
