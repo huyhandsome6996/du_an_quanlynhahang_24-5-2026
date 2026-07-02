@@ -40,6 +40,7 @@
     <div class="ambient-glow w-[300px] h-[300px] bg-primary/3 bottom-0 left-1/4"></div>
 
     <!-- SIDEBAR -->
+    <!-- JS TƯƠNG TÁC: Div này được JS (sidebar.js) nhúng giao diện thanh menu bên trái vào -->
     <div id="sidebar"></div>
 
     <!-- NỘI DUNG CHÍNH -->
@@ -71,19 +72,23 @@
                         <p class="text-on-surface-variant text-sm">Quản lý danh sách món ăn của nhà hàng.</p>
                     </div>
                     <div class="flex gap-3">
+                        <!-- JS TƯƠNG TÁC: Sự kiện onclick gọi hàm moModalThem() trong file menu.js để mở popup thêm món -->
                         <button onclick="moModalThem()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 font-bold text-sm">
                             <img src="img/add_3d.png" alt="Add" class="w-5 h-5 object-cover rounded-md"> Thêm Món Mới
                         </button>
+                        <!-- JS TƯƠNG TÁC: Sự kiện onclick gọi hàm taiDanhSach() để gọi API lấy lại dữ liệu mới nhất -->
                         <button onclick="taiDanhSach()" class="glass-card text-on-surface px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-white/10 transition-all text-sm cursor-pointer">
                             <img src="img/refresh_3d.png" alt="Refresh" class="w-5 h-5 object-cover rounded-md"> Làm Mới
                         </button>
                     </div>
                 </div>
 
+                <!-- JS TƯƠNG TÁC: Div có id="thongBaoKhuVuc" dùng để JS chèn các thông báo (toast) màu xanh/đỏ vào đây -->
                 <div id="thongBaoKhuVuc" class="mb-6"></div>
 
                 <!-- Bộ lọc + tìm kiếm -->
                 <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-surface-container border border-primary/5 p-4 rounded-2xl mb-8">
+                    <!-- JS TƯƠNG TÁC: Lấy id="cboLocLoai" để lọc và sự kiện onchange="locTheoLoai()" kích hoạt khi đổi loại -->
                     <select id="cboLocLoai"
                             class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:border-primary outline-none text-xs font-semibold uppercase tracking-wider cursor-pointer"
                             onchange="locTheoLoai()">
@@ -93,11 +98,13 @@
                     </select>
 
                     <div class="text-sm bg-white/[0.04] px-4 py-2 rounded-xl border border-primary/5">
+                        <!-- JS TƯƠNG TÁC: JS cập nhật số lượng hiển thị vào thẻ có id="tongSoMon" này -->
                         <span class="text-on-surface-variant">Tổng số: <strong id="tongSoMon" class="text-primary font-bold">0</strong> món</span>
                     </div>
 
                     <div class="flex items-center gap-3 bg-white/[0.04] px-4 py-2 rounded-xl border border-primary/5 flex-1 max-w-xs focus-within:border-primary/20">
                         <img src="img/search_3d.png" alt="Search" class="w-4 h-4 object-cover rounded-sm opacity-70">
+                        <!-- JS TƯƠNG TÁC: oninput="timKiemMon()" kích hoạt mỗi khi gõ phím. JS lấy giá trị qua id="txtTimKiemMon" -->
                         <input type="text" id="txtTimKiemMon"
                                class="bg-transparent border-none outline-none text-on-surface text-xs flex-1"
                                placeholder="Tìm món..." oninput="timKiemMon()">
@@ -105,6 +112,7 @@
                 </div>
 
                 <!-- Lưới món ăn -->
+                <!-- JS TƯƠNG TÁC: Div id="bangSanPham" là nơi JS dùng vòng lặp render ra danh sách các thẻ HTML món ăn -->
                 <div id="bangSanPham" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <div class="col-span-full flex justify-center py-12"><div class="spinner"></div></div>
                 </div>
@@ -113,19 +121,23 @@
     </div>
 
     <!-- ========== MODAL: Thêm/Sửa Sản Phẩm ========== -->
+    <!-- JS TƯƠNG TÁC: JS thao tác thêm class 'active' vào id="modalSanPham" để ẩn/hiện popup -->
     <div class="modal-overlay" id="modalSanPham">
         <div class="glass-card bg-surface-container p-8 rounded-3xl w-full max-w-lg relative scale-95 transition-transform duration-300 border border-primary/10">
+            <!-- JS TƯƠNG TÁC: Gọi hàm dongModal('modalSanPham') để đóng popup -->
             <button onclick="dongModal('modalSanPham')" class="absolute top-4 right-4 hover:scale-110 transition-transform">
                 <img src="img/close_3d.png" alt="Close" class="w-6 h-6 object-cover rounded-lg">
             </button>
             <h3 class="text-2xl font-bold mb-6 text-primary tracking-tight" style="font-family:'Playfair Display',serif;" id="modalSanPhamTieuDe">Thêm Món Mới</h3>
 
+            <!-- JS TƯƠNG TÁC: JS lưu ngầm ID của món ăn đang sửa vào id="txtIdSanPham" -->
             <input type="hidden" id="txtIdSanPham">
 
             <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                 <!-- Tên món -->
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tên món <span class="text-mau-do">*</span></label>
+                    <!-- JS TƯƠNG TÁC: JS lấy và gán giá trị tên món qua id="txtTenSanPham" -->
                     <input type="text" id="txtTenSanPham"
                            class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary outline-none text-sm"
                            placeholder="VD: Lẩu Thái, Nước ép cam...">
@@ -134,6 +146,7 @@
                 <!-- Loại -->
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Loại <span class="text-mau-do">*</span></label>
+                    <!-- JS TƯƠNG TÁC: id="cboLoai" để lấy giá trị. onchange gọi capNhatGiaoDienLoai() đổi chữ hiển thị phụ phí -->
                     <select id="cboLoai"
                             class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary outline-none text-sm cursor-pointer"
                             onchange="capNhatGiaoDienLoai()">
@@ -145,6 +158,7 @@
                 <!-- Giá -->
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Giá cơ bản (VNĐ) <span class="text-mau-do">*</span></label>
+                    <!-- JS TƯƠNG TÁC: JS lấy giá từ ô input có id="txtGiaCoBan" -->
                     <input type="number" id="txtGiaCoBan"
                            class="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary outline-none text-sm"
                            placeholder="VD: 150000" min="0" step="1000">
@@ -157,15 +171,19 @@
                         <label class="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] text-on-surface border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-all">
                             <img src="img/upload_3d.png" alt="Upload" class="w-5 h-5 object-cover rounded-md">
                             <span>Chọn ảnh...</span>
+                            <!-- JS TƯƠNG TÁC: Chọn file sẽ gọi xuLyChonAnh(event) để tải ảnh và hiển thị xem trước -->
                             <input type="file" id="txtFileHinhAnh" accept="image/*" class="hidden" onchange="xuLyChonAnh(event)">
                         </label>
+                        <!-- JS TƯƠNG TÁC: Bấm nút này gọi xoaAnhDaChon() để hủy ảnh -->
                         <button type="button" onclick="xoaAnhDaChon()" class="bg-white/[0.04] hover:bg-mau-do/20 text-on-surface hover:text-mau-do border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold transition-all">
                             Xóa ảnh
                         </button>
                     </div>
                     <div class="relative w-full h-32 rounded-xl bg-white/[0.03] border border-primary/8 overflow-hidden flex items-center justify-center mt-1">
+                        <!-- JS TƯƠNG TÁC: JS thay đổi thuộc tính src của thẻ img id="imgPreviewHinhAnh" này -->
                         <img id="imgPreviewHinhAnh" src="img/logo.png" alt="Preview" class="w-full h-full object-cover" onerror="this.src='img/logo.png'">
                     </div>
+                    <!-- JS TƯƠNG TÁC: JS lưu dữ liệu base64 của ảnh vào id="txtHinhAnh" để gửi API -->
                     <input type="hidden" id="txtHinhAnh">
                 </div>
 
@@ -175,6 +193,7 @@
                         <strong class="text-primary flex items-center gap-1 mb-1">
                             <img src="img/check_3d.png" alt="Info" class="w-4 h-4 object-cover rounded-sm"> Đa hình OOP (Phụ phí tự động):
                         </strong>
+                        <!-- JS TƯƠNG TÁC: JS chèn text giải thích phụ phí (tùy Đồ ăn hay Thức uống) vào id="moTaPhuPhi" -->
                         <span id="moTaPhuPhi" class="text-on-surface font-medium italic"></span>
                     </p>
                 </div>
@@ -182,6 +201,7 @@
                 <!-- Trạng thái bán -->
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Trạng thái bán</label>
+                    <!-- JS TƯƠNG TÁC: JS lấy lựa chọn (true/false) từ id="cboDangBan" -->
                     <select id="cboDangBan"
                             class="bg-surface-container-highest border border-white/10 rounded-xl px-4 py-2.5 text-on-surface focus:border-primary outline-none text-sm cursor-pointer">
                         <option value="true">✅ Đang phục vụ</option>
@@ -191,7 +211,9 @@
             </div>
 
             <div class="flex gap-3 pt-6 border-t border-primary/5 mt-6">
+                <!-- JS TƯƠNG TÁC: Nút đóng modal, không cần gọi API -->
                 <button onclick="dongModal('modalSanPham')" class="flex-1 glass-card text-on-surface py-3 rounded-xl font-bold hover:bg-white/10 transition-all cursor-pointer">Hủy</button>
+                <!-- JS TƯƠNG TÁC: Nút Lưu gọi hàm luuSanPham(), hàm này sẽ gom tất cả dữ liệu từ các thẻ input ở trên và gửi lên API -->
                 <button onclick="luuSanPham()" class="flex-1 btn btn-primary py-3 rounded-xl font-bold">Lưu</button>
             </div>
         </div>

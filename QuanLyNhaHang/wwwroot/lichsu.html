@@ -41,6 +41,7 @@
     <div class="ambient-glow w-[400px] h-[400px] bg-primary/3 bottom-20 left-10"></div>
 
     <!-- SIDEBAR -->
+    <!-- JS TƯƠNG TÁC: Được JS nhúng menu trái vào -->
     <div id="sidebar"></div>
 
     <!-- NỘI DUNG CHÍNH -->
@@ -117,6 +118,7 @@
                         <h3 class="font-bold text-xs text-primary uppercase tracking-widest flex items-center gap-2">
                             <img src="img/bill_3d.png" alt="List" class="w-5 h-5 object-cover rounded-md"> Danh sách hóa đơn
                         </h3>
+                        <!-- JS TƯƠNG TÁC: Gọi API lấy lại lịch sử hóa đơn mới nhất -->
                         <button class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all flex items-center gap-1.5 text-on-surface cursor-pointer"
                                 onclick="taiLichSu()">
                             <img src="img/refresh_3d.png" alt="Refresh" class="w-4 h-4 object-cover rounded-sm"> Làm mới
@@ -135,6 +137,7 @@
                                     <th class="px-6 py-4 text-center">Xem</th>
                                 </tr>
                             </thead>
+                            <!-- JS TƯƠNG TÁC: Bảng lịch sử này sẽ được JS chèn dữ liệu động vào -->
                             <tbody id="bangLichSu" class="divide-y divide-white/3 text-sm">
                                 <tr><td colspan="7" class="px-6 py-12"><div class="flex justify-center"><div class="spinner"></div></div></td></tr>
                             </tbody>

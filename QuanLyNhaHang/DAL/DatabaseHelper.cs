@@ -9,6 +9,10 @@ namespace QuanLyNhaHang.DAL
 {
     public static class DatabaseHelper
     {
+        // =======================================================================
+        // 🎯 CHÚ Ý KHI THI: NẾU THẦY HỎI "CHUỖI KẾT NỐI CSDL NẰM Ở ĐÂU?"
+        // -> TRẢ LỜI: DẠ Ở FILE "DatabaseHelper.cs", DÒNG CHUỖI KẾT NỐI DƯỚI ĐÂY Ạ!
+        // =======================================================================
         // Provider Microsoft.ACE.OLEDB.12.0 = Access 2007+ (2016/365 đều dùng được)
         public const string ConnectionString =
             @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=QuanLyNhaHang.accdb;";

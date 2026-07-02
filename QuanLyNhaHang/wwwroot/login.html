@@ -95,6 +95,7 @@
         </div>
 
         <!-- ============ FORM ĐĂNG KÝ (lần đầu chạy app) ============ -->
+        <!-- JS TƯƠNG TÁC: Khi nhấn Submit form đăng ký, gọi hàm xuLyDangKy() để gửi API -->
         <form id="registerForm" class="space-y-5 hidden" onsubmit="xuLyDangKy(event)">
             <div class="p-3.5 rounded-xl bg-primary/5 border border-primary/15 text-primary text-sm text-center font-medium">
                 👋 Chào mừng! Vui lòng tạo tài khoản quản trị đầu tiên để bắt đầu.
@@ -103,6 +104,7 @@
             <!-- Tên đăng nhập -->
             <div class="space-y-1.5">
                 <label class="block text-xs font-bold uppercase tracking-wider" style="color:var(--mau-chu-nhat);">Tên tài khoản</label>
+                <!-- JS TƯƠNG TÁC: Lấy giá trị tên đăng ký từ id="txtRegUser" -->
                 <input type="text" id="txtRegUser" required
                        class="premium-input w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 outline-none text-sm font-medium"
                        style="color:var(--mau-chu);"
@@ -112,6 +114,7 @@
             <!-- Mật khẩu -->
             <div class="space-y-1.5">
                 <label class="block text-xs font-bold uppercase tracking-wider" style="color:var(--mau-chu-nhat);">Mật khẩu</label>
+                <!-- JS TƯƠNG TÁC: Lấy mật khẩu đăng ký từ id="txtRegPass" -->
                 <input type="password" id="txtRegPass" required
                        class="premium-input w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 outline-none text-sm font-medium"
                        style="color:var(--mau-chu);"
@@ -129,11 +132,13 @@
 
             <p class="text-center text-xs" style="color:var(--mau-chu-nhat);">
                 Đã có tài khoản?
+                <!-- JS TƯƠNG TÁC: Chuyển sang form Đăng nhập -->
                 <a href="#" onclick="chuyenForm('login'); return false;" class="text-primary font-bold">Đăng nhập ngay</a>
             </p>
         </form>
 
         <!-- ============ FORM ĐĂNG NHẬP ============ -->
+        <!-- JS TƯƠNG TÁC: Khi nhấn Đăng nhập, gọi hàm xuLyDangNhap() -->
         <form id="loginForm" class="space-y-5 hidden" onsubmit="xuLyDangNhap(event)">
             <!-- Tên đăng nhập -->
             <div class="space-y-1.5">
@@ -147,6 +152,7 @@
             <!-- Mật khẩu -->
             <div class="space-y-1.5">
                 <label class="block text-xs font-bold uppercase tracking-wider" style="color:var(--mau-chu-nhat);">Mật khẩu</label>
+                <!-- JS TƯƠNG TÁC: Lấy mật khẩu đăng nhập từ id="txtLogPass" -->
                 <input type="password" id="txtLogPass" required
                        class="premium-input w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3.5 outline-none text-sm font-medium"
                        style="color:var(--mau-chu);"
@@ -164,6 +170,7 @@
 
             <p class="text-center text-xs" style="color:var(--mau-chu-nhat);">
                 Chưa có tài khoản?
+                <!-- JS TƯƠNG TÁC: Chuyển sang form Đăng ký -->
                 <a href="#" onclick="chuyenForm('register'); return false;" class="text-primary font-bold">Tạo tài khoản mới</a>
             </p>
         </form>
