@@ -1,24 +1,31 @@
 // ============================================================
 // TẦNG DAL - DatabaseHelper
-// Khởi tạo SQLite và tạo các bảng nếu chưa tồn tại
-// V2: Thêm bảng NguyenLieu, KhoLog; Thêm cột VAT, GiamGia, PhuongThucThanhToan, TrangThaiMon
+// Khởi tạo SQLite và tạo 5 bảng: Ban, SanPham, HoaDon,
+// ChiTietHoaDon, NguoiDung (có quan hệ khóa ngoại).
 // ============================================================
 using Microsoft.Data.Sqlite;
 
 namespace QuanLyNhaHang.DAL
 {
+    /// <summary>
+    /// Lớp tĩnh giúp khởi tạo cơ sở dữ liệu SQLite.
+    /// Chạy 1 lần khi ứng dụng mới khởi động lần đầu.
+    /// </summary>
     public static class DatabaseHelper
     {
-        private static readonly string _connectionString =
-            "Data Source=nha_hang.db;";
-
+        // Chuỗi kết nối: dữ liệu lưu trong tệp nha_hang.db
+        private static readonly string _connectionString = "Data Source=nha_hang.db;";
         public static string ConnectionString => _connectionString;
 
+        /// <summary>
+        /// Tạo các bảng nếu chưa tồn tại, sau đó thêm dữ liệu mẫu.
+        /// </summary>
         public static void KhoiTaoCSDL()
         {
             using var conn = new SqliteConnection(_connectionString);
             conn.Open();
 
+            // Bật ràng buộc khóa ngoại
             string sql = @"
                 PRAGMA foreign_keys = ON;
 
@@ -38,15 +45,15 @@ namespace QuanLyNhaHang.DAL
                 );
 
                 CREATE TABLE IF NOT EXISTS HoaDon (
-                    Id                 INTEGER PRIMARY KEY AUTOINCREMENT,
-                    BanId              INTEGER NOT NULL,
-                    ThoiGianTao        DATETIME NOT NULL,
-                    ThoiGianThanhToan  DATETIME NULL,
-                    TongTien           DECIMAL  NOT NULL DEFAULT 0,
-                    TrangThai          TEXT     NOT NULL DEFAULT 'Chưa thanh toán',
-                    VAT                DECIMAL  NOT NULL DEFAULT 0,
-                    GiamGia            DECIMAL  NOT NULL DEFAULT 0,
-                    PhuongThucThanhToan TEXT    NOT NULL DEFAULT 'TienMat',
+                    Id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+                    BanId               INTEGER NOT NULL,
+                    ThoiGianTao         DATETIME NOT NULL,
+                    ThoiGianThanhToan   DATETIME NULL,
+                    TongTien            DECIMAL  NOT NULL DEFAULT 0,
+                    TrangThai           TEXT     NOT NULL DEFAULT 'Chưa thanh toán',
+                    VAT                 DECIMAL  NOT NULL DEFAULT 0,
+                    GiamGia             DECIMAL  NOT NULL DEFAULT 0,
+                    PhuongThucThanhToan TEXT     NOT NULL DEFAULT 'TienMat',
                     FOREIGN KEY (BanId) REFERENCES Ban(Id)
                 );
 
@@ -59,7 +66,7 @@ namespace QuanLyNhaHang.DAL
                     ThuocTinhThem   TEXT    NULL,
                     ThanhTien       DECIMAL NOT NULL,
                     TrangThaiMon    TEXT    NOT NULL DEFAULT 'DangCho',
-                    FOREIGN KEY (HoaDonId) REFERENCES HoaDon(Id),
+                    FOREIGN KEY (HoaDonId)  REFERENCES HoaDon(Id),
                     FOREIGN KEY (SanPhamId) REFERENCES SanPham(Id)
                 );
 
@@ -70,59 +77,23 @@ namespace QuanLyNhaHang.DAL
                     VaiTro        TEXT    NOT NULL DEFAULT 'QuanTri',
                     NgayTao       DATETIME NOT NULL
                 );
-
-                CREATE TABLE IF NOT EXISTS NguyenLieu (
-                    Id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                    TenNguyenLieu   TEXT    NOT NULL UNIQUE,
-                    DonVi           TEXT    NOT NULL,
-                    SoLuongTon      DECIMAL NOT NULL DEFAULT 0,
-                    MucToiThieu     DECIMAL NOT NULL DEFAULT 0,
-                    GhiChu          TEXT    NULL
-                );
-
-                CREATE TABLE IF NOT EXISTS KhoLog (
-                    Id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Loai            TEXT    NOT NULL,
-                    NguyenLieuId    INTEGER NOT NULL,
-                    SoLuong         DECIMAL NOT NULL,
-                    DonGia          DECIMAL NOT NULL DEFAULT 0,
-                    ThoiGian        DATETIME NOT NULL,
-                    LyDo            TEXT    NULL,
-                    FOREIGN KEY (NguyenLieuId) REFERENCES NguyenLieu(Id)
-                );
             ";
 
             using var cmd = new SqliteCommand(sql, conn);
             cmd.ExecuteNonQuery();
 
-            // Thêm cột mới vào bảng cũ nếu chưa tồn tại (backward compatibility)
-            string[] alterCommands = new[]
-            {
-                "ALTER TABLE SanPham ADD COLUMN HinhAnh TEXT NULL;",
-                "ALTER TABLE HoaDon ADD COLUMN VAT DECIMAL NOT NULL DEFAULT 0;",
-                "ALTER TABLE HoaDon ADD COLUMN GiamGia DECIMAL NOT NULL DEFAULT 0;",
-                "ALTER TABLE HoaDon ADD COLUMN PhuongThucThanhToan TEXT NOT NULL DEFAULT 'TienMat';",
-                "ALTER TABLE ChiTietHoaDon ADD COLUMN TrangThaiMon TEXT NOT NULL DEFAULT 'DangCho';"
-            };
-            foreach (var alterSql in alterCommands)
-            {
-                try
-                {
-                    using var alterCmd = new SqliteCommand(alterSql, conn);
-                    alterCmd.ExecuteNonQuery();
-                }
-                catch { /* Cột đã tồn tại */ }
-            }
-
             ThemDuLieuMau(conn);
             Console.WriteLine("✅ CSDL đã sẵn sàng: nha_hang.db");
         }
 
+        /// <summary>
+        /// Thêm dữ liệu mẫu lần đầu tiên (chỉ khi bảng Ban còn rỗng).
+        /// </summary>
         private static void ThemDuLieuMau(SqliteConnection conn)
         {
             using var checkCmd = new SqliteCommand("SELECT COUNT(*) FROM Ban", conn);
             long soBan = (long)(checkCmd.ExecuteScalar() ?? 0);
-            if (soBan > 0) return;
+            if (soBan > 0) return; // Đã có dữ liệu → không thêm nữa
 
             string sqlMau = @"
                 INSERT INTO Ban (TenBan) VALUES
@@ -140,25 +111,11 @@ namespace QuanLyNhaHang.DAL
                     ('Coca Cola',            30000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400'),
                     ('Bia Tiger',            35000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400'),
                     ('Nước suối Lavie',      15000, 'NuocUong', 1, 'https://images.unsplash.com/photo-1560023907-5f67f61f904d?w=400');
-
-                INSERT INTO NguyenLieu (TenNguyenLieu, DonVi, SoLuongTon, MucToiThieu, GhiChu) VALUES
-                    ('Thịt bò', 'kg', 50, 10, 'Nguyên liệu chính'),
-                    ('Thịt gà', 'kg', 40, 8, 'Nguyên liệu chính'),
-                    ('Hải sản tổng hợp', 'kg', 20, 5, 'Cá, tôm, mực'),
-                    ('Rau sạch', 'kg', 30, 5, 'Rau ăn kèm, salad'),
-                    ('Gạo', 'kg', 100, 20, 'Gạo Jasmine'),
-                    ('Dầu ăn', 'lít', 20, 5, 'Dầu thực vật'),
-                    ('Nước mắm', 'lít', 10, 3, 'Nước mắm nhĩ'),
-                    ('Đường', 'kg', 15, 5, 'Đường trắng'),
-                    ('Coca Cola', 'thùng', 10, 3, '24 lon/thùng'),
-                    ('Bia Tiger', 'thùng', 8, 2, '24 lon/thùng'),
-                    ('Nước suối', 'thùng', 12, 3, '24 chai/thùng'),
-                    ('Trà đào', 'thùng', 5, 2, '6 bình/thùng');
             ";
 
             using var insertCmd = new SqliteCommand(sqlMau, conn);
             insertCmd.ExecuteNonQuery();
-            Console.WriteLine("✅ Đã thêm dữ liệu mẫu (6 bàn, 10 món, 12 nguyên liệu)");
+            Console.WriteLine("✅ Đã thêm dữ liệu mẫu (6 bàn, 10 món)");
         }
     }
 }

@@ -1,54 +1,52 @@
 // ============================================================
-// MENU.JS - Logic trang Quản Lý Thực Đơn (menu.html)
+// MENU.JS — Logic trang Thực Đơn (menu.html)
+//
+// Chức năng:
+//   1. Tải danh sách món từ API
+//   2. Lọc theo loại (Thức ăn / Nước uống)
+//   3. Tìm kiếm theo tên
+//   4. Thêm / Sửa / Xóa món (kèm upload ảnh Base64)
+//   5. Hiển thị ghi chú đa hình OOP (Phụ phí Phần lớn / Lon)
 // ============================================================
 
-const API = 'http://localhost:5000/api';
 let danhSachSanPham = [];   // Cache toàn bộ sản phẩm
 
-// ---- Khởi động ----
+// ---------- KHỞI ĐỘNG ----------
 document.addEventListener('DOMContentLoaded', () => {
     taiDanhSach();
-    capNhatGiaoDienLoai(); // Hiển thị ghi chú phụ phí ban đầu
+    capNhatGiaoDienLoai(); // Hiện ghi chú phụ phí lần đầu
 });
 
-// Lấy danh sách sản phẩm từ API
+// ---------- 1. TẢI DANH SÁCH MÓN ----------
 async function taiDanhSach() {
-    document.getElementById('bangSanPham').innerHTML = `
-        <div class="col-span-full flex justify-center py-12">
-            <div class="spinner"></div>
-        </div>`;
+    document.getElementById('bangSanPham').innerHTML =
+        '<div class="col-span-full flex justify-center py-12"><div class="spinner"></div></div>';
     try {
         const res = await fetch(`${API}/sanpham`);
         danhSachSanPham = await res.json();
         locTheoLoai();
-    } catch (err) {
-        document.getElementById('bangSanPham').innerHTML = `
-            <div class="col-span-full">
-                <div class="alert alert-error">⚠️ Lỗi kết nối server!</div>
-            </div>`;
+    } catch {
+        document.getElementById('bangSanPham').innerHTML =
+            '<div class="col-span-full"><div class="alert alert-error">⚠️ Lỗi kết nối server!</div></div>';
     }
 }
 
-// Lọc theo loại và hiển thị bảng
+// ---------- 2. LỌC THEO LOẠI + TÌM KIẾM ----------
 function locTheoLoai() {
     const loai = document.getElementById('cboLocLoai').value;
     let dsLoc = loai ? danhSachSanPham.filter(sp => sp.Loai === loai) : danhSachSanPham;
-    
-    // Áp dụng tìm kiếm nếu có
+
+    // Áp dụng thêm tìm kiếm nếu có
     const tuKhoa = document.getElementById('txtTimKiemMon')?.value.trim().toLowerCase();
     if (tuKhoa) {
         dsLoc = dsLoc.filter(sp => sp.TenSanPham.toLowerCase().includes(tuKhoa));
     }
-    
     hienThiBang(dsLoc);
 }
 
-// TÌM KIẾM món theo tên
-function timKiemMon() {
-    locTheoLoai(); // Gọi lại lọc (sẽ kết hợp cả bộ lọc loại + từ khóa)
-}
+function timKiemMon() { locTheoLoai(); }
 
-// Vẽ lưới sản phẩm kèm ảnh minh họa
+// ---------- 3. HIỂN THỊ LƯỚI MÓN ĂN ----------
 function hienThiBang(ds) {
     document.getElementById('tongSoMon').textContent = ds.length;
     const grid = document.getElementById('bangSanPham');
@@ -65,8 +63,7 @@ function hienThiBang(ds) {
     }
 
     grid.innerHTML = ds.map(sp => {
-        // Nếu không có ảnh, dùng ảnh mặc định là Logo hoặc một hình placeholder thức ăn đẹp mắt
-        const imageSrc = sp.HinhAnh ? sp.HinhAnh : 'img/logo.png';
+        const imageSrc = sp.HinhAnh || 'img/logo.png';
         return `
         <div class="glass-card product-card rounded-2xl overflow-hidden cursor-pointer flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" onclick="moModalSua(${sp.Id})">
             <div class="relative h-44 w-full bg-surface-container-highest overflow-hidden border-b border-white/5">
@@ -90,7 +87,7 @@ function hienThiBang(ds) {
     }).join('');
 }
 
-// ---- MODAL THÊM / SỬA ----
+// ---------- 4. MODAL THÊM MÓN ----------
 function moModalThem() {
     document.getElementById('modalSanPhamTieuDe').textContent = 'Thêm Món Mới';
     document.getElementById('txtIdSanPham').value = '';
@@ -105,6 +102,7 @@ function moModalThem() {
     moModal('modalSanPham');
 }
 
+// ---------- 5. MODAL SỬA MÓN ----------
 function moModalSua(id) {
     const sp = danhSachSanPham.find(s => s.Id === id);
     if (!sp) return;
@@ -122,12 +120,12 @@ function moModalSua(id) {
     moModal('modalSanPham');
 }
 
-// Xử lý tệp hình ảnh từ máy tính (Convert sang Base64)
+// ---------- 6. XỬ LÝ CHỌN ẢNH TỪ MÁY (convert sang Base64) ----------
 function xuLyChonAnh(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Giới hạn dung lượng ảnh là 1MB để tránh làm nặng CSDL SQLite
+    // Giới hạn 1MB để tránh nặng CSDL SQLite
     if (file.size > 1 * 1024 * 1024) {
         hienThiThongBao('Vui lòng chọn ảnh nhỏ hơn 1MB!', 'error');
         event.target.value = '';
@@ -135,7 +133,7 @@ function xuLyChonAnh(event) {
     }
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = (e) => {
         const base64String = e.target.result;
         document.getElementById('txtHinhAnh').value = base64String;
         document.getElementById('imgPreviewHinhAnh').src = base64String;
@@ -149,11 +147,10 @@ function xoaAnhDaChon() {
     document.getElementById('txtFileHinhAnh').value = '';
 }
 
-// Cập nhật ghi chú phụ phí khi đổi loại (thể hiện Đa hình cho giảng viên hiểu)
+// ---------- 7. CẬP NHẬT GHI CHÚ PHỤ PHÍ (thể hiện ĐA HÌNH OOP) ----------
 function capNhatGiaoDienLoai() {
     const loai = document.getElementById('cboLoai').value;
     const moTa = document.getElementById('moTaPhuPhi');
-
     if (loai === 'ThucAn') {
         moTa.textContent = 'Thức ăn: Khách chọn "Phần lớn" → cộng thêm 50,000đ/phần.';
     } else {
@@ -161,47 +158,45 @@ function capNhatGiaoDienLoai() {
     }
 }
 
-// Lưu sản phẩm (Thêm hoặc Sửa)
+// ---------- 8. LƯU SẢN PHẨM (THÊM HOẶC SỬA) ----------
 async function luuSanPham() {
-    const id = document.getElementById('txtIdSanPham').value;
-    const ten = document.getElementById('txtTenSanPham').value.trim();
-    const gia = parseFloat(document.getElementById('txtGiaCoBan').value);
+    const id   = document.getElementById('txtIdSanPham').value;
+    const ten  = document.getElementById('txtTenSanPham').value.trim();
+    const gia  = parseFloat(document.getElementById('txtGiaCoBan').value);
     const hinhAnh = document.getElementById('txtHinhAnh').value.trim();
     const loai = document.getElementById('cboLoai').value;
     const dangBan = document.getElementById('cboDangBan').value === 'true';
 
-    // --- Validation phía client ---
+    // Validate phía client
     if (!ten) {
         hienThiThongBao('Vui lòng nhập tên món!', 'error');
         document.getElementById('txtTenSanPham').focus();
         return;
     }
     if (isNaN(gia) || gia < 0) {
-        hienThiThongBao('Giá cơ bản phải là số và không được âm!', 'error');
+        hienThiThongBao('Giá phải là số và không được âm!', 'error');
         document.getElementById('txtGiaCoBan').focus();
         return;
     }
 
-    const payload = { 
-        TenSanPham: ten, 
-        GiaCoBan: gia, 
-        Loai: loai, 
+    const payload = {
+        TenSanPham: ten,
+        GiaCoBan: gia,
+        Loai: loai,
         DangBan: dangBan,
-        HinhAnh: hinhAnh || null 
+        HinhAnh: hinhAnh || null
     };
     const isEdit = id !== '';
 
     try {
-        const url = isEdit ? `${API}/sanpham/${id}` : `${API}/sanpham`;
+        const url    = isEdit ? `${API}/sanpham/${id}` : `${API}/sanpham`;
         const method = isEdit ? 'PUT' : 'POST';
-
         const res = await fetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
         const data = await res.json();
-
         if (res.ok) {
             dongModal('modalSanPham');
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');
@@ -209,12 +204,12 @@ async function luuSanPham() {
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
         }
-    } catch (err) {
+    } catch {
         hienThiThongBao('Lỗi kết nối server!', 'error');
     }
 }
 
-// Xóa sản phẩm
+// ---------- 9. XÓA SẢN PHẨM ----------
 async function xoa(id, ten) {
     if (!confirm(`Xác nhận xóa món "${ten}"?`)) return;
     try {
@@ -226,76 +221,7 @@ async function xoa(id, ten) {
         } else {
             hienThiThongBao(`❌ ${data.thongBao}`, 'error');
         }
-    } catch (err) {
+    } catch {
         hienThiThongBao('Lỗi kết nối server!', 'error');
-    }
-}
-
-// ---- Hàm tiện ích ----
-
-// Hiển thị thông báo nội tuyến + Toast notification
-function hienThiThongBao(noiDung, loai = 'success') {
-    // Inline notification (bảo toàn cho học thuật)
-    const kv = document.getElementById('thongBaoKhuVuc');
-    if (kv) {
-        kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
-        setTimeout(() => kv.innerHTML = '', 4000);
-    }
-    // Toast notification (UX cao cấp)
-    hienToast(noiDung, loai);
-}
-
-// Toast notification — Hiển thị thông báo nổi góc phải trên cùng
-function hienToast(noiDung, loai = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${loai}`;
-    const icon = loai === 'success' ? '✅' : '❌';
-    toast.innerHTML = `<span style="font-size:1.1rem;">${icon}</span><span>${noiDung}</span>`;
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.classList.add('toast-out');
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
-}
-
-function formatTien(so) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(so);
-}
-
-// MODAL — Mở/đóng modal mượt mà với hiệu ứng scale
-function moModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.add('show');
-        setTimeout(() => {
-            const child = modal.firstElementChild;
-            if (child) {
-                child.classList.remove('scale-95');
-                child.classList.add('scale-100');
-            }
-        }, 50);
-    }
-}
-
-function dongModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        const child = modal.firstElementChild;
-        if (child) {
-            child.classList.remove('scale-100');
-            child.classList.add('scale-95');
-        }
-        setTimeout(() => {
-            modal.classList.remove('show');
-        }, 150);
     }
 }

@@ -1,12 +1,19 @@
 // ============================================================
-// LICHSU.JS - Logic trang Lịch Sử Hóa Đơn (lichsu.html)
+// LICHSU.JS — Logic trang Lịch Sử Hóa Đơn (lichsu.html)
+//
+// Chức năng:
+//   1. Tải danh sách toàn bộ hóa đơn
+//   2. Hiển thị 3 ô thống kê nhanh (tổng HĐ, đã thanh toán, doanh thu)
+//   3. Click "Xem" → mở modal chi tiết món trong hóa đơn
+//   4. In hóa đơn
 // ============================================================
 
-const API = 'http://localhost:5000/api';
-let hoaDonDangXem = null;
+let hoaDonDangXem = null;   // Lưu hóa đơn đang xem để in
 
-document.addEventListener('DOMContentLoaded', () => { taiLichSu(); });
+// ---------- KHỞI ĐỘNG ----------
+document.addEventListener('DOMContentLoaded', taiLichSu);
 
+// ---------- 1. TẢI LỊCH SỬ HÓA ĐƠN ----------
 async function taiLichSu() {
     document.getElementById('bangLichSu').innerHTML =
         '<tr><td colspan="7" class="text-center" style="padding:2rem;"><div class="spinner"></div></td></tr>';
@@ -21,6 +28,7 @@ async function taiLichSu() {
     }
 }
 
+// ---------- 2. CẬP NHẬT 3 Ô THỐNG KÊ ----------
 function capNhatThongKe(ds) {
     document.getElementById('tongHoaDon').textContent = ds.length;
     const daThanhToan = ds.filter(h => h.TrangThai === 'Đã thanh toán');
@@ -29,6 +37,7 @@ function capNhatThongKe(ds) {
     document.getElementById('tongDoanhThu').textContent = formatTien(tongDoanhThu);
 }
 
+// ---------- 3. HIỂN THỊ BẢNG LỊCH SỬ ----------
 function hienThiBang(ds) {
     const tbody = document.getElementById('bangLichSu');
     if (!ds.length) {
@@ -40,50 +49,57 @@ function hienThiBang(ds) {
             <td class="px-6 py-4 font-bold text-primary">#${hd.Id}</td>
             <td class="px-6 py-4 font-medium">${hd.TenBan}</td>
             <td class="px-6 py-4 text-on-surface-variant">${formatThoiGian(hd.ThoiGianTao)}</td>
-            <td class="px-6 py-4 text-on-surface-variant">${hd.ThoiGianThanhToan ? formatThoiGian(hd.ThoiGianThanhToan) : '<span class="text-on-surface-variant/40 italic">Chưa đóng</span>'}</td>
+            <td class="px-6 py-4 text-on-surface-variant">
+                ${hd.ThoiGianThanhToan ? formatThoiGian(hd.ThoiGianThanhToan) : '<span class="text-on-surface-variant/40 italic">Chưa đóng</span>'}
+            </td>
             <td class="px-6 py-4 text-right font-bold text-primary">${formatTien(hd.TongTien)}</td>
             <td class="px-6 py-4 text-center">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${hd.TrangThai === 'Đã thanh toán' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-primary/10 text-primary border-primary/20'}">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border
+                    ${hd.TrangThai === 'Đã thanh toán'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : 'bg-primary/10 text-primary border-primary/20'}">
                     <span class="w-1.5 h-1.5 rounded-full ${hd.TrangThai === 'Đã thanh toán' ? 'bg-emerald-400' : 'bg-primary'} animate-pulse"></span>
                     ${hd.TrangThai}
                 </span>
             </td>
             <td class="px-6 py-4 text-center">
-                <button class="bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-[0.95] text-on-surface flex items-center justify-center gap-1 mx-auto" onclick="xemChiTiet(${hd.Id})">
+                <button class="bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all text-on-surface flex items-center gap-1 mx-auto"
+                        onclick="xemChiTiet(${hd.Id})">
                     <img src="img/search_3d.png" alt="Search" class="w-4 h-4 object-cover rounded-sm"> Xem
                 </button>
             </td>
         </tr>`).join('');
 }
 
+// ---------- 4. XEM CHI TIẾT HÓA ĐƠN ----------
 async function xemChiTiet(id) {
     document.getElementById('chiTietHDNoidung').innerHTML = '<div class="spinner"></div>';
     moModal('modalChiTietHD');
 
     try {
         const res = await fetch(`${API}/hoadon/${id}`);
-        const data = await res.json();
-        const { hoaDon: hd, chiTiet } = data;
+        const { hoaDon: hd, chiTiet } = await res.json();
         hoaDonDangXem = hd;
 
-        document.getElementById('chiTietHDTieuDe').textContent =
-            `Hóa Đơn #${hd.Id} - ${hd.TenBan}`;
+        document.getElementById('chiTietHDTieuDe').textContent = `Hóa Đơn #${hd.Id} - ${hd.TenBan}`;
 
         const bangMon = chiTiet.length === 0
             ? '<p class="text-nhat text-center" style="padding:1rem;">Không có món nào.</p>'
             : `<div class="table-wrapper">
                 <table>
                     <thead><tr><th>Món</th><th>Ghi Chú</th><th>SL</th><th>Đơn Giá</th><th>Thành Tiền</th></tr></thead>
-                    <tbody>${chiTiet.map(ct => `
-                        <tr>
-                            <td>${ct.TenSanPham}</td>
-                            <td><span class="text-nhat">${ct.ThuocTinhThem || '-'}</span></td>
-                            <td class="text-center">${ct.SoLuong}</td>
-                            <td>${formatTien(ct.DonGiaBan)}</td>
-                            <td class="fw-bold text-chinh">${formatTien(ct.ThanhTien)}</td>
-                        </tr>`).join('')}
+                    <tbody>
+                        ${chiTiet.map(ct => `
+                            <tr>
+                                <td>${ct.TenSanPham}</td>
+                                <td><span class="text-nhat">${ct.ThuocTinhThem || '-'}</span></td>
+                                <td class="text-center">${ct.SoLuong}</td>
+                                <td>${formatTien(ct.DonGiaBan)}</td>
+                                <td class="fw-bold text-chinh">${formatTien(ct.ThanhTien)}</td>
+                            </tr>`).join('')}
                     </tbody>
-                </table></div>`;
+                </table>
+               </div>`;
 
         document.getElementById('chiTietHDNoidung').innerHTML = `
             <div style="display:flex; gap:2rem; margin-bottom:1rem; flex-wrap:wrap;">
@@ -105,81 +121,8 @@ async function xemChiTiet(id) {
     }
 }
 
+// ---------- 5. IN HÓA ĐƠN ----------
 function inHoaDon() {
     if (!hoaDonDangXem) return;
     window.print();
-}
-
-// ---- Hàm tiện ích ----
-
-// Hiển thị thông báo nội tuyến + Toast notification
-function hienThiThongBao(noiDung, loai = 'success') {
-    // Inline notification (bảo toàn cho học thuật)
-    const kv = document.getElementById('thongBaoKhuVuc');
-    if (kv) {
-        kv.innerHTML = `<div class="alert alert-${loai}">${noiDung}</div>`;
-        setTimeout(() => kv.innerHTML = '', 4000);
-    }
-    // Toast notification (UX cao cấp)
-    hienToast(noiDung, loai);
-}
-
-// Toast notification — Hiển thị thông báo nổi góc phải trên cùng
-function hienToast(noiDung, loai = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${loai}`;
-    const icon = loai === 'success' ? '✅' : '❌';
-    toast.innerHTML = `<span style="font-size:1.1rem;">${icon}</span><span>${noiDung}</span>`;
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.classList.add('toast-out');
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
-}
-
-function formatTien(so) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(so);
-}
-
-function formatThoiGian(chuoi) {
-    if (!chuoi) return '-';
-    return new Date(chuoi).toLocaleString('vi-VN');
-}
-
-// MODAL — Mở/đóng modal mượt mà với hiệu ứng scale
-function moModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.add('show');
-        setTimeout(() => {
-            const child = modal.firstElementChild;
-            if (child) {
-                child.classList.remove('scale-95');
-                child.classList.add('scale-100');
-            }
-        }, 50);
-    }
-}
-
-function dongModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        const child = modal.firstElementChild;
-        if (child) {
-            child.classList.remove('scale-100');
-            child.classList.add('scale-95');
-        }
-        setTimeout(() => {
-            modal.classList.remove('show');
-        }, 150);
-    }
 }

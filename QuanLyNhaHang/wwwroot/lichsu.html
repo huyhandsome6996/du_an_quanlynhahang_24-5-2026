@@ -1,126 +1,63 @@
 <!DOCTYPE html>
-<html class="dark" lang="vi">
+<html lang="vi">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Vua Sư Tử - Lịch Sử Hóa Đơn</title>
-    <!-- FAVICON: Thay đổi biểu tượng chương trình -->
     <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
+    <script>
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['"Outfit"', 'sans-serif'],
-                        heading: ['"Playfair Display"', 'serif'],
-                    },
                     colors: {
                         "primary": "#d4a853",
-                        "primary-hover": "#c49a42",
                         "primary-soft": "#f0d68a",
                         "surface": "#0a1628",
                         "surface-container": "#101e35",
                         "surface-container-highest": "#1e3050",
                         "on-surface": "#e8ecf4",
                         "on-surface-variant": "#8b9ab8",
-                        "background": "#060d1a"
+                        "background": "#0a1628",
+                        "mau-do": "#f87171"
                     },
-                    spacing: {
-                        "sidebar-width": "76px",
-                    }
+                    spacing: { "sidebar-width": "76px" }
                 }
             }
         };
     </script>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        #modalChiTietHD > .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #d4a853, transparent);
-            border-radius: 24px 24px 0 0;
-        }
-    </style>
 </head>
-<body class="bg-[#0a1628] text-on-surface min-h-screen flex font-sans relative">
+
+<body class="bg-background text-on-surface min-h-screen flex font-sans relative">
 
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Quả cầu phát sáng -->
-    <div class="absolute top-20 right-10 w-[500px] h-[500px] rounded-full bg-primary/4 glow-orb-1"></div>
-    <div class="absolute bottom-20 left-10 w-[400px] h-[400px] rounded-full bg-primary/3 glow-orb-1"></div>
+    <div class="ambient-glow w-[500px] h-[500px] bg-primary/4 top-20 right-10"></div>
+    <div class="ambient-glow w-[400px] h-[400px] bg-primary/3 bottom-20 left-10"></div>
 
     <!-- SIDEBAR -->
-    <nav class="sidebar fixed left-0 top-0 h-screen z-50 flex flex-col py-6" id="mainSidebar">
-        <script>
-            if (sessionStorage.getItem('sidebarExpanded') === 'true') {
-                document.getElementById('mainSidebar').classList.add('expanded');
-            }
-        </script>
-        <!-- Logo with gold ring -->
-        <div class="relative group mb-6 px-3 w-full flex justify-center">
-            <div class="absolute inset-0 rounded-full bg-primary/15 blur-md pointer-events-none transition-all group-hover:bg-primary/25"></div>
-            <img src="img/logo.png" alt="Logo" class="relative w-12 h-12 rounded-full border-2 border-primary/30 object-cover shadow-[0_0_15px_rgba(212,168,83,0.2)] transition-all group-hover:scale-105 shrink-0">
-            <span class="sidebar-text text-primary font-heading text-xl mt-2">Vua Sư Tử</span>
-        </div>
-        
-        <!-- Decorative line -->
-        <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent mb-4"></div>
-        
-        <a href="index.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Sơ đồ bàn">
-            <img src="img/table_3d.png" alt="Bàn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
-            <span class="sidebar-text text-sm">Sơ đồ bàn</span>
-        </a>
+    <div id="sidebar"></div>
 
-        <a href="menu.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Thực đơn">
-            <img src="img/menu_book_3d.png" alt="Thực đơn" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
-            <span class="sidebar-text text-sm">Thực đơn</span>
-        </a>
-
-        <a href="order.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Gọi món">
-            <img src="img/pos_3d.png" alt="POS" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
-            <span class="sidebar-text text-sm">Gọi món</span>
-        </a>
-
-        <a href="lichsu.html" class="nav-btn active relative flex items-center group" title="Lịch sử hóa đơn">
-            <img src="img/bill_3d.png" alt="Lịch sử" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
-            <span class="sidebar-text text-sm">Lịch sử hóa đơn</span>
-        </a>
-        <a href="baocao.html" class="nav-btn relative flex items-center group text-on-surface-variant/50 hover:text-on-surface transition-all" title="Báo cáo">
-            <img src="img/money_3d.png" alt="Báo cáo" class="w-9 h-9 object-cover rounded-[14px] bg-white/[0.04] border border-primary/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
-            <span class="sidebar-text text-sm">Báo cáo</span>
-        </a>
-
-        <!-- Spacer + Logout ở cuối -->
-        <div class="flex-1"></div>
-        <button onclick="event.stopPropagation(); sessionStorage.clear(); window.location.href='login.html';" class="nav-btn relative flex items-center group text-on-surface-variant/40 hover:text-mau-do transition-all" title="Đăng xuất">
-            <img src="img/logout_3d.png" alt="Đăng xuất" class="w-9 h-9 object-cover rounded-[14px] bg-red-500/10 border border-red-500/20 p-1 group-hover:scale-110 transition-transform shadow-sm shrink-0">
-            <span class="sidebar-text text-sm text-red-500">Đăng xuất</span>
-        </button>
-    </nav>
-
-    <!-- MAIN CONTENT -->
+    <!-- NỘI DUNG CHÍNH -->
     <div class="ml-sidebar-width flex-1 flex flex-col z-10 relative">
         <header class="sticky top-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-primary/5 flex justify-between items-center px-8 z-40">
-            <h1 class="font-heading text-xl font-bold tracking-tight text-on-surface flex items-center gap-2.5">
-                <img src="img/bill_3d.png" alt="History" class="w-6 h-6 object-cover rounded-md opacity-90">
+            <h1 class="text-xl font-bold tracking-tight flex items-center gap-2.5" style="font-family:'Playfair Display',serif;">
+                <img src="img/bill_3d.png" alt="History" class="w-6 h-6 object-cover rounded-md">
                 <span class="text-primary">Vua Sư Tử</span>
                 <span class="text-on-surface-variant/40 font-light">|</span>
                 <span class="text-on-surface-variant text-sm font-normal">Lịch Sử Hóa Đơn</span>
             </h1>
             <div class="flex items-center gap-4">
                 <div class="text-right mr-3">
-                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Hệ thống quản lý</p>
-                    <p class="text-xs font-semibold text-on-surface-variant">Vua Sư Tử v2.0</p>
+                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Hệ thống</p>
+                    <p class="text-xs font-semibold text-on-surface-variant">Vua Sư Tử v1.0</p>
                 </div>
-                <div class="w-10 h-10 rounded-xl overflow-hidden border border-primary/15 bg-surface-container-highest flex items-center justify-center shadow-inner">
+                <div class="w-10 h-10 rounded-xl overflow-hidden border border-primary/15 bg-surface-container-highest flex items-center justify-center">
                     <img src="img/user_3d.png" class="w-full h-full object-cover" alt="User">
                 </div>
             </div>
@@ -130,45 +67,47 @@
             <section id="trang-lichsu" class="page active block">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 pb-4">
                     <div>
-                        <h2 class="font-heading text-3xl font-extrabold mb-2 tracking-tight text-on-surface">Lịch Sử Hóa Đơn</h2>
-                        <p class="text-on-surface-variant text-sm">Tra cứu toàn bộ hóa đơn đã thanh toán và doanh thu tổng của nhà hàng.</p>
+                        <h2 class="text-3xl font-extrabold mb-2 tracking-tight" style="font-family:'Playfair Display',serif;">Lịch Sử Hóa Đơn</h2>
+                        <p class="text-on-surface-variant text-sm">Tra cứu toàn bộ hóa đơn và doanh thu tổng của nhà hàng.</p>
                     </div>
                 </div>
 
-                <!-- Thống kê nhanh -->
+                <!-- 3 ô thống kê nhanh -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <!-- Widget 1 -->
-                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+                    <!-- Tổng hóa đơn -->
+                    <div class="stat-widget glass-card rounded-3xl p-6 flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
                         <div class="z-10 flex flex-col justify-center">
                             <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng hóa đơn</span>
-                            <h3 class="text-4xl font-black text-on-surface drop-shadow-md" id="tongHoaDon">0</h3>
+                            <h3 class="text-4xl font-black text-on-surface" id="tongHoaDon">0</h3>
                         </div>
-                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
-                            <img src="img/bill_3d.png" alt="Bill" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
+                        <div class="z-10 w-[64px] h-[64px] rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-all group-hover:scale-105">
+                            <img src="img/bill_3d.png" alt="Bill" class="w-full h-full object-contain transition-transform group-hover:-rotate-6">
                         </div>
-                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/20"></div>
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
                     </div>
-                    <!-- Widget 2 -->
-                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+
+                    <!-- Đã thanh toán -->
+                    <div class="stat-widget glass-card rounded-3xl p-6 flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
                         <div class="z-10 flex flex-col justify-center">
                             <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Đã thanh toán</span>
-                            <h3 class="text-4xl font-black text-emerald-400 drop-shadow-md" id="daThanhToan">0</h3>
+                            <h3 class="text-4xl font-black text-emerald-400" id="daThanhToan">0</h3>
                         </div>
-                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-emerald-500/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
-                            <img src="img/check_3d.png" alt="Check" class="w-full h-full object-contain group-hover:rotate-6 transition-transform duration-500">
+                        <div class="z-10 w-[64px] h-[64px] rounded-[18px] bg-white/[0.03] border border-emerald-500/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-all group-hover:scale-105">
+                            <img src="img/check_3d.png" alt="Check" class="w-full h-full object-contain transition-transform group-hover:rotate-6">
                         </div>
-                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-emerald-500/20"></div>
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
                     </div>
-                    <!-- Widget 3 -->
-                    <div class="stat-widget glass-card rounded-3xl p-6 shadow-lg flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
+
+                    <!-- Tổng doanh thu -->
+                    <div class="stat-widget glass-card rounded-3xl p-6 flex justify-between items-center relative overflow-hidden border-t border-t-white/10 group">
                         <div class="z-10 flex flex-col justify-center min-w-0 pr-4">
                             <span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Tổng doanh thu</span>
-                            <h3 class="text-3xl font-black text-primary drop-shadow-md truncate" id="tongDoanhThu">0 ₫</h3>
+                            <h3 class="text-3xl font-black text-primary truncate" id="tongDoanhThu">0 ₫</h3>
                         </div>
-                        <div class="relative z-10 w-[64px] h-[64px] flex-shrink-0 rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-500 group-hover:scale-105">
-                            <img src="img/money_3d.png" alt="Money" class="w-full h-full object-contain group-hover:-rotate-6 transition-transform duration-500">
+                        <div class="z-10 w-[64px] h-[64px] rounded-[18px] bg-white/[0.03] border border-primary/15 p-2 shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-all group-hover:scale-105">
+                            <img src="img/money_3d.png" alt="Money" class="w-full h-full object-contain transition-transform group-hover:-rotate-6">
                         </div>
-                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/15 rounded-full blur-2xl pointer-events-none transition-all group-hover:bg-primary/25"></div>
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/15 rounded-full blur-2xl"></div>
                     </div>
                 </div>
 
@@ -176,9 +115,10 @@
                 <div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-primary/6">
                     <div class="flex justify-between items-center px-6 py-5 border-b border-primary/5 bg-primary/[0.02]">
                         <h3 class="font-bold text-xs text-primary uppercase tracking-widest flex items-center gap-2">
-                            <img src="img/bill_3d.png" alt="List" class="w-5 h-5 object-cover rounded-md shadow-sm opacity-90"> Danh sách hóa đơn
+                            <img src="img/bill_3d.png" alt="List" class="w-5 h-5 object-cover rounded-md"> Danh sách hóa đơn
                         </h3>
-                        <button class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] text-on-surface cursor-pointer" onclick="taiLichSu()">
+                        <button class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 px-4 py-2 rounded-xl font-bold text-[11px] tracking-wider uppercase transition-all flex items-center gap-1.5 text-on-surface cursor-pointer"
+                                onclick="taiLichSu()">
                             <img src="img/refresh_3d.png" alt="Refresh" class="w-4 h-4 object-cover rounded-sm"> Làm mới
                         </button>
                     </div>
@@ -188,21 +128,15 @@
                                 <tr>
                                     <th class="px-6 py-4">Mã HĐ</th>
                                     <th class="px-6 py-4">Bàn</th>
-                                    <th class="px-6 py-4">Thời Gian Mở</th>
-                                    <th class="px-6 py-4">Thời Gian Đóng</th>
+                                    <th class="px-6 py-4">Mở lúc</th>
+                                    <th class="px-6 py-4">Đóng lúc</th>
                                     <th class="px-6 py-4 text-right">Tổng Tiền</th>
                                     <th class="px-6 py-4 text-center">Trạng Thái</th>
                                     <th class="px-6 py-4 text-center">Xem</th>
                                 </tr>
                             </thead>
                             <tbody id="bangLichSu" class="divide-y divide-white/3 text-sm">
-                                <tr>
-                                    <td colspan="7" class="px-6 py-12">
-                                        <div class="flex justify-center">
-                                            <div class="spinner"></div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <tr><td colspan="7" class="px-6 py-12"><div class="flex justify-center"><div class="spinner"></div></div></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -211,58 +145,33 @@
         </main>
     </div>
 
-    <!-- Modal chi tiết hóa đơn -->
+    <!-- MODAL chi tiết hóa đơn -->
     <div class="modal-overlay" id="modalChiTietHD">
         <div class="glass-card bg-surface-container/90 border border-primary/10 p-8 rounded-3xl w-full max-w-2xl relative scale-95 transition-all duration-300 shadow-2xl">
-            <button onclick="dongModal('modalChiTietHD')" class="absolute top-5 right-5 text-on-surface-variant hover:text-on-surface transition-all">
-                <img src="img/close_3d.png" alt="Close" class="w-7 h-7 object-cover rounded-lg hover:scale-110 transition-transform">
+            <button onclick="dongModal('modalChiTietHD')" class="absolute top-5 right-5 hover:scale-110 transition-transform">
+                <img src="img/close_3d.png" alt="Close" class="w-7 h-7 object-cover rounded-lg">
             </button>
-            <h3 class="font-heading text-2xl font-extrabold mb-6 text-primary flex items-center gap-2 tracking-tight" id="chiTietHDTieuDe">
-                <img src="img/bill_3d.png" alt="Receipt" class="w-8 h-8 object-cover rounded-lg shadow-sm"> Chi Tiết Hóa Đơn
+            <h3 class="text-2xl font-extrabold mb-6 text-primary flex items-center gap-2 tracking-tight" style="font-family:'Playfair Display',serif;" id="chiTietHDTieuDe">
+                <img src="img/bill_3d.png" alt="Receipt" class="w-8 h-8 object-cover rounded-lg"> Chi Tiết Hóa Đơn
             </h3>
-            
+
             <div class="max-h-[55vh] overflow-y-auto pr-2" id="chiTietHDNoidung"></div>
-            
+
             <div class="flex justify-end gap-3 pt-6 border-t border-primary/5 mt-6">
-                <button onclick="dongModal('modalChiTietHD')" class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer">Đóng</button>
-                <button class="bg-gradient-to-r from-primary to-primary-soft hover:from-primary-hover hover:to-primary text-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1 shadow-lg shadow-primary/10 active:scale-[0.98] cursor-pointer border-none" onclick="inHoaDon()">
+                <button onclick="dongModal('modalChiTietHD')"
+                        class="bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 text-on-surface px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">Đóng</button>
+                <button onclick="inHoaDon()"
+                        class="btn btn-primary px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                     <img src="img/print_3d.png" alt="Print" class="w-5 h-5 object-cover rounded-sm"> In Hóa Đơn
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- SCRIPTS -->
+    <script src="js/common.js"></script>
     <script src="js/sidebar.js"></script>
-    <script src="js/lichsu.js?v=2.0"></script>
-    <script>
-        // Đồng bộ hiệu ứng modal mượt mà
-        window.moModal = function(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.add('show');
-                setTimeout(() => {
-                    const child = modal.firstElementChild;
-                    if (child) {
-                        child.classList.remove('scale-95');
-                        child.classList.add('scale-100');
-                    }
-                }, 50);
-            }
-        };
-
-        window.dongModal = function(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                const child = modal.firstElementChild;
-                if (child) {
-                    child.classList.remove('scale-100');
-                    child.classList.add('scale-95');
-                }
-                setTimeout(() => {
-                    modal.classList.remove('show');
-                }, 150);
-            }
-        };
-    </script>
+    <script>chenSidebar('lichsu');</script>
+    <script src="js/lichsu.js"></script>
 </body>
 </html>
