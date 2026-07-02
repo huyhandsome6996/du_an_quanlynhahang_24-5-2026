@@ -40,7 +40,7 @@ namespace QuanLyNhaHang.CacModun
 
             var app = builder.Build();
 
-            // Tạo SQLite DB và bảng nếu chưa tồn tại
+            // Kiểm tra file CSDL Access (.accdb) tồn tại
             DatabaseHelper.KhoiTaoCSDL();
 
             app.UseCors();

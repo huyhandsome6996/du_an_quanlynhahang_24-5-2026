@@ -3,10 +3,10 @@
 // Đây là form quản lý quan hệ nhiều đối tượng:
 //   Bàn 1—n HóaDon 1—n ChiTietHoaDon n—1 SanPham
 // ============================================================
+using System.Data.OleDb;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.Sqlite;
 using QuanLyNhaHang.DAL;
 using QuanLyNhaHang.DAL.Interfaces;
 using QuanLyNhaHang.Entities;
@@ -111,9 +111,10 @@ namespace QuanLyNhaHang.CacModun
             {
                 try
                 {
-                    using var conn = new SqliteConnection(DatabaseHelper.ConnectionString);
+                    using var conn = new OleDbConnection(DatabaseHelper.ConnectionString);
                     conn.Open();
-                    var getCmd = new SqliteCommand("SELECT HoaDonId, ThanhTien FROM ChiTietHoaDon WHERE Id = @id", conn);
+                    using var getCmd = new OleDbCommand(
+                        "SELECT HoaDonId, ThanhTien FROM ChiTietHoaDon WHERE Id = @id", conn);
                     getCmd.Parameters.AddWithValue("@id", id);
                     using var reader = getCmd.ExecuteReader();
                     if (!reader.Read()) return Results.NotFound(new { thongBao = "Không tìm thấy món này!" });

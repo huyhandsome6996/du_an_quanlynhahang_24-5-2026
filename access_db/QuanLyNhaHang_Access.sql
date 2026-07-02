@@ -85,19 +85,19 @@ CREATE TABLE ChiTietHoaDon (
 -- PHẦN 2: DỮ LIỆU MẪU (DML)
 -- ============================================================
 
--- 2.1. 3 Tài khoản (mật khẩu đã băm SHA-256)
--- admin   / admin123  → hash dưới
--- huy     / admin123  → hash dưới
--- nhanvien1 / 123456  → hash dưới
+-- 2.1. 3 Tài khoản (mật khẩu đã băm SHA-256 thật, khớp với code C# MatKhauBaoMat.BamSHA256)
+-- admin   / admin123  → 240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+-- huy     / admin123  → 240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+-- nhanvien1 / 123456 → 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92
 INSERT INTO NguoiDung (Id, TenDangNhap, MatKhauHash, VaiTro, NgayTao) VALUES
     (1, 'admin',
-     '240be518fabd2724ddb8f6ee857a5cf2e9e6c4c5e9e6c4c5e9e6c4c5e9e6c4c5',
+     '240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
      'QuanTri', #2026-07-01 08:00:00#),
     (2, 'nhanvien1',
      '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
      'NhanVien', #2026-07-01 08:00:00#),
     (3, 'huy',
-     '240be518fabd2724ddb8f6ee857a5cf2e9e6c4c5e9e6c4c5e9e6c4c5e9e6c4c5',
+     '240be518fabd2724ddb8f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
      'QuanTri', #2026-07-01 08:00:00#);
 
 -- 2.2. 10 Bàn

@@ -1,6 +1,6 @@
 # DỰ ÁN QUẢN LÝ NHÀ HÀNG - VUA SƯ TỬ 🦁
 
-> **Mô tả:** Đây là hệ thống phần mềm quản lý nhà hàng hiện đại, được xây dựng bằng C# (Backend) kết nối với cơ sở dữ liệu SQLite và giao diện (Frontend) viết bằng HTML/CSS/JS thuần theo phong cách Glassmorphism sang trọng.
+> **Mô tả:** Đây là hệ thống phần mềm quản lý nhà hàng hiện đại, được xây dựng bằng C# (Backend) kết nối với cơ sở dữ liệu **Microsoft Access (.accdb)** qua OLE DB Provider và giao diện (Frontend) viết bằng HTML/CSS/JS thuần theo phong cách Glassmorphism sang trọng.
 
 ---
 
@@ -23,7 +23,7 @@ du_an_quanlynhahang_24-5-2026/
 │   │   └── ChiTietHoaDon.cs         (Bản vẽ cấu tạo của 1 dòng ghi món trên hóa đơn)
 │   │
 │   ├── DAL/                         <-- KHU VỰC "KHO LƯU TRỮ" (Data Access Layer)
-│   │   ├── DatabaseHelper.cs        (Người thợ xây: Tự động tạo file nha_hang.db và xây các bảng)
+│   │   ├── DatabaseHelper.cs        (Người gác cổng: Quản lý chuỗi kết nối tới file QuanLyNhaHang.accdb)
 │   │   ├── BanDAL.cs                (Thủ kho chuyên quản lý việc Thêm/Sửa/Xóa dữ liệu Bàn)
 │   │   ├── SanPhamDAL.cs            (Thủ kho chuyên quản lý dữ liệu Thực đơn)
 │   │   ├── HoaDonDAL.cs             (Thủ kho chuyên lưu trữ Hóa đơn)
@@ -62,8 +62,8 @@ Dưới đây là mô tả chi tiết của từng phần trong cấu trúc dự
 *   **`ChiTietHoaDon.cs`**: Đại diện cho từng dòng món ăn được gọi trên hóa đơn (mã hóa đơn, mã sản phẩm, số lượng, giá bán tại thời điểm gọi).
 
 ### 🗄️ 2. Thư mục `DAL/` (Data Access Layer - Tầng Truy Xuất Dữ Liệu)
-Nhiệm vụ của tầng này là làm việc trực tiếp với cơ sở dữ liệu SQLite (`nha_hang.db`), đọc ghi dữ liệu từ C# vào file vật lý:
-*   **`DatabaseHelper.cs`**: Quản lý kết nối CSDL, thiết lập chế độ khóa ngoại (`foreign_keys = ON`), tạo mới các bảng dữ liệu nếu chưa tồn tại và nạp (seed) dữ liệu mẫu đầu tiên vào hệ thống.
+Nhiệm vụ của tầng này là làm việc trực tiếp với cơ sở dữ liệu Microsoft Access (`QuanLyNhaHang.accdb`) qua OLE DB Provider, đọc ghi dữ liệu từ C# vào file vật lý:
+*   **`DatabaseHelper.cs`**: Quản lý chuỗi kết nối OLE DB tới file `QuanLyNhaHang.accdb`, kiểm tra file CSDL tồn tại khi ứng dụng khởi động.
 *   **Các lớp DAL (`BanDAL.cs`, `SanPhamDAL.cs`, `HoaDonDAL.cs`, `ChiTietHoaDonDAL.cs`)**: Thực hiện các câu lệnh SQL (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) để truy vấn và cập nhật dữ liệu tương ứng.
 *   **Thư mục con `Interfaces/` (`IBanDAL.cs`, `ISanPhamDAL.cs`...)**: Định nghĩa các Interface quy định các phương thức mà một lớp DAL bắt buộc phải triển khai. Điều này thể hiện **tính Trừu tượng (Abstraction)** trong thiết kế phần mềm.
 
@@ -82,7 +82,7 @@ Là nơi chứa toàn bộ giao diện chạy trên trình duyệt web và WebVi
 *   **`ChayUngDung.bat`**: File script 1-click giúp người dùng chạy nhanh dự án mà không cần gõ lệnh Terminal bằng tay.
 
 ### 📝 5. Các tài liệu hướng dẫn và báo cáo
-*   **`cac_loi_hay_gap.md`**: Ghi chú các lỗi kỹ thuật thường gặp khi chạy và phát triển dự án (như lỗi cache WebView2, lỗi schema database SQLite) và cách xử lý.
+*   **`cac_loi_hay_gap.md`**: Ghi chú các lỗi kỹ thuật thường gặp khi chạy và phát triển dự án (như lỗi cache WebView2, lỗi kết nối OLE DB Access) và cách xử lý.
 *   **`trello.md`**: Bảng quản lý tiến độ công việc được phân rã theo Epic / User Story / Task để nộp cho thầy cô đánh giá quy trình làm việc nhóm.
 *   **`yeu_cau_can_dat_tu_thay.md`**: Bản đối chiếu các tiêu chí kỹ thuật yêu cầu trong đề bài của giảng viên với các chức năng đã hoàn thành trong mã nguồn.
 

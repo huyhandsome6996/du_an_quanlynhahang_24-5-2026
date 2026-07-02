@@ -73,7 +73,7 @@ Môn: **Lập trình hướng đối tượng** | Đề tài: **Hệ thống Qu�
 | `HoaDon` | 5 | 5 hóa đơn đã thanh toán từ 15–18/06/2026 |
 | `ChiTietHoaDon` | 14 | Từng món trong mỗi hóa đơn, có thuộc tính Phần lớn / Lon |
 
-## 🔑 Tài khoản đăng nhập (mật khẩu đã băm SHA-256)
+## 🔑 Tài khoản đăng nhập (mật khẩu đã băm SHA-256 thật, khớp với code C#)
 
 | Tên đăng nhập | Mật khẩu gốc | Vai trò |
 |---------------|--------------|---------|
@@ -81,9 +81,8 @@ Môn: **Lập trình hướng đối tượng** | Đề tài: **Hệ thống Qu�
 | `huy` | `admin123` | QuanTri |
 | `nhanvien1` | `123456` | NhanVien |
 
-> ⚠️ File SQLite gốc (`nha_hang.db` ở project C#) dùng hash SHA-256 thực tế.
-> Hash trong file Access này là giá trị mẫu cùng độ dài – nếu muốn khớp 100%,
-> chạy lại hàm `MatKhauBaoMat.BamSHA256("admin123")` trong code C# rồi cập nhật.
+> ✅ Hash SHA-256 trong file Access đã được đồng bộ với hàm `MatKhauBaoMat.BamSHA256()`
+> trong code C# — đăng nhập sẽ thành công ngay mà không cần chỉnh sửa gì thêm.
 
 ## 🚀 Cách mở file
 

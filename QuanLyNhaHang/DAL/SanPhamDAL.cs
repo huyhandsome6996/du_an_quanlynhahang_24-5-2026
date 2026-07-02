@@ -1,10 +1,8 @@
 // ============================================================
-// TẦNG DAL - SanPhamDAL
-// Implement interface ISanPhamDAL: thao tác CRUD với bảng SanPham
-// Thể hiện Đa hình: Dựa vào cột 'Loai' để tạo đúng object ThucAn/NuocUong
-// Sử dụng try-catch-finally + conn.Close() trong finally
+// TẦNG DAL - SanPhamDAL (Access + OLE DB)
+// Đa hình: đọc cột Loai → tạo ThucAn hoặc NuocUong
 // ============================================================
-using Microsoft.Data.Sqlite;
+using System.Data.OleDb;
 using QuanLyNhaHang.DAL.Interfaces;
 using QuanLyNhaHang.Entities;
 
@@ -14,222 +12,106 @@ namespace QuanLyNhaHang.DAL
     {
         private readonly string _conn = DatabaseHelper.ConnectionString;
 
-        // -------------------------------------------------------
-        // ĐA HÌNH: Đọc từ DB và tạo đúng loại object (ThucAn/NuocUong)
-        // -------------------------------------------------------
-        private SanPham DocTuReader(SqliteDataReader reader)
+        // Factory Pattern + Đa hình: chọn class con dựa vào Loai
+        private static SanPham Doc(OleDbDataReader r)
         {
-            string loai = reader.GetString(4);
-
-            // Factory Pattern kết hợp Đa hình: tạo object phù hợp theo Loai
-            SanPham sp = loai == "ThucAn" ? new ThucAn() : new NuocUong();
-
-            sp.Id = reader.GetInt32(0);
-            sp.TenSanPham = reader.GetString(1);
-            sp.GiaCoBan = reader.GetDecimal(2);
-            sp.DangBan = reader.GetInt32(3) == 1;
-            sp.Loai = loai;
-            sp.HinhAnh = reader.IsDBNull(5) ? null : reader.GetString(5);
-
+            SanPham sp = r.GetString(4) == "ThucAn" ? new ThucAn() : new NuocUong();
+            sp.Id = r.GetInt32(0);
+            sp.TenSanPham = r.GetString(1);
+            sp.GiaCoBan = r.GetDecimal(2);
+            sp.DangBan = r.GetBoolean(3);
+            sp.Loai = r.GetString(4);
+            sp.HinhAnh = r.IsDBNull(5) ? null : r.GetString(5);
             return sp;
         }
 
-        // Lấy toàn bộ sản phẩm
         public List<SanPham> LayTatCa()
         {
             var ds = new List<SanPham>();
-            SqliteConnection? conn = null;
-            try
-            {
-                conn = new SqliteConnection(_conn);
-                conn.Open();
-
-                string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham ORDER BY Loai, TenSanPham";
-                using var cmd = new SqliteCommand(sql, conn);
-                using var reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                    ds.Add(DocTuReader(reader));
-
-                return ds;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Lỗi LayTatCa SanPham: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                // Bắt buộc đóng kết nối trong finally
-                if (conn != null) conn.Close();
-            }
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand(
+                "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham ORDER BY Loai, TenSanPham", c);
+            using var r = cmd.ExecuteReader();
+            while (r.Read()) ds.Add(Doc(r));
+            return ds;
         }
 
-        // Lấy chỉ các món đang phục vụ (DangBan = 1)
         public List<SanPham> LayDangBan()
         {
             var ds = new List<SanPham>();
-            SqliteConnection? conn = null;
-            try
-            {
-                conn = new SqliteConnection(_conn);
-                conn.Open();
-
-                string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham WHERE DangBan = 1 ORDER BY Loai, TenSanPham";
-                using var cmd = new SqliteCommand(sql, conn);
-                using var reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                    ds.Add(DocTuReader(reader));
-
-                return ds;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Lỗi LayDangBan SanPham: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                // Bắt buộc đóng kết nối trong finally
-                if (conn != null) conn.Close();
-            }
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand(
+                "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham " +
+                "WHERE DangBan = True ORDER BY Loai, TenSanPham", c);
+            using var r = cmd.ExecuteReader();
+            while (r.Read()) ds.Add(Doc(r));
+            return ds;
         }
 
-        // Lấy 1 sản phẩm theo Id
         public SanPham? LayTheoId(int id)
         {
-            SqliteConnection? conn = null;
-            try
-            {
-                conn = new SqliteConnection(_conn);
-                conn.Open();
-
-                string sql = "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham WHERE Id = @id";
-                using var cmd = new SqliteCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", id);
-                using var reader = cmd.ExecuteReader();
-
-                if (reader.Read())
-                    return DocTuReader(reader);
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Lỗi LayTheoId SanPham: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                // Bắt buộc đóng kết nối trong finally
-                if (conn != null) conn.Close();
-            }
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand(
+                "SELECT Id, TenSanPham, GiaCoBan, DangBan, Loai, HinhAnh FROM SanPham WHERE Id = @id", c);
+            cmd.Parameters.AddWithValue("@id", id);
+            using var r = cmd.ExecuteReader();
+            return r.Read() ? Doc(r) : null;
         }
 
-        // Thêm sản phẩm mới
-        public void Them(SanPham sanPham)
+        public void Them(SanPham sp)
         {
-            SqliteConnection? conn = null;
-            try
-            {
-                conn = new SqliteConnection(_conn);
-                conn.Open();
+            using var c = new OleDbConnection(_conn);
+            c.Open();
 
-                // Kiểm tra trùng tên sản phẩm
-                string sqlCheck = "SELECT COUNT(*) FROM SanPham WHERE TenSanPham = @ten";
-                using var checkCmd = new SqliteCommand(sqlCheck, conn);
-                checkCmd.Parameters.AddWithValue("@ten", sanPham.TenSanPham);
-                long count = (long)(checkCmd.ExecuteScalar() ?? 0);
-                if (count > 0)
-                    throw new Exception("Tên sản phẩm đã tồn tại! Vui lòng đặt tên khác.");
+            using var chk = new OleDbCommand("SELECT COUNT(*) FROM SanPham WHERE TenSanPham = @ten", c);
+            chk.Parameters.AddWithValue("@ten", sp.TenSanPham);
+            if ((int)chk.ExecuteScalar() > 0)
+                throw new Exception("Tên sản phẩm đã tồn tại! Vui lòng đặt tên khác.");
 
-                string sql = @"INSERT INTO SanPham (TenSanPham, GiaCoBan, Loai, DangBan, HinhAnh)
-                               VALUES (@ten, @gia, @loai, @dangBan, @hinhAnh)";
-                using var cmd = new SqliteCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@ten", sanPham.TenSanPham);
-                cmd.Parameters.AddWithValue("@gia", sanPham.GiaCoBan);
-                cmd.Parameters.AddWithValue("@loai", sanPham.Loai);
-                cmd.Parameters.AddWithValue("@dangBan", sanPham.DangBan ? 1 : 0);
-                cmd.Parameters.AddWithValue("@hinhAnh", (object?)sanPham.HinhAnh ?? DBNull.Value);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                // Bắt buộc đóng kết nối trong finally
-                if (conn != null) conn.Close();
-            }
+            using var cmd = new OleDbCommand(
+                "INSERT INTO SanPham (TenSanPham, GiaCoBan, Loai, DangBan, HinhAnh) " +
+                "VALUES (@ten, @gia, @loai, @dangBan, @hinhAnh)", c);
+            cmd.Parameters.AddWithValue("@ten", sp.TenSanPham);
+            cmd.Parameters.AddWithValue("@gia", sp.GiaCoBan);
+            cmd.Parameters.AddWithValue("@loai", sp.Loai);
+            cmd.Parameters.AddWithValue("@dangBan", sp.DangBan);
+            cmd.Parameters.AddWithValue("@hinhAnh", (object?)sp.HinhAnh ?? DBNull.Value);
+            cmd.ExecuteNonQuery();
         }
 
-        // Sửa thông tin sản phẩm
-        public void Sua(SanPham sanPham)
+        public void Sua(SanPham sp)
         {
-            SqliteConnection? conn = null;
-            try
-            {
-                conn = new SqliteConnection(_conn);
-                conn.Open();
+            using var c = new OleDbConnection(_conn);
+            c.Open();
 
-                // Kiểm tra trùng tên sản phẩm (trừ chính nó)
-                string sqlCheck = "SELECT COUNT(*) FROM SanPham WHERE TenSanPham = @ten AND Id != @id";
-                using var checkCmd = new SqliteCommand(sqlCheck, conn);
-                checkCmd.Parameters.AddWithValue("@ten", sanPham.TenSanPham);
-                checkCmd.Parameters.AddWithValue("@id", sanPham.Id);
-                long count = (long)(checkCmd.ExecuteScalar() ?? 0);
-                if (count > 0)
-                    throw new Exception("Tên sản phẩm đã tồn tại! Vui lòng đặt tên khác.");
+            using var chk = new OleDbCommand("SELECT COUNT(*) FROM SanPham WHERE TenSanPham = @ten AND Id <> @id", c);
+            chk.Parameters.AddWithValue("@ten", sp.TenSanPham);
+            chk.Parameters.AddWithValue("@id", sp.Id);
+            if ((int)chk.ExecuteScalar() > 0)
+                throw new Exception("Tên sản phẩm đã tồn tại! Vui lòng đặt tên khác.");
 
-                string sql = @"UPDATE SanPham
-                               SET TenSanPham = @ten, GiaCoBan = @gia,
-                                   Loai = @loai, DangBan = @dangBan, HinhAnh = @hinhAnh
-                               WHERE Id = @id";
-                using var cmd = new SqliteCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@ten", sanPham.TenSanPham);
-                cmd.Parameters.AddWithValue("@gia", sanPham.GiaCoBan);
-                cmd.Parameters.AddWithValue("@loai", sanPham.Loai);
-                cmd.Parameters.AddWithValue("@dangBan", sanPham.DangBan ? 1 : 0);
-                cmd.Parameters.AddWithValue("@hinhAnh", (object?)sanPham.HinhAnh ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@id", sanPham.Id);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                // Bắt buộc đóng kết nối trong finally
-                if (conn != null) conn.Close();
-            }
+            using var cmd = new OleDbCommand(
+                "UPDATE SanPham SET TenSanPham = @ten, GiaCoBan = @gia, Loai = @loai, " +
+                "DangBan = @dangBan, HinhAnh = @hinhAnh WHERE Id = @id", c);
+            cmd.Parameters.AddWithValue("@ten", sp.TenSanPham);
+            cmd.Parameters.AddWithValue("@gia", sp.GiaCoBan);
+            cmd.Parameters.AddWithValue("@loai", sp.Loai);
+            cmd.Parameters.AddWithValue("@dangBan", sp.DangBan);
+            cmd.Parameters.AddWithValue("@hinhAnh", (object?)sp.HinhAnh ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@id", sp.Id);
+            cmd.ExecuteNonQuery();
         }
 
-        // Xóa sản phẩm
         public void Xoa(int id)
         {
-            SqliteConnection? conn = null;
-            try
-            {
-                conn = new SqliteConnection(_conn);
-                conn.Open();
-
-                string sql = "DELETE FROM SanPham WHERE Id = @id";
-                using var cmd = new SqliteCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                // Bắt buộc đóng kết nối trong finally
-                if (conn != null) conn.Close();
-            }
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand("DELETE FROM SanPham WHERE Id = @id", c);
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.ExecuteNonQuery();
         }
     }
 }
