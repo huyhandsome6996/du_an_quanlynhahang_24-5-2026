@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="img/logo.png">
     <!-- Yêu cầu đăng nhập mới được vào trang này -->
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
+    <!-- Class trên body cho biết vai trò — ban.js sẽ dùng để ẩn/hiện nút admin -->
+    <script>document.documentElement.classList.add('vai-tro-' + (sessionStorage.getItem('vst_vai_tro') || 'NhanVien').toLowerCase());</script>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -82,7 +84,8 @@
                     </div>
                     <div class="flex gap-3">
                         <!-- JS TƯƠNG TÁC: Sự kiện click gọi hàm moModalThemBan() để mở form nhập -->
-                        <button onclick="moModalThemBan()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 font-bold text-sm">
+                        <!-- Chỉ Quản trị viên mới thấy nút "Thêm Bàn Mới" (Use Case: "Đổi trạng thái bàn") -->
+                        <button id="btnThemBanMoi" onclick="moModalThemBan()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 font-bold text-sm" style="display:none;">
                             <img src="img/add_3d.png" alt="Add" class="w-5 h-5 object-cover rounded-md"> Thêm Bàn Mới
                         </button>
                         <!-- JS TƯƠNG TÁC: Sự kiện click gọi hàm taiDanhSachBan() để tải lại dữ liệu từ server -->

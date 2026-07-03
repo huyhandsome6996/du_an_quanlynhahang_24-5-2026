@@ -24,7 +24,7 @@ async function taiDanhSach() {
         '<div class="col-span-full flex justify-center py-12"><div class="spinner"></div></div>';
     try {
         // Gọi GET /api/sanpham — trả về mảng tất cả sản phẩm
-        const res = await fetch(`${API}/sanpham`);
+        const res = await apiFetch(`${API}/sanpham`);
         danhSachSanPham = await res.json();   // Cache vào biến toàn cục
         locTheoLoai();                         // Hiển thị (có áp dụng bộ lọc)
     } catch {
@@ -222,7 +222,7 @@ async function luuSanPham() {
     try {
         const url    = isEdit ? `${API}/sanpham/${id}` : `${API}/sanpham`;
         const method = isEdit ? 'PUT' : 'POST';
-        const res = await fetch(url, {
+        const res = await apiFetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -244,7 +244,7 @@ async function luuSanPham() {
 async function xoa(id, ten) {
     if (!confirm(`Xác nhận xóa món "${ten}"?`)) return;
     try {
-        const res = await fetch(`${API}/sanpham/${id}`, { method: 'DELETE' });
+        const res = await apiFetch(`${API}/sanpham/${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');

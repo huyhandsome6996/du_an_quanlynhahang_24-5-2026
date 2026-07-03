@@ -44,9 +44,13 @@ namespace QuanLyNhaHang.CacModun
             });
 
             // 3) POST /api/ban — Thêm bàn mới
+            //    CHỈ QUẢN TRỊ VIÊN (Use Case: "Đổi trạng thái bàn").
             //    ASP.NET tự deserialize body JSON → object Ban
-            app.MapPost("/api/ban", (Ban ban, IBanDAL banDAL) =>
+            app.MapPost("/api/ban", (HttpContext ctx, Ban ban, IBanDAL banDAL) =>
             {
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     // Validate phía server
@@ -59,8 +63,12 @@ namespace QuanLyNhaHang.CacModun
             });
 
             // 4) PUT /api/ban/{id} — Cập nhật thông tin bàn
-            app.MapPut("/api/ban/{id:int}", (int id, Ban ban, IBanDAL banDAL) =>
+            //    CHỈ QUẢN TRỊ VIÊN.
+            app.MapPut("/api/ban/{id:int}", (int id, HttpContext ctx, Ban ban, IBanDAL banDAL) =>
             {
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     ban.Id = id;        // Đảm bảo Id đúng theo URL
@@ -72,8 +80,12 @@ namespace QuanLyNhaHang.CacModun
 
             // 5) DELETE /api/ban/{id} — Xoá bàn
             //    KHÔNG cho xoá bàn đang có khách (để không mất hóa đơn đang mở)
-            app.MapDelete("/api/ban/{id:int}", (int id, IBanDAL banDAL) =>
+            //    CHỈ QUẢN TRỊ VIÊN.
+            app.MapDelete("/api/ban/{id:int}", (int id, HttpContext ctx, IBanDAL banDAL) =>
             {
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     var ban = banDAL.LayTheoId(id);

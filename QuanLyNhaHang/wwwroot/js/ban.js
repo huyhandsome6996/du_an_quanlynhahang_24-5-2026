@@ -17,7 +17,14 @@ let idBanDangSua = null;   // Id bàn đang sửa (null = đang ở chế độ 
 
 // ---------- KHỞI ĐỘNG ----------
 // Khi trang tải xong → gọi taiDanhSachBan để load dữ liệu
-document.addEventListener('DOMContentLoaded', taiDanhSachBan);
+document.addEventListener('DOMContentLoaded', () => {
+    taiDanhSachBan();
+    // Phân quyền: chỉ QuanTri mới thấy nút "Thêm Bàn Mới"
+    if (laQuanTri()) {
+        const btn = document.getElementById('btnThemBanMoi');
+        if (btn) btn.style.display = '';
+    }
+});
 
 // ---------- 1. TẢI DANH SÁCH BÀN TỪ API ----------
 async function taiDanhSachBan() {
@@ -25,7 +32,7 @@ async function taiDanhSachBan() {
     document.getElementById('luoiBan').innerHTML = '<div class="col-span-full flex justify-center py-12"><div class="spinner"></div></div>';
     try {
         // Gọi GET /api/ban — server trả về mảng JSON
-        const res = await fetch(`${API}/ban`);
+        const res = await apiFetch(`${API}/ban`);
         danhSachBan = await res.json();   // Parse JSON → gán vào biến toàn cục
         hienThiBan(danhSachBan);          // Hiển thị lên UI
     } catch {
@@ -65,6 +72,8 @@ function hienThiBan(dsBan) {
     }
 
     // Tạo HTML cho từng bàn — dùng map + template literal
+    // Phân quyền: chỉ QuanTri mới thấy 2 nút Sửa/Xoá (Use Case: "Đổi trạng thái bàn")
+    const hienNutSuaXoa = laQuanTri();
     luoi.innerHTML = dsBan.map(ban => {
         // Phân loại trạng thái để chọn CSS class
         const laTrong = ban.TrangThai === 'Trống';
@@ -78,6 +87,13 @@ function hienThiBan(dsBan) {
         // Chọn icon theo trạng thái
         const icon = laTrong ? 'chair_3d.png' : (laDaDat ? 'click_3d.png' : 'user_3d.png');
 
+        // HTML 2 nút Sửa/Xoá — chỉ render nếu là QuanTri
+        const nutSuaXoa = hienNutSuaXoa ? `
+            <div style="margin-top:0.75rem; display:flex; gap:0.35rem; justify-content:center;">
+                <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); moModalSuaBan(${ban.Id})">✏️</button>
+                <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); xoaBan(${ban.Id}, '${ban.TenBan}')">🗑️</button>
+            </div>` : '';
+
         // Trả về HTML của 1 card bàn
         // onclick="clickVaoBan(${ban.Id})" → click vào card sẽ mở modal chi tiết
         // event.stopPropagation() ở 2 nút Sửa/Xoá để không trigger click của card
@@ -88,10 +104,7 @@ function hienThiBan(dsBan) {
             </div>
             <div class="ban-ten">${ban.TenBan}</div>
             <div><span class="badge ${badgeClass}">${badgeText}</span></div>
-            <div style="margin-top:0.75rem; display:flex; gap:0.35rem; justify-content:center;">
-                <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); moModalSuaBan(${ban.Id})">✏️</button>
-                <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); xoaBan(${ban.Id}, '${ban.TenBan}')">🗑️</button>
-            </div>
+            ${nutSuaXoa}
         </div>`;
     }).join('');   // Nối mảng thành chuỗi
 }
@@ -154,7 +167,7 @@ async function clickVaoBan(banId) {
 async function hienThiHoaDonCuaBan(banId) {
     try {
         // Gọi GET /api/ban/{id}/hoadon — trả về { hoaDon, chiTiet }
-        const res = await fetch(`${API}/ban/${banId}/hoadon`);
+        const res = await apiFetch(`${API}/ban/${banId}/hoadon`);
         if (!res.ok) {
             // Bàn chưa có hóa đơn (lẻ) → hiện thông báo
             document.getElementById('chiTietBanNoidung').innerHTML =
@@ -211,7 +224,7 @@ async function hienThiHoaDonCuaBan(banId) {
 async function moBan(banId) {
     try {
         // POST /api/ban/{id}/mo — server tạo HóaDon mới + set Bàn = "Có khách"
-        const res = await fetch(`${API}/ban/${banId}/mo`, { method: 'POST' });
+        const res = await apiFetch(`${API}/ban/${banId}/mo`, { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
             dongModal('modalChiTietBan');              // Đóng modal
@@ -232,7 +245,7 @@ async function thanhToanNhanhTuModal(banId) {
     try {
         // POST /api/ban/{id}/thanhtoan — body chứa VAT=0, GiamGia=0, PTTT=TienMat
         // (Thanh toán nhanh không áp dụng VAT/GiamGia)
-        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, {
+        const res = await apiFetch(`${API}/ban/${banId}/thanhtoan`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ VAT: 0, GiamGia: 0, PhuongThucThanhToan: 'TienMat' })
@@ -293,7 +306,7 @@ async function luuBan() {
         // Chọn URL và method tùy chế độ
         const url    = isEdit ? `${API}/ban/${idBanDangSua}` : `${API}/ban`;
         const method = isEdit ? 'PUT' : 'POST';
-        const res = await fetch(url, {
+        const res = await apiFetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -316,7 +329,7 @@ async function huyDatBan(banId) {
     if (!confirm('Xác nhận hủy đặt bàn này?')) return;
     try {
         // POST /api/ban/{id}/huy-dat — đổi trạng thái "Đã đặt" → "Trống"
-        const res = await fetch(`${API}/ban/${banId}/huy-dat`, { method: 'POST' });
+        const res = await apiFetch(`${API}/ban/${banId}/huy-dat`, { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
             dongModal('modalChiTietBan');
@@ -335,7 +348,7 @@ async function xoaBan(banId, tenBan) {
     if (!confirm(`Xác nhận xóa "${tenBan}"? Không thể hoàn tác!`)) return;
     try {
         // DELETE /api/ban/{id} — server không cho xoá bàn đang có khách
-        const res = await fetch(`${API}/ban/${banId}`, { method: 'DELETE' });
+        const res = await apiFetch(`${API}/ban/${banId}`, { method: 'DELETE' });
         const data = await res.json();
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');

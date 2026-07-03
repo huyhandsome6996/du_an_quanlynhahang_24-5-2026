@@ -268,9 +268,13 @@
                 });
 
                 if (res.ok) {
+                    // Parse JSON để lấy vaiTro
+                    const data = await res.json();
                     // Lưu trạng thái đăng nhập vào sessionStorage
                     sessionStorage.setItem('vst_logged_in', 'true');
                     sessionStorage.setItem('vst_user', u);
+                    // Lưu vaiTro (QuanTri / NhanVien) để phân quyền ở frontend
+                    sessionStorage.setItem('vst_vai_tro', data.vaiTro || 'NhanVien');
                     window.location.href = 'index.html';
                 } else if (res.status === 401) {
                     hienLoiDangNhap('Tài khoản hoặc mật khẩu không chính xác!');

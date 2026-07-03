@@ -6,6 +6,8 @@
     <title>Vua Sư Tử - Thực Đơn</title>
     <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
+    <!-- Chặn NhanVien truy cập trang Thực đơn (chỉ QuanTri được quản lý món) -->
+    <script>if((sessionStorage.getItem('vst_vai_tro') || 'NhanVien') !== 'QuanTri') { alert('⛔ Trang Thực đơn chỉ dành cho Quản trị viên!'); window.location.href='index.html'; }</script>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -73,6 +75,7 @@
                     </div>
                     <div class="flex gap-3">
                         <!-- JS TƯƠNG TÁC: Sự kiện onclick gọi hàm moModalThem() trong file menu.js để mở popup thêm món -->
+                        <!-- Nút "Thêm Món Mới" chỉ dành cho QuanTri — đã chặn NhanVien ở script đầu trang -->
                         <button onclick="moModalThem()" class="btn btn-primary px-5 py-2.5 flex items-center gap-2 font-bold text-sm">
                             <img src="img/add_3d.png" alt="Add" class="w-5 h-5 object-cover rounded-md"> Thêm Món Mới
                         </button>

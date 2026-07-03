@@ -14,6 +14,49 @@
 // (mặc định server ASP.NET chạy ở http://localhost:5000)
 const API = 'http://localhost:5000/api';
 
+// ---------- 0. PHÂN QUYỀN (Role-Based Access Control) ----------
+
+/**
+ * Lấy vai trò của user hiện tại từ sessionStorage.
+ * Trả về 'QuanTri' hoặc 'NhanVien'. Mặc định 'NhanVien' nếu chưa có.
+ */
+function layVaiTro() {
+    return sessionStorage.getItem('vst_vai_tro') || 'NhanVien';
+}
+
+/**
+ * Trả về true nếu user hiện tại là Quản trị viên.
+ */
+function laQuanTri() {
+    return layVaiTro() === 'QuanTri';
+}
+
+/**
+ * Wrapper fetch() tự gắn header "X-Vai-Tro" cho mọi lời gọi API.
+ * Backend (PhanQuyen.cs) đọc header này để quyết định cho phép hay chặn.
+ *
+ * Cách dùng: thay fetch(...) bằng apiFetch(...), cú pháp y hệt.
+ *   const res = await apiFetch(`${API}/sanpham`);
+ *   const res = await apiFetch(`${API}/sanpham`, {
+ *       method: 'POST',
+ *       headers: { 'Content-Type': 'application/json' },
+ *       body: JSON.stringify(payload)
+ *   });
+ *
+ * Header X-Vai-Tro và X-Ten-Dang-Nhap được tự động thêm vào.
+ * Nếu options.headers có Content-Type, sẽ được giữ nguyên.
+ */
+async function apiFetch(url, options = {}) {
+    // Clone options để không mutate object gốc
+    const opts = { ...options };
+    // Đảm bảo có object headers
+    opts.headers = { ...(opts.headers || {}) };
+    // Gắn header phân quyền
+    opts.headers['X-Vai-Tro'] = layVaiTro();
+    opts.headers['X-Ten-Dang-Nhap'] = sessionStorage.getItem('vst_user') || '';
+    return fetch(url, opts);
+}
+
 // ---------- 1. ĐỊNH DẠNG TIỀN & THỜI GIAN ----------
 
 /**

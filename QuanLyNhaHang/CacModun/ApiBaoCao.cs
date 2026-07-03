@@ -44,8 +44,12 @@ namespace QuanLyNhaHang.CacModun
             //   - Sắp xếp giảm dần theo TongSoLuong, lấy Top N
             // =====================================================
             app.MapGet("/api/baocao/monbanchay",
-                (int? top, ISanPhamDAL spDAL, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
+                (HttpContext ctx, int? top, ISanPhamDAL spDAL, IHoaDonDAL hdDAL, IChiTietHoaDonDAL ctDAL) =>
             {
+                // CHỈ QUẢN TRỊ VIÊN (Use Case: "Xem báo cáo doanh thu")
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     // Nếu query không có top → mặc định 10
@@ -98,8 +102,12 @@ namespace QuanLyNhaHang.CacModun
             //   - doanhThuHomNay   : doanh thu trong ngày hôm nay
             //   - doanhThuThangNay : doanh thu từ đầu tháng tới nay
             // =====================================================
-            app.MapGet("/api/baocao/doanhthu", (IHoaDonDAL hdDAL) =>
+            app.MapGet("/api/baocao/doanhthu", (HttpContext ctx, IHoaDonDAL hdDAL) =>
             {
+                // CHỈ QUẢN TRỊ VIÊN
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     // Lấy tất cả HĐ đã TT (ToList để query nhiều lần)

@@ -20,7 +20,7 @@ async function taiLichSu() {
         '<tr><td colspan="7" class="text-center" style="padding:2rem;"><div class="spinner"></div></td></tr>';
     try {
         // Gọi GET /api/hoadon — trả về tất cả HĐ (đã TT + chưa TT)
-        const res = await fetch(`${API}/hoadon`);
+        const res = await apiFetch(`${API}/hoadon`);
         const ds = await res.json();
         hienThiBang(ds);            // Hiển thị bảng
         capNhatThongKe(ds);         // Cập nhật 3 ô thống kê
@@ -87,7 +87,7 @@ async function xemChiTiet(id) {
 
     try {
         // GET /api/hoadon/{id} — trả về { hoaDon, chiTiet }
-        const res = await fetch(`${API}/hoadon/${id}`);
+        const res = await apiFetch(`${API}/hoadon/${id}`);
         const { hoaDon: hd, chiTiet } = await res.json();
         hoaDonDangXem = hd;   // Lưu để dùng cho hàm inHoaDon()
 

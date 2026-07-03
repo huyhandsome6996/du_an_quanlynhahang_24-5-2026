@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function taiBaoCaoDoanhThu() {
     try {
         // GET /api/baocao/doanhthu — trả về object { tongDoanhThu, tongHoaDon, ... }
-        const res = await fetch(`${API}/baocao/doanhthu`);
+        const res = await apiFetch(`${API}/baocao/doanhthu`);
         if (!res.ok) throw new Error('Lỗi phản hồi server');
         const data = await res.json();
 
@@ -48,7 +48,7 @@ async function taiLichSu() {
     document.getElementById('bangDoanhThu').innerHTML =
         '<tr><td colspan="7" class="text-center" style="padding:2rem;"><div class="spinner"></div></td></tr>';
     try {
-        const res = await fetch(`${API}/hoadon`);
+        const res = await apiFetch(`${API}/hoadon`);
         const ds = await res.json();
         hienThiBangDoanhThu(ds);
     } catch {
@@ -80,7 +80,7 @@ async function locTheoNgay() {
     try {
         // GET /api/hoadon/theongay?tuNgay=...&denNgay=...
         // Server lọc các HĐ ĐÃ thanh toán trong khoảng [tuNgay, denNgay]
-        const res = await fetch(`${API}/hoadon/theongay?tuNgay=${tuNgay}&denNgay=${denNgay}`);
+        const res = await apiFetch(`${API}/hoadon/theongay?tuNgay=${tuNgay}&denNgay=${denNgay}`);
         if (!res.ok) throw new Error('Lỗi phản hồi server');
         const ds = await res.json();
         hienThiBangDoanhThu(ds);
@@ -138,7 +138,7 @@ async function taiMonBanChay() {
         '<tr><td colspan="4" class="text-center" style="padding:2rem;"><div class="spinner"></div></td></tr>';
     try {
         // GET /api/baocao/monbanchay?top=10
-        const res = await fetch(`${API}/baocao/monbanchay?top=10`);
+        const res = await apiFetch(`${API}/baocao/monbanchay?top=10`);
         if (!res.ok) throw new Error('Lỗi phản hồi server');
         const ds = await res.json();
         hienThiMonBanChay(ds);
@@ -200,7 +200,7 @@ async function xemChiTiet(id) {
     moModal('modalChiTietHD');
 
     try {
-        const res = await fetch(`${API}/hoadon/${id}`);
+        const res = await apiFetch(`${API}/hoadon/${id}`);
         const { hoaDon: hd, chiTiet } = await res.json();
         hoaDonDangXem = hd;
 

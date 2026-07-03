@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ---------- 1. TẢI DANH SÁCH BÀN VÀO DROPDOWN ----------
 async function taiDanhSachBan() {
     try {
-        const res = await fetch(`${API}/ban`);
+        const res = await apiFetch(`${API}/ban`);
         const dsBan = await res.json();
         const select = document.getElementById('cboBan');
         // Option đầu tiên = placeholder
@@ -59,7 +59,7 @@ async function taiDanhSachBan() {
 // ---------- 2. TẢI THỰC ĐƠN (chỉ món đang bán) ----------
 async function taiMenu() {
     try {
-        const res = await fetch(`${API}/sanpham/dangban`);
+        const res = await apiFetch(`${API}/sanpham/dangban`);
         danhSachMenu = await res.json();
         hienThiMenu(danhSachMenu);
     } catch (err) {
@@ -119,7 +119,7 @@ async function chonBan() {
     }
 
     // Lấy thông tin chi tiết bàn
-    const res = await fetch(`${API}/ban/${banId}`);
+    const res = await apiFetch(`${API}/ban/${banId}`);
     const ban = await res.json();
     thongTin.style.display = 'block';
 
@@ -156,7 +156,7 @@ async function chonBan() {
 async function moBanVaGoiMon(banId) {
     try {
         // POST /api/ban/{id}/mo — server tạo HóaDon mới + set Bàn = "Có khách"
-        const res = await fetch(`${API}/ban/${banId}/mo`, { method: 'POST' });
+        const res = await apiFetch(`${API}/ban/${banId}/mo`, { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');
@@ -176,7 +176,7 @@ async function taiLaiHoaDon() {
     const banId = document.getElementById('cboBan').value;
     if (!banId) return;
     try {
-        const res = await fetch(`${API}/ban/${banId}/hoadon`);
+        const res = await apiFetch(`${API}/ban/${banId}/hoadon`);
         if (!res.ok) {
             // Bàn không có hóa đơn chưa TT → ẩn danh sách món
             document.getElementById('chuaChonBan').style.display = 'block';
@@ -281,7 +281,7 @@ async function themMon() {
         // POST /api/hoadon/{id}/them-mon
         // Server sẽ gọi TinhTien() của ThucAn/NuocUong (ĐA HÌNH OOP ở backend)
         // để tính thành tiền có phụ phí (Phần lớn +50k / Lon ×1.2)
-        const res = await fetch(`${API}/hoadon/${hoaDonHienTai.Id}/them-mon`, {
+        const res = await apiFetch(`${API}/hoadon/${hoaDonHienTai.Id}/them-mon`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -309,7 +309,7 @@ async function xoaMon(chiTietId) {
     if (!confirm('Xóa món này khỏi hóa đơn?')) return;
     try {
         // DELETE /api/chitiethoadon/{id} — server tự tính lại tổng tiền
-        const res = await fetch(`${API}/chitiethoadon/${chiTietId}`, { method: 'DELETE' });
+        const res = await apiFetch(`${API}/chitiethoadon/${chiTietId}`, { method: 'DELETE' });
         const data = await res.json();
         if (res.ok) {
             hienThiThongBao(`✅ ${data.thongBao}`, 'success');
@@ -348,7 +348,7 @@ async function thanhToan() {
         //   2. Tính lại TongTien = TongTienMon + VAT - GiamGia
         //   3. Set TrangThai = "Đã thanh toán", ThoiGianThanhToan = now
         //   4. Đổi trạng thái bàn → "Trống"
-        const res = await fetch(`${API}/ban/${banId}/thanhtoan`, {
+        const res = await apiFetch(`${API}/ban/${banId}/thanhtoan`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ VAT: vat, GiamGia: giamGia, PhuongThucThanhToan: phuongThuc })

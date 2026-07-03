@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using QuanLyNhaHang.DAL.Interfaces;
 using QuanLyNhaHang.Entities;
+// PhanQuyen nằm cùng namespace CacModun → không cần using thêm
 
 namespace QuanLyNhaHang.CacModun
 {
@@ -69,8 +70,13 @@ namespace QuanLyNhaHang.CacModun
 
             // 3) POST /api/sanpham — Thêm sản phẩm mới
             //    Body JSON: { TenSanPham, GiaCoBan, Loai, DangBan, HinhAnh }
-            app.MapPost("/api/sanpham", (JsonElement body, ISanPhamDAL spDAL) =>
+            //    CHỈ QUẢN TRỊ VIÊN (Use Case: "Quản lý thực đơn").
+            app.MapPost("/api/sanpham", (HttpContext ctx, JsonElement body, ISanPhamDAL spDAL) =>
             {
+                // Kiểm tra quyền — trả 403 nếu là NhanVien
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     // Parse body JSON
@@ -97,8 +103,12 @@ namespace QuanLyNhaHang.CacModun
             });
 
             // 4) PUT /api/sanpham/{id} — Sửa sản phẩm
-            app.MapPut("/api/sanpham/{id:int}", (int id, JsonElement body, ISanPhamDAL spDAL) =>
+            //    CHỈ QUẢN TRỊ VIÊN.
+            app.MapPut("/api/sanpham/{id:int}", (int id, HttpContext ctx, JsonElement body, ISanPhamDAL spDAL) =>
             {
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     string tenSanPham = body.GetProperty("TenSanPham").GetString() ?? "";
@@ -121,8 +131,12 @@ namespace QuanLyNhaHang.CacModun
             });
 
             // 5) DELETE /api/sanpham/{id} — Xoá sản phẩm
-            app.MapDelete("/api/sanpham/{id:int}", (int id, ISanPhamDAL spDAL) =>
+            //    CHỈ QUẢN TRỊ VIÊN.
+            app.MapDelete("/api/sanpham/{id:int}", (int id, HttpContext ctx, ISanPhamDAL spDAL) =>
             {
+                var loi = PhanQuyen.YeuCauQuanTri(ctx);
+                if (loi != null) return loi;
+
                 try
                 {
                     var sp = spDAL.LayTheoId(id);

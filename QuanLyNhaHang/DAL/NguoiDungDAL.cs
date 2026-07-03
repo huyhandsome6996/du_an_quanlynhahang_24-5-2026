@@ -87,7 +87,8 @@ namespace QuanLyNhaHang.DAL
         /// <summary>
         /// Thêm 1 người dùng mới vào bảng NguoiDung.
         /// Throw exception nếu tên đăng nhập đã tồn tại.
-        /// Dùng cho: đăng ký tài khoản quản trị đầu tiên khi mới cài app.
+        /// Dùng cho: đăng ký tài khoản quản trị đầu tiên khi mới cài app,
+        /// hoặc Quản trị viên tạo tài khoản nhân viên mới.
         /// </summary>
         public void Them(NguoiDung nd)
         {
@@ -111,6 +112,101 @@ namespace QuanLyNhaHang.DAL
             cmd.Parameters.Add("@vaiTro", OleDbType.VarWChar).Value = nd.VaiTro;
             cmd.Parameters.Add("@ngay", OleDbType.Date).Value = nd.NgayTao;
             cmd.ExecuteNonQuery();   // Thực thi INSERT
+        }
+
+        // =====================================================
+        // CÁC HÀM DÀNH CHO QUẢN TRỊ VIÊN (Quản lý tài khoản)
+        // =====================================================
+
+        /// <summary>
+        /// Lấy danh sách tất cả người dùng, sắp xếp theo Id tăng dần.
+        /// Trường MatKhau được làm rỗng để tránh lộ mật khẩu qua JSON.
+        /// </summary>
+        public List<NguoiDung> LayTatCa()
+        {
+            var ds = new List<NguoiDung>();
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand(
+                "SELECT Id, TenDangNhap, MatKhau, VaiTro, NgayTao FROM NguoiDung ORDER BY Id", c);
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                ds.Add(new NguoiDung
+                {
+                    Id = r.GetInt32(0),
+                    TenDangNhap = r.GetString(1),
+                    MatKhau = "",   // Không trả mật khẩu về client
+                    VaiTro = r.GetString(3),
+                    NgayTao = r.GetDateTime(4)
+                });
+            }
+            return ds;
+        }
+
+        /// <summary>
+        /// Lấy người dùng theo Id. Trả về null nếu không tìm thấy.
+        /// </summary>
+        public NguoiDung? LayTheoId(int id)
+        {
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand(
+                "SELECT Id, TenDangNhap, MatKhau, VaiTro, NgayTao FROM NguoiDung WHERE Id = ?", c);
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
+            using var r = cmd.ExecuteReader();
+            if (r.Read())
+                return new NguoiDung
+                {
+                    Id = r.GetInt32(0),
+                    TenDangNhap = r.GetString(1),
+                    MatKhau = r.GetString(2),
+                    VaiTro = r.GetString(3),
+                    NgayTao = r.GetDateTime(4)
+                };
+            return null;
+        }
+
+        /// <summary>
+        /// Cập nhật mật khẩu mới (plain-text) cho người dùng theo Id.
+        /// Dùng cho tính năng "Reset mật khẩu" của Quản trị viên.
+        /// </summary>
+        public void CapNhatMatKhau(int id, string matKhauMoi)
+        {
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand(
+                "UPDATE NguoiDung SET MatKhau = ? WHERE Id = ?", c);
+            cmd.Parameters.Add("@mk", OleDbType.VarWChar).Value = matKhauMoi;
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
+            cmd.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// Xoá 1 người dùng theo Id.
+        /// KHÔNG kiểm tra ràng buộc nghiệp vụ ở đây — tầng API sẽ kiểm tra.
+        /// </summary>
+        public void Xoa(int id)
+        {
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand("DELETE FROM NguoiDung WHERE Id = ?", c);
+            cmd.Parameters.Add("@id", OleDbType.Integer).Value = id;
+            cmd.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// Đếm số người dùng có VaiTro = "QuanTri".
+        /// Dùng để chặn xoá QuanTri cuối cùng (tránh mất quyền admin).
+        /// </summary>
+        public int DemSoQuanTri()
+        {
+            using var c = new OleDbConnection(_conn);
+            c.Open();
+            using var cmd = new OleDbCommand(
+                "SELECT COUNT(*) FROM NguoiDung WHERE VaiTro = ?", c);
+            cmd.Parameters.Add("@vt", OleDbType.VarWChar).Value = "QuanTri";
+            return (int)cmd.ExecuteScalar()!;
         }
     }
 }

@@ -6,6 +6,8 @@
     <title>Vua Sư Tử - Báo Cáo Thống Kê</title>
     <link rel="icon" type="image/png" href="img/logo.png">
     <script>if(!sessionStorage.getItem('vst_logged_in')) window.location.href='login.html';</script>
+    <!-- Chặn NhanVien truy cập trang Báo cáo (chỉ QuanTri được xem) -->
+    <script>if((sessionStorage.getItem('vst_vai_tro') || 'NhanVien') !== 'QuanTri') { alert('⛔ Trang Báo cáo chỉ dành cho Quản trị viên!'); window.location.href='index.html'; }</script>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
