@@ -1,0 +1,13 @@
+﻿Id,TenSanPham,GiaCoBan,Loai,DangBan,HinhAnh
+1,Cơm gà xối mỡ,45000,ThucAn,TRUE,/img/com_ga.jpg
+2,Mỳ Quảng,40000,ThucAn,TRUE,/img/my_quang.jpg
+3,Bún bò Huế,50000,ThucAn,TRUE,/img/bun_bo.jpg
+4,Phở bò,55000,ThucAn,TRUE,/img/pho_bo.jpg
+5,Cơm sườn nướng,60000,ThucAn,TRUE,/img/com_suon.jpg
+6,Gỏi cuốn tôm,35000,ThucAn,FALSE,/img/goi_cuon.jpg
+7,Cà phê sữa,25000,NuocUong,TRUE,/img/ca_phe_sua.jpg
+8,Trà sữa trân châu,45000,NuocUong,TRUE,/img/tra_sua.jpg
+9,Nước cam ép,35000,NuocUong,TRUE,/img/nuoc_cam.jpg
+10,Coca Cola,15000,NuocUong,TRUE,/img/coca.jpg
+11,Trà đá,10000,NuocUong,TRUE,/img/tra_da.jpg
+12,Sinh tố xoài,40000,NuocUong,FALSE,/img/sinh_to_xoai.jpg

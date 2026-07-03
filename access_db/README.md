@@ -7,9 +7,46 @@ Môn: **Lập trình hướng đối tượng** | Đề tài: **Hệ thống Qu�
 | File | Mô tả |
 |------|-------|
 | `QuanLyNhaHang.accdb` | **File Access 2016 chính** – mở trực tiếp bằng MS Access 2016/2019/365. Đã có sẵn 5 bảng, 3 quan hệ khóa ngoại và dữ liệu mẫu. |
-| `QuanLyNhaHang_Access.sql` | Script SQL tham khảo – cùng cấu trúc, có thể chạy trong Access Query Designer để tạo lại database từ đầu. |
+| `QuanLyNhaHang_Access.sql` | **Script SQL** – CREATE TABLE + INSERT dữ liệu mẫu + 6 truy vấn tham khảo. Chạy được trong Access Query Designer hoặc dùng để tái tạo CSDL trên các DBMS khác. |
+| `csv/` | **5 file CSV** – dữ liệu mẫu từng bảng dưới dạng text thuần, mở được bằng Excel / Google Sheets / bất kỳ trình bảng tính nào. Encoding UTF-8 BOM để tiếng Việt hiển thị đúng. |
 | `tao_access.java` | Mã nguồn Java (dùng Jackcess 5.1.0) – đã tạo ra file `.accdb` ở trên. Mỗi dòng đều có ghi chú tiếng Việt. |
 | `libs/jackcess.jar` + `libs/commons-logging.jar` | Thư viện Jackcess dùng để tạo file Access trên nền Java (không cần cài MS Access). |
+
+### 🎯 Vì sao có 3 định dạng cùng tồn tại?
+
+Đồ án sử dụng **Microsoft Access** làm HQTCSDL (theo yêu cầu môi trường Windows của
+môn học). Tuy nhiên, để đáp ứng yêu cầu nộp dữ liệu dạng **script SQL hoặc CSV**
+của giảng viên — và để dữ liệu có thể mở/kiểm tra trên bất kỳ hệ điều hành nào
+không có Access — em nộp kèm **3 định dạng**:
+
+| Định dạng | Mục đích | Khi nào dùng |
+|-----------|----------|--------------|
+| `.accdb` | Chạy ứng dụng | Mở trực tiếp bằng MS Access khi cần chạy đồ án |
+| `.sql` | Tái tạo CSDL | Chạy script để tạo lại CSDL trên Access / MySQL / PostgreSQL |
+| `.csv` | Xem dữ liệu thô | Mở bằng Excel / Google Sheets để xem nhanh dữ liệu mẫu mà không cần DBMS |
+
+> **Lưu ý**: 3 định dạng này **đồng bộ với nhau**. Cả `.sql` và `.csv` đều được
+> sinh ra từ cùng source data với file `.accdb` (do `tao_access.java` tạo). Nếu
+> có chỉnh sửa dữ liệu trong `.accdb`, cần xuất lại CSV và cập nhật script SQL
+> tương ứng.
+
+### 📂 Danh sách 5 file CSV
+
+| File CSV | Số dòng | Bảng gốc |
+|----------|---------|----------|
+| `csv/NguoiDung.csv` | 3 | Tài khoản đăng nhập (admin, huy, nhanvien1) |
+| `csv/Ban.csv` | 10 | Danh sách bàn 1–10 |
+| `csv/SanPham.csv` | 12 | 6 thức ăn + 6 nước uống |
+| `csv/HoaDon.csv` | 5 | 5 hóa đơn đã thanh toán |
+| `csv/ChiTietHoaDon.csv` | 14 | Chi tiết từng món trong mỗi hóa đơn |
+
+**Quy ước format CSV:**
+- Encoding: UTF-8 with BOM (Excel tiếng Việt hiển thị đúng)
+- Separator: dấu phẩy (`,`)
+- Quote: nháy kép (`"`) khi giá trị chứa dấu phẩy
+- Boolean: `TRUE` / `FALSE` (chữ hoa, theo chuẩn Access)
+- DateTime: ISO 8601 (`yyyy-MM-dd HH:mm:ss`)
+- NULL: rỗng giữa 2 dấu phẩy
 
 ## 🗄️ Cấu trúc cơ sở dữ liệu (5 bảng)
 

@@ -1,0 +1,15 @@
+﻿Id,HoaDonId,SanPhamId,SoLuong,DonGiaBan,ThuocTinhThem,ThanhTien,TrangThaiMon
+1,1,1,1,95000,Phần lớn,95000,DaPhucVu
+2,1,9,1,15000,Lon,18000,DaPhucVu
+3,1,10,1,10000,Ly,10000,DaPhucVu
+4,2,7,1,25000,Ly,25000,DaPhucVu
+5,2,4,2,55000,Phần thường,110000,DaPhucVu
+6,3,4,1,55000,Phần thường,55000,DaPhucVu
+7,3,8,1,45000,Ly,45000,DaPhucVu
+8,3,9,1,15000,Lon,18000,DaPhucVu
+9,4,1,1,95000,Phần lớn,95000,DaPhucVu
+10,4,9,1,15000,Lon,18000,DaPhucVu
+11,4,10,1,10000,Ly,10000,DaPhucVu
+12,5,2,1,90000,Phần lớn,90000,DaPhucVu
+13,5,9,1,35000,Ly,35000,DaPhucVu
+14,5,8,1,45000,Ly,45000,DaPhucVu

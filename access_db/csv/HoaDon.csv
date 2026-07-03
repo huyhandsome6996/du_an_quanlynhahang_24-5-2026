@@ -1,0 +1,6 @@
+﻿Id,BanId,ThoiGianTao,ThoiGianThanhToan,TongTien,TrangThai,VAT,GiamGia,PhuongThucThanhToan
+1,1,2026-06-15 11:30:00,2026-06-15 12:00:00,118000,Đã thanh toán,10727,0,TienMat
+2,2,2026-06-16 18:00:00,2026-06-16 19:30:00,125000,Đã thanh toán,11364,0,The
+3,4,2026-06-17 19:00:00,2026-06-17 20:00:00,155000,Đã thanh toán,14091,0,QR
+4,8,2026-06-18 12:00:00,2026-06-18 13:00:00,125000,Đã thanh toán,11364,0,TienMat
+5,3,2026-06-15 11:30:00,2026-06-16 18:00:00,115000,Đã thanh toán,10455,0,ChuyenKhoan
