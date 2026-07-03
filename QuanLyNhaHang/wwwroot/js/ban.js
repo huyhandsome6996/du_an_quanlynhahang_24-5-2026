@@ -17,7 +17,14 @@ let idBanDangSua = null;   // Id bàn đang sửa (null = đang ở chế độ 
 
 // ---------- KHỞI ĐỘNG ----------
 // Khi trang tải xong → gọi taiDanhSachBan để load dữ liệu
-document.addEventListener('DOMContentLoaded', taiDanhSachBan);
+document.addEventListener('DOMContentLoaded', () => {
+    // Nếu là quản trị thì mới hiện nút "Thêm Bàn Mới"
+    if (sessionStorage.getItem('vst_role') === 'QuanTri') {
+        const btnThemBan = document.getElementById('btnThemBan');
+        if (btnThemBan) btnThemBan.style.display = 'flex';
+    }
+    taiDanhSachBan();
+});
 
 // ---------- 1. TẢI DANH SÁCH BÀN TỪ API ----------
 async function taiDanhSachBan() {
@@ -81,6 +88,17 @@ function hienThiBan(dsBan) {
         // Trả về HTML của 1 card bàn
         // onclick="clickVaoBan(${ban.Id})" → click vào card sẽ mở modal chi tiết
         // event.stopPropagation() ở 2 nút Sửa/Xoá để không trigger click của card
+        
+        // Chỉ Quản Trị mới thấy nút Sửa và Xóa bàn
+        let actionButtons = '';
+        if (sessionStorage.getItem('vst_role') === 'QuanTri') {
+            actionButtons = `
+            <div style="margin-top:0.75rem; display:flex; gap:0.35rem; justify-content:center;">
+                <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); moModalSuaBan(${ban.Id})">✏️</button>
+                <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); xoaBan(${ban.Id}, '${ban.TenBan}')">🗑️</button>
+            </div>`;
+        }
+
         return `
         <div class="ban-card ${cssClass}" onclick="clickVaoBan(${ban.Id})" title="${ban.TenBan} - ${ban.TrangThai}">
             <div class="flex justify-center mb-2">
@@ -88,10 +106,7 @@ function hienThiBan(dsBan) {
             </div>
             <div class="ban-ten">${ban.TenBan}</div>
             <div><span class="badge ${badgeClass}">${badgeText}</span></div>
-            <div style="margin-top:0.75rem; display:flex; gap:0.35rem; justify-content:center;">
-                <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); moModalSuaBan(${ban.Id})">✏️</button>
-                <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); xoaBan(${ban.Id}, '${ban.TenBan}')">🗑️</button>
-            </div>
+            ${actionButtons}
         </div>`;
     }).join('');   // Nối mảng thành chuỗi
 }

@@ -253,33 +253,48 @@
         }
 
         // ====== ĐĂNG NHẬP ======
+        // TƯƠNG TÁC: Hàm này chạy khi người dùng bấm nút "Đăng nhập" trên màn hình
         async function xuLyDangNhap(e) {
+            // TƯƠNG TÁC: Chặn trình duyệt tự động tải lại trang khi gửi biểu mẫu (submit)
             e.preventDefault();
+            
+            // TƯƠNG TÁC: Lấy chữ từ 2 ô nhập liệu trên giao diện và cắt bỏ dấu cách thừa ở hai đầu
             const u = document.getElementById('txtLogUser').value.trim();
             const p = document.getElementById('txtLogPass').value.trim();
 
+            // TƯƠNG TÁC: Kiểm tra nếu chưa nhập đủ thì dừng lại và hiện thông báo lỗi
             if (!u || !p) return hienLoiDangNhap('Vui lòng nhập đầy đủ thông tin!');
 
             try {
+                // TƯƠNG TÁC: Dùng lệnh fetch đóng gói Tên đăng nhập + Mật khẩu thành gói dữ liệu JSON
+                // và ném sang Hệ thống xử lý (Backend C#) tại đường dẫn "/api/auth/dangnhap"
                 const res = await fetch(`${API}/auth/dangnhap`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ TenDangNhap: u, MatKhau: p })
                 });
 
+                // TƯƠNG TÁC: Nếu C# trả về thành công (Mã 200) nghĩa là CSDL xác nhận đúng người
                 if (res.ok) {
-                    // Lưu trạng thái đăng nhập vào sessionStorage
+                    const data = await res.json(); // Lấy data chứa VaiTro từ C# trả về
+                    // TƯƠNG TÁC: Lưu thẻ thông hành vào bộ nhớ trình duyệt để hệ thống nhớ là đã đăng nhập
                     sessionStorage.setItem('vst_logged_in', 'true');
                     sessionStorage.setItem('vst_user', u);
+                    sessionStorage.setItem('vst_role', data.vaiTro); // Lưu thêm quyền hạn
+                    
+                    // TƯƠNG TÁC: Tự động chuyển hướng người dùng sang trang Sơ đồ bàn
                     window.location.href = 'index.html';
                 } else if (res.status === 401) {
+                    // TƯƠNG TÁC: C# từ chối truy cập (Mã lỗi 401 - Sai mật khẩu hoặc tài khoản)
                     hienLoiDangNhap('Tài khoản hoặc mật khẩu không chính xác!');
                 } else {
+                    // TƯƠNG TÁC: Bắt các thông báo lỗi khác do hệ thống C# báo về
                     const data = await res.json();
                     hienLoiDangNhap(data.thongBao || 'Lỗi đăng nhập!');
                 }
             } catch {
-                hienLoiDangNhap('Không kết nối được server!');
+                // TƯƠNG TÁC: Báo lỗi nếu máy chủ C# đang tắt, không thể kết nối
+                hienLoiDangNhap('Không kết nối được máy chủ!');
             }
         }
 
