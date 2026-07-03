@@ -11,7 +11,7 @@
 //   tài khoản trực tiếp trong Access mà không cần tính hash.
 //   Đồ án nhỏ → tối giản code cho dễ học, dễ thi vấn đáp.
 // ============================================================
-using System.Text.Json;
+using System.Text.Json; // Có chứa hàm GetProperty để bóc tách JSON
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using QuanLyNhaHang.DAL.Interfaces;
@@ -87,33 +87,43 @@ namespace QuanLyNhaHang.CacModun
                 }
             });
 
+
+
+
+
+
+
+
+
+
+
+
             // =====================================================
             // 3. POST /api/auth/dangnhap
             // Đăng nhập, so sánh mật khẩu PLAIN-TEXT.
             // Body JSON: { "TenDangNhap": "admin", "MatKhau": "admin123" }
             // =====================================================
+            // [GIẢI THÍCH MÃ NGUỒN]: Sử dụng MapPost để mở cổng API. Dùng Dependency Injection để gọi INguoiDungDAL (tương tác Database).
             app.MapPost("/api/auth/dangnhap", (JsonElement body, INguoiDungDAL ndDAL) =>
             {
                 try
                 {
-                    // Parse JSON body
+                    // [GIẢI THÍCH MÃ NGUỒN]: Sử dụng JsonElement để bóc tách gói dữ liệu lấy tên và mật khẩu
                     string tenDangNhap = body.GetProperty("TenDangNhap").GetString() ?? "";
                     string matKhau = body.GetProperty("MatKhau").GetString() ?? "";
 
-                    // Validate không được để trống
+                    // [GIẢI THÍCH MÃ NGUỒN]: Sử dụng hàm IsNullOrWhiteSpace để Validate tính hợp lệ (báo lỗi 400 nếu rỗng)
                     if (string.IsNullOrWhiteSpace(tenDangNhap) || string.IsNullOrWhiteSpace(matKhau))
                         return Results.BadRequest(new { thongBao = "Vui lòng nhập đầy đủ thông tin!" });
 
-                    // Tìm user trong DB
+                    // [GIẢI THÍCH MÃ NGUỒN]: Sử dụng tầng DAL (ndDAL) để chọc vào DB tìm tài khoản. Trả về 401 nếu kết quả null.
                     var nguoiDung = ndDAL.LayTheoTenDangNhap(tenDangNhap.Trim());
-                    // Không tìm thấy user → 401 Unauthorized
                     if (nguoiDung == null) return Results.Unauthorized();
 
-                    // SO SÁNH MẬT KHẨU PLAIN-TEXT trực tiếp
-                    // (Phiên bản cũ dùng SHA-256 → phức tạp và thừa thãi cho đồ án nhỏ)
+                    // [GIẢI THÍCH MÃ NGUỒN]: Sử dụng toán tử != để so sánh thô (Plain-text) mật khẩu. Trả về lỗi 401 nếu sai.
                     if (nguoiDung.MatKhau != matKhau) return Results.Unauthorized();
 
-                    // Đúng user + đúng mật khẩu → trả về 200 + thông tin user
+                    // [GIẢI THÍCH MÃ NGUỒN]: Sử dụng Results.Ok và Đối tượng vô danh (Anonymous Object) để trả mã 200 kèm VaiTro
                     return Results.Ok(new
                     {
                         thongBao = "Đăng nhập thành công!",
@@ -126,6 +136,11 @@ namespace QuanLyNhaHang.CacModun
                     return Results.BadRequest(new { thongBao = ex.Message });
                 }
             });
+
+
+
+
+
 
             // =====================================================
             // 4. GET /api/taikhoan — Lấy danh sách tất cả tài khoản.
